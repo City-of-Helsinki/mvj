@@ -807,15 +807,15 @@ class ContractChangeSerializer(serializers.ModelSerializer[ContractChange]):
         model = ContractChange
         fields = (
             "id",
-            "identifier",
+            "contract_number",
             "signing_date",
             "signing_deadline",
-            "first_invitation_sent_date",
-            "second_invitation_sent_date",
-            "third_invitation_sent_date",
+            "first_call_sent",
+            "second_call_sent",
+            "third_call_sent",
             "executor",
             "decision",
-            "note",
+            "description",
         )
 
 
@@ -823,10 +823,10 @@ class CollateralSerializer(serializers.ModelSerializer[CollateralBase]):
     class Meta:
         fields: tuple[str, ...] = (
             "id",
-            "guarantee_type",
+            "collateral_type",
             "parties",
-            "third_party_pledger_name",
-            "third_party_pledger_business_id",
+            "third_party_pledgor_name",
+            "third_party_pledgor_business_id",
             "start_date",
             "end_date",
             "amount",
@@ -836,57 +836,57 @@ class CollateralSerializer(serializers.ModelSerializer[CollateralBase]):
         )
 
 
-class MortgageDeedCollateralSerializer(CollateralSerializer):
+class MortgageDocumentCollateralSerializer(CollateralSerializer):
     class Meta(CollateralSerializer.Meta):
         model = MortgageDeedCollateral
         fields = (
             *CollateralSerializer.Meta.fields,
-            "document_category",
+            "document_type",
             "target",
-            "facility_identifier",
-            "mortgage_deed_number",
+            "institution_identifier",
+            "mortgage_document_number",
             "mortgage_deed_date",
-            "subsequent_pledgee_name",
-            "subsequent_pledgee_business_id",
+            "subordinate_pledgee_name",
+            "subordinate_pledgee_business_id",
             "property_identifiers",
         )
 
 
-class CashDepositCollateralSerializer(CollateralSerializer):
+class FinancialGuaranteeCollateralSerializer(CollateralSerializer):
     class Meta(CollateralSerializer.Meta):
         model = CashDepositCollateral
         fields = (
             *CollateralSerializer.Meta.fields,
-            "guarantor_name",
-            "guarantor_business_id",
-            "guarantor_national_identification_number",
+            "pledgor_name",
+            "pledgor_business_id",
+            "pledgor_national_identification_number",
             "account_number",
             "paid_at_date",
         )
 
 
-class PersonalGuaranteeCollateralSerializer(CollateralSerializer):
+class SelfDebtorGuaranteeCollateralSerializer(CollateralSerializer):
     class Meta(CollateralSerializer.Meta):
         model = PersonalGuaranteeCollateral
         fields = (
             *CollateralSerializer.Meta.fields,
-            "document_category",
-            "guarantor_name",
-            "guarantor_business_id",
-            "guarantor_national_identification_number",
-            "guarantee_identifier",
+            "document_type",
+            "pledgor_name",
+            "pledgor_business_id",
+            "pledgor_national_identification_number",
+            "guarantee_number",
         )
 
 
-class DepositPledgeCollateralSerializer(CollateralSerializer):
+class PledgeOfFundsCollateralSerializer(CollateralSerializer):
     class Meta(CollateralSerializer.Meta):
         model = DepositPledgeCollateral
         fields = (
             *CollateralSerializer.Meta.fields,
-            "document_category",
-            "guarantor_name",
-            "guarantor_business_id",
-            "guarantor_national_identification_number",
+            "document_type",
+            "pledgor_name",
+            "pledgor_business_id",
+            "pledgor_national_identification_number",
             "account_number",
         )
 
@@ -896,31 +896,31 @@ class OtherCollateralSerializer(CollateralSerializer):
         model = OtherCollateral
         fields = (
             *CollateralSerializer.Meta.fields,
-            "document_category",
-            "guarantor_name",
-            "guarantor_business_id",
-            "guarantor_national_identification_number",
+            "document_type",
+            "pledgor_name",
+            "pledgor_business_id",
+            "pledgor_national_identification_number",
         )
 
 
 class ContractSerializer(serializers.ModelSerializer[Contract]):
-    changes = ContractChangeSerializer(many=True, read_only=True)
-    mortgage_deed_collaterals = MortgageDeedCollateralSerializer(
+    contract_changes = ContractChangeSerializer(many=True, read_only=True)
+    mortgage_document_collaterals = MortgageDocumentCollateralSerializer(
         many=True,
         read_only=True,
         source="mortgagedeedcollateral_collaterals",
     )
-    cash_deposit_collaterals = CashDepositCollateralSerializer(
+    financial_guarantee_collaterals = FinancialGuaranteeCollateralSerializer(
         many=True,
         read_only=True,
         source="cashdepositcollateral_collaterals",
     )
-    personal_guarantee_collaterals = PersonalGuaranteeCollateralSerializer(
+    self_debtor_guarantee_collaterals = SelfDebtorGuaranteeCollateralSerializer(
         many=True,
         read_only=True,
         source="personalguaranteecollateral_collaterals",
     )
-    deposit_pledge_collaterals = DepositPledgeCollateralSerializer(
+    pledge_of_funds_collaterals = PledgeOfFundsCollateralSerializer(
         many=True,
         read_only=True,
         source="depositpledgecollateral_collaterals",
@@ -935,22 +935,22 @@ class ContractSerializer(serializers.ModelSerializer[Contract]):
         model = Contract
         fields = (
             "id",
-            "identifier",
+            "contract_number",
             "signing_date",
             "signing_deadline",
-            "first_invitation_sent_date",
-            "second_invitation_sent_date",
-            "third_invitation_sent_date",
+            "first_call_sent",
+            "second_call_sent",
+            "third_call_sent",
             "executor",
             "decision",
-            "note",
+            "signing_note",
             "title",
             "contract_type",
-            "changes",
-            "mortgage_deed_collaterals",
-            "cash_deposit_collaterals",
-            "personal_guarantee_collaterals",
-            "deposit_pledge_collaterals",
+            "contract_changes",
+            "mortgage_document_collaterals",
+            "financial_guarantee_collaterals",
+            "self_debtor_guarantee_collaterals",
+            "pledge_of_funds_collaterals",
             "other_collaterals",
         )
 
@@ -962,15 +962,15 @@ class ContractChangeWriteSerializer(serializers.ModelSerializer[ContractChange])
         model = ContractChange
         fields = (
             "id",
-            "identifier",
+            "contract_number",
             "signing_date",
             "signing_deadline",
-            "first_invitation_sent_date",
-            "second_invitation_sent_date",
-            "third_invitation_sent_date",
+            "first_call_sent",
+            "second_call_sent",
+            "third_call_sent",
             "executor",
             "decision",
-            "note",
+            "description",
         )
 
 
@@ -990,122 +990,122 @@ class CollateralWriteBaseSerializer(serializers.ModelSerializer[CollateralBase])
 
 
 class MortgageDeedCollateralWriteSerializer(CollateralWriteBaseSerializer):
-    guarantee_type = serializers.HiddenField(
-        default=MortgageDeedCollateral.CollateralType.MORTGAGE_DEED
+    collateral_type = serializers.HiddenField(
+        default=MortgageDeedCollateral.CollateralType.MORTGAGE_DOCUMENT
     )
 
     class Meta:
         model = MortgageDeedCollateral
         fields = (
             "id",
-            "guarantee_type",
+            "collateral_type",
             "parties",
-            "third_party_pledger_name",
-            "third_party_pledger_business_id",
+            "third_party_pledgor_name",
+            "third_party_pledgor_business_id",
             "start_date",
             "end_date",
             "amount",
             "returned_date",
             "marked_returned_by",
             "additional_information",
-            "document_category",
+            "document_type",
             "target",
-            "facility_identifier",
-            "mortgage_deed_number",
+            "institution_identifier",
+            "mortgage_document_number",
             "mortgage_deed_date",
-            "subsequent_pledgee_name",
-            "subsequent_pledgee_business_id",
+            "subordinate_pledgee_name",
+            "subordinate_pledgee_business_id",
             "property_identifiers",
         )
         extra_kwargs = {
-            "mortgage_deed_number": {"required": False, "allow_blank": True},
+            "mortgage_document_number": {"required": False, "allow_blank": True},
             "mortgage_deed_date": {"required": False, "allow_null": True},
         }
 
 
 class CashDepositCollateralWriteSerializer(CollateralWriteBaseSerializer):
-    guarantee_type = serializers.HiddenField(
-        default=CashDepositCollateral.CollateralType.CASH_DEPOSIT
+    collateral_type = serializers.HiddenField(
+        default=CashDepositCollateral.CollateralType.FINANCIAL_GUARANTEE
     )
 
     class Meta:
         model = CashDepositCollateral
         fields = (
             "id",
-            "guarantee_type",
+            "collateral_type",
             "parties",
-            "third_party_pledger_name",
-            "third_party_pledger_business_id",
+            "third_party_pledgor_name",
+            "third_party_pledgor_business_id",
             "start_date",
             "end_date",
             "amount",
             "returned_date",
             "marked_returned_by",
             "additional_information",
-            "guarantor_name",
-            "guarantor_business_id",
-            "guarantor_national_identification_number",
+            "pledgor_name",
+            "pledgor_business_id",
+            "pledgor_national_identification_number",
             "account_number",
             "paid_at_date",
         )
 
 
 class PersonalGuaranteeCollateralWriteSerializer(CollateralWriteBaseSerializer):
-    guarantee_type = serializers.HiddenField(
-        default=PersonalGuaranteeCollateral.CollateralType.PERSONAL_GUARANTEE
+    collateral_type = serializers.HiddenField(
+        default=PersonalGuaranteeCollateral.CollateralType.SELF_DEBTOR_GUARANTEE
     )
 
     class Meta:
         model = PersonalGuaranteeCollateral
         fields = (
             "id",
-            "guarantee_type",
+            "collateral_type",
             "parties",
-            "third_party_pledger_name",
-            "third_party_pledger_business_id",
+            "third_party_pledgor_name",
+            "third_party_pledgor_business_id",
             "start_date",
             "end_date",
             "amount",
             "returned_date",
             "marked_returned_by",
             "additional_information",
-            "document_category",
-            "guarantor_name",
-            "guarantor_business_id",
-            "guarantor_national_identification_number",
-            "guarantee_identifier",
+            "document_type",
+            "pledgor_name",
+            "pledgor_business_id",
+            "pledgor_national_identification_number",
+            "guarantee_number",
         )
 
 
 class DepositPledgeCollateralWriteSerializer(CollateralWriteBaseSerializer):
-    guarantee_type = serializers.HiddenField(
-        default=DepositPledgeCollateral.CollateralType.DEPOSIT_PLEDGE
+    collateral_type = serializers.HiddenField(
+        default=DepositPledgeCollateral.CollateralType.PLEDGE_OF_FUNDS
     )
 
     class Meta:
         model = DepositPledgeCollateral
         fields = (
             "id",
-            "guarantee_type",
+            "collateral_type",
             "parties",
-            "third_party_pledger_name",
-            "third_party_pledger_business_id",
+            "third_party_pledgor_name",
+            "third_party_pledgor_business_id",
             "start_date",
             "end_date",
             "amount",
             "returned_date",
             "marked_returned_by",
             "additional_information",
-            "document_category",
-            "guarantor_name",
-            "guarantor_business_id",
-            "guarantor_national_identification_number",
+            "document_type",
+            "pledgor_name",
+            "pledgor_business_id",
+            "pledgor_national_identification_number",
             "account_number",
         )
 
 
 class OtherCollateralWriteSerializer(CollateralWriteBaseSerializer):
-    guarantee_type = serializers.HiddenField(
+    collateral_type = serializers.HiddenField(
         default=OtherCollateral.CollateralType.OTHER
     )
 
@@ -1113,26 +1113,26 @@ class OtherCollateralWriteSerializer(CollateralWriteBaseSerializer):
         model = OtherCollateral
         fields = (
             "id",
-            "guarantee_type",
+            "collateral_type",
             "parties",
-            "third_party_pledger_name",
-            "third_party_pledger_business_id",
+            "third_party_pledgor_name",
+            "third_party_pledgor_business_id",
             "start_date",
             "end_date",
             "amount",
             "returned_date",
             "marked_returned_by",
             "additional_information",
-            "document_category",
-            "guarantor_name",
-            "guarantor_business_id",
-            "guarantor_national_identification_number",
+            "document_type",
+            "pledgor_name",
+            "pledgor_business_id",
+            "pledgor_national_identification_number",
         )
 
 
 class ContractListSerializer(ReplaceListSerializer):
     read_prefetch = (
-        "changes",
+        "contract_changes",
         "mortgagedeedcollateral_collaterals__parties",
         "cashdepositcollateral_collaterals__parties",
         "personalguaranteecollateral_collaterals__parties",
@@ -1149,7 +1149,7 @@ class ContractListSerializer(ReplaceListSerializer):
         decision_ids = set()
         party_ids = set()
         for contract in validated_data:
-            records = [contract, *contract.get("changes", [])]
+            records = [contract, *contract.get("contract_changes", [])]
             decision_ids |= {r["decision"].pk for r in records if r.get("decision")}
             for key in ContractWriteSerializer.COLLATERAL_MODELS:
                 for collateral in contract.get(key, []):
@@ -1170,26 +1170,26 @@ class ContractListSerializer(ReplaceListSerializer):
 
 class ContractWriteSerializer(serializers.ModelSerializer[Contract]):
     id = serializers.IntegerField(required=False)
-    changes = ContractChangeWriteSerializer(many=True, required=False)
-    mortgage_deed_collaterals = MortgageDeedCollateralWriteSerializer(
+    contract_changes = ContractChangeWriteSerializer(many=True, required=False)
+    mortgage_document_collaterals = MortgageDeedCollateralWriteSerializer(
         many=True, required=False
     )
-    cash_deposit_collaterals = CashDepositCollateralWriteSerializer(
+    financial_guarantee_collaterals = CashDepositCollateralWriteSerializer(
         many=True, required=False
     )
-    personal_guarantee_collaterals = PersonalGuaranteeCollateralWriteSerializer(
+    self_debtor_guarantee_collaterals = PersonalGuaranteeCollateralWriteSerializer(
         many=True, required=False
     )
-    deposit_pledge_collaterals = DepositPledgeCollateralWriteSerializer(
+    pledge_of_funds_collaterals = DepositPledgeCollateralWriteSerializer(
         many=True, required=False
     )
     other_collaterals = OtherCollateralWriteSerializer(many=True, required=False)
 
     COLLATERAL_MODELS: dict[str, CollateralModel] = {
-        "mortgage_deed_collaterals": MortgageDeedCollateral,
-        "cash_deposit_collaterals": CashDepositCollateral,
-        "personal_guarantee_collaterals": PersonalGuaranteeCollateral,
-        "deposit_pledge_collaterals": DepositPledgeCollateral,
+        "mortgage_document_collaterals": MortgageDeedCollateral,
+        "financial_guarantee_collaterals": CashDepositCollateral,
+        "self_debtor_guarantee_collaterals": PersonalGuaranteeCollateral,
+        "pledge_of_funds_collaterals": DepositPledgeCollateral,
         "other_collaterals": OtherCollateral,
     }
 
@@ -1198,22 +1198,22 @@ class ContractWriteSerializer(serializers.ModelSerializer[Contract]):
         list_serializer_class = ContractListSerializer
         fields = (
             "id",
-            "identifier",
+            "contract_number",
             "signing_date",
             "signing_deadline",
-            "first_invitation_sent_date",
-            "second_invitation_sent_date",
-            "third_invitation_sent_date",
+            "first_call_sent",
+            "second_call_sent",
+            "third_call_sent",
             "executor",
             "decision",
-            "note",
+            "signing_note",
             "title",
             "contract_type",
-            "changes",
-            "mortgage_deed_collaterals",
-            "cash_deposit_collaterals",
-            "personal_guarantee_collaterals",
-            "deposit_pledge_collaterals",
+            "contract_changes",
+            "mortgage_document_collaterals",
+            "financial_guarantee_collaterals",
+            "self_debtor_guarantee_collaterals",
+            "pledge_of_funds_collaterals",
             "other_collaterals",
         )
 
@@ -1226,7 +1226,7 @@ class ContractWriteSerializer(serializers.ModelSerializer[Contract]):
 
     @transaction.atomic
     def create(self, validated_data: dict[str, Any]) -> Any:
-        changes = validated_data.pop("changes", [])
+        changes = validated_data.pop("contract_changes", [])
         collaterals = {
             key: validated_data.pop(key, []) for key in self.COLLATERAL_MODELS
         }
@@ -1236,7 +1236,7 @@ class ContractWriteSerializer(serializers.ModelSerializer[Contract]):
 
     @transaction.atomic
     def update(self, instance: Any, validated_data: dict[str, Any]) -> Any:
-        changes = validated_data.pop("changes", [])
+        changes = validated_data.pop("contract_changes", [])
         collaterals = {
             key: validated_data.pop(key, []) for key in self.COLLATERAL_MODELS
         }
@@ -1251,7 +1251,7 @@ class ContractWriteSerializer(serializers.ModelSerializer[Contract]):
         collaterals: dict[str, list[dict[str, Any]]],
     ) -> None:
         sync_rows(
-            contract.changes.all(),
+            contract.contract_changes.all(),
             changes,
             partial(self._save_change, contract),
         )

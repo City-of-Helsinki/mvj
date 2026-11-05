@@ -16,8 +16,8 @@ def contract(db):
 def mortgage_deed_collateral(contract):
     return MortgageDeedCollateral(
         contract=contract,
-        guarantee_type=MortgageDeedCollateral.CollateralType.MORTGAGE_DEED,
-        mortgage_deed_number="123",
+        collateral_type=MortgageDeedCollateral.CollateralType.MORTGAGE_DOCUMENT,
+        mortgage_document_number="123",
         mortgage_deed_date=datetime.date(2026, 1, 1),
     )
 
@@ -44,11 +44,11 @@ def test_collateral_requires_return_date_and_marker_together(
         mortgage_deed_collateral.save()
 
 
-def test_mortgage_deed_collateral_rejects_facility_identifier_for_property_target(
+def test_mortgage_deed_collateral_rejects_institution_identifier_for_property_target(
     mortgage_deed_collateral,
 ):
     mortgage_deed_collateral.target = MortgageDeedCollateral.CollateralTarget.PROPERTY
-    mortgage_deed_collateral.facility_identifier = "facility-123"
+    mortgage_deed_collateral.institution_identifier = "facility-123"
 
     with pytest.raises(
         ValueError, match="Facility identifier cannot be set for property target."
@@ -56,7 +56,7 @@ def test_mortgage_deed_collateral_rejects_facility_identifier_for_property_targe
         mortgage_deed_collateral.save()
 
 
-def test_mortgage_deed_collateral_requires_facility_identifier_for_facility_target(
+def test_mortgage_deed_collateral_requires_institution_identifier_for_facility_target(
     mortgage_deed_collateral,
 ):
     mortgage_deed_collateral.target = MortgageDeedCollateral.CollateralTarget.FACILITY
@@ -69,7 +69,7 @@ def test_mortgage_deed_collateral_requires_facility_identifier_for_facility_targ
 
 def test_property_identifiers_rejected_for_facility_target(mortgage_deed_collateral):
     mortgage_deed_collateral.target = MortgageDeedCollateral.CollateralTarget.FACILITY
-    mortgage_deed_collateral.facility_identifier = "facility-123"
+    mortgage_deed_collateral.institution_identifier = "facility-123"
     mortgage_deed_collateral.property_identifiers = ["123-456-789-0"]
 
     with pytest.raises(

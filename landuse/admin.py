@@ -287,13 +287,13 @@ class OtherCollateralInline(admin.StackedInline[OtherCollateral, Contract]):
 class ContractAdmin(admin.ModelAdmin[Contract]):
     list_display = (
         "title",
-        "identifier",
+        "contract_number",
         "contract_type",
         "agreement",
         "signing_date",
     )
     list_filter = ("contract_type",)
-    search_fields = ("title", "identifier", "agreement__identifier")
+    search_fields = ("title", "contract_number", "agreement__identifier")
     autocomplete_fields = ("agreement", "decision")
     inlines = (
         ContractChangeInline,
@@ -308,14 +308,19 @@ class ContractAdmin(admin.ModelAdmin[Contract]):
 @admin.register(ContractChange)
 class ContractChangeAdmin(admin.ModelAdmin[ContractChange]):
     list_display = ("contract", "signing_date", "signing_deadline")
-    search_fields = ("contract__identifier", "contract__agreement__identifier")
+    search_fields = ("contract__contract_number", "contract__agreement__identifier")
     autocomplete_fields = ("contract", "decision")
 
 
 @admin.register(MortgageDeedCollateral)
 class MortgageDeedCollateralAdmin(admin.ModelAdmin[MortgageDeedCollateral]):
-    list_display = ("mortgage_deed_number", "contract", "amount", "returned_date")
-    search_fields = ("mortgage_deed_number", "contract__identifier")
+    list_display = (
+        "mortgage_document_number",
+        "contract",
+        "amount",
+        "returned_date",
+    )
+    search_fields = ("mortgage_document_number", "contract__contract_number")
     autocomplete_fields = ("contract",)
     filter_horizontal = ("parties",)
 
@@ -329,18 +334,18 @@ class CashDepositCollateralAdmin(admin.ModelAdmin[CashDepositCollateral]):
         "paid_at_date",
         "returned_date",
     )
-    search_fields = ("account_number", "contract__identifier")
+    search_fields = ("account_number", "contract__contract_number")
     autocomplete_fields = ("contract",)
     filter_horizontal = ("parties",)
 
 
 @admin.register(PersonalGuaranteeCollateral)
 class PersonalGuaranteeCollateralAdmin(admin.ModelAdmin[PersonalGuaranteeCollateral]):
-    list_display = ("guarantee_identifier", "guarantor_name", "contract", "amount")
+    list_display = ("guarantee_number", "pledgor_name", "contract", "amount")
     search_fields = (
-        "guarantee_identifier",
-        "guarantor_name",
-        "contract__identifier",
+        "guarantee_number",
+        "pledgor_name",
+        "contract__contract_number",
     )
     autocomplete_fields = ("contract",)
     filter_horizontal = ("parties",)
@@ -348,16 +353,16 @@ class PersonalGuaranteeCollateralAdmin(admin.ModelAdmin[PersonalGuaranteeCollate
 
 @admin.register(DepositPledgeCollateral)
 class DepositPledgeCollateralAdmin(admin.ModelAdmin[DepositPledgeCollateral]):
-    list_display = ("account_number", "guarantor_name", "contract", "amount")
-    search_fields = ("account_number", "guarantor_name", "contract__identifier")
+    list_display = ("account_number", "pledgor_name", "contract", "amount")
+    search_fields = ("account_number", "pledgor_name", "contract__contract_number")
     autocomplete_fields = ("contract",)
     filter_horizontal = ("parties",)
 
 
 @admin.register(OtherCollateral)
 class OtherCollateralAdmin(admin.ModelAdmin[OtherCollateral]):
-    list_display = ("guarantor_name", "contract", "amount", "returned_date")
-    search_fields = ("guarantor_name", "contract__identifier")
+    list_display = ("pledgor_name", "contract", "amount", "returned_date")
+    search_fields = ("pledgor_name", "contract__contract_number")
     autocomplete_fields = ("contract",)
     filter_horizontal = ("parties",)
 
