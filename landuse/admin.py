@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.db.models import QuerySet
+from django.http import HttpRequest
 from django.utils.html import format_html
 
 from landuse.models.agreement import (
@@ -44,42 +46,42 @@ from landuse.models.site import (
 )
 
 
-class AgreementAddressInline(admin.TabularInline):
+class AgreementAddressInline(admin.TabularInline[AgreementAddress, LandUseAgreement]):
     model = AgreementAddress
     extra = 0
 
 
-class AgreementPreparerInline(admin.TabularInline):
+class AgreementPreparerInline(admin.TabularInline[AgreementPreparer, LandUseAgreement]):
     model = AgreementPreparer
     extra = 0
     raw_id_fields = ("preparer",)
 
 
-class AgreementPartyInline(admin.TabularInline):
+class AgreementPartyInline(admin.TabularInline[AgreementParty, LandUseAgreement]):
     model = AgreementParty
     extra = 0
     show_change_link = True
 
 
-class AgreementSiteInline(admin.TabularInline):
+class AgreementSiteInline(admin.TabularInline[AgreementSite, LandUseAgreement]):
     model = AgreementSite
     extra = 0
     show_change_link = True
 
 
-class DecisionInline(admin.TabularInline):
+class DecisionInline(admin.TabularInline[Decision, LandUseAgreement]):
     model = Decision
     extra = 0
     show_change_link = True
 
 
-class ContractInline(admin.TabularInline):
+class ContractInline(admin.TabularInline[Contract, LandUseAgreement]):
     model = Contract
     extra = 0
     show_change_link = True
 
 
-class PaymentScheduleInline(admin.TabularInline):
+class PaymentScheduleInline(admin.TabularInline[PaymentSchedule, LandUseAgreement]):
     model = PaymentSchedule
     extra = 0
     show_change_link = True
@@ -87,7 +89,7 @@ class PaymentScheduleInline(admin.TabularInline):
 
 class SapXmlDisplayMixin:
     @admin.display(description="SAP XML")
-    def formatted_sap_xml(self, invoice):
+    def formatted_sap_xml(self, invoice: Invoice) -> str:
         if not invoice or not invoice.pk:
             return "-"
 
@@ -100,7 +102,7 @@ class SapXmlDisplayMixin:
         )
 
 
-class InvoiceInline(SapXmlDisplayMixin, admin.TabularInline):
+class InvoiceInline(SapXmlDisplayMixin, admin.TabularInline[Invoice, LandUseAgreement]):
     model = Invoice
     extra = 0
     show_change_link = True
@@ -109,7 +111,7 @@ class InvoiceInline(SapXmlDisplayMixin, admin.TabularInline):
 
 
 @admin.register(LandUseAgreement)
-class LandUseAgreementAdmin(admin.ModelAdmin):
+class LandUseAgreementAdmin(admin.ModelAdmin[LandUseAgreement]):
     list_display = (
         "identifier",
         "status",
@@ -133,7 +135,7 @@ class LandUseAgreementAdmin(admin.ModelAdmin):
         InvoiceInline,
     )
 
-    def get_queryset(self, request):
+    def get_queryset(self, request: HttpRequest) -> QuerySet[LandUseAgreement]:
         return (
             super()
             .get_queryset(request)
@@ -141,25 +143,25 @@ class LandUseAgreementAdmin(admin.ModelAdmin):
         )
 
 
-class ContactPersonInline(admin.TabularInline):
+class ContactPersonInline(admin.TabularInline[ContactPerson, AgreementParty]):
     model = ContactPerson
     extra = 0
 
 
-class BillingDetailsInline(admin.StackedInline):
+class BillingDetailsInline(admin.StackedInline[BillingDetails, AgreementParty]):
     model = BillingDetails
     extra = 0
     max_num = 1
 
 
-class InvoiceRecipientInline(admin.StackedInline):
+class InvoiceRecipientInline(admin.StackedInline[InvoiceRecipient, AgreementParty]):
     model = InvoiceRecipient
     extra = 0
     max_num = 1
 
 
 @admin.register(AgreementParty)
-class AgreementPartyAdmin(admin.ModelAdmin):
+class AgreementPartyAdmin(admin.ModelAdmin[AgreementParty]):
     list_display = ("name", "role", "party_type", "business_id", "agreement")
     list_filter = ("role", "party_type", "country")
     search_fields = (
@@ -171,19 +173,19 @@ class AgreementPartyAdmin(admin.ModelAdmin):
     autocomplete_fields = ("agreement",)
     inlines = (ContactPersonInline, BillingDetailsInline, InvoiceRecipientInline)
 
-    def get_queryset(self, request):
+    def get_queryset(self, request: HttpRequest) -> QuerySet[AgreementParty]:
         return super().get_queryset(request).select_related("agreement")
 
 
 @admin.register(AgreementAddress)
-class AgreementAddressAdmin(admin.ModelAdmin):
+class AgreementAddressAdmin(admin.ModelAdmin[AgreementAddress]):
     list_display = ("street_address", "postal_code", "city", "agreement")
     search_fields = ("street_address", "postal_code", "city", "agreement__identifier")
     autocomplete_fields = ("agreement",)
 
 
 @admin.register(AgreementPreparer)
-class AgreementPreparerAdmin(admin.ModelAdmin):
+class AgreementPreparerAdmin(admin.ModelAdmin[AgreementPreparer]):
     list_display = ("agreement", "preparer")
     search_fields = (
         "agreement__identifier",
@@ -195,21 +197,21 @@ class AgreementPreparerAdmin(admin.ModelAdmin):
 
 
 @admin.register(District)
-class DistrictAdmin(admin.ModelAdmin):
+class DistrictAdmin(admin.ModelAdmin[District]):
     list_display = ("identifier", "name")
     search_fields = ("identifier", "name")
     ordering = ("identifier",)
 
 
 @admin.register(AuthorizedSignatory)
-class AuthorizedSignatoryAdmin(admin.ModelAdmin):
+class AuthorizedSignatoryAdmin(admin.ModelAdmin[AuthorizedSignatory]):
     list_display = ("name",)
     search_fields = ("name",)
     ordering = ("name",)
 
 
 @admin.register(DetailedPlan)
-class DetailedPlanAdmin(admin.ModelAdmin):
+class DetailedPlanAdmin(admin.ModelAdmin[DetailedPlan]):
     list_display = (
         "plan_number",
         "processing_stage",
@@ -222,7 +224,7 @@ class DetailedPlanAdmin(admin.ModelAdmin):
 
 
 @admin.register(LandUseCompensation)
-class LandUseCompensationAdmin(admin.ModelAdmin):
+class LandUseCompensationAdmin(admin.ModelAdmin[LandUseCompensation]):
     list_display = (
         "agreement",
         "total_compensation",
@@ -234,49 +236,55 @@ class LandUseCompensationAdmin(admin.ModelAdmin):
 
 
 @admin.register(LandPolicyProgram)
-class LandPolicyProgramAdmin(admin.ModelAdmin):
+class LandPolicyProgramAdmin(admin.ModelAdmin[LandPolicyProgram]):
     list_display = ("name", "default_discount_percentage")
     search_fields = ("name",)
     ordering = ("name",)
 
 
-class ContractChangeInline(admin.StackedInline):
+class ContractChangeInline(admin.StackedInline[ContractChange, Contract]):
     model = ContractChange
     extra = 0
 
 
-class MortgageDeedCollateralInline(admin.StackedInline):
+class MortgageDeedCollateralInline(
+    admin.StackedInline[MortgageDeedCollateral, Contract]
+):
     model = MortgageDeedCollateral
     extra = 0
     filter_horizontal = ("parties",)
 
 
-class CashDepositCollateralInline(admin.StackedInline):
+class CashDepositCollateralInline(admin.StackedInline[CashDepositCollateral, Contract]):
     model = CashDepositCollateral
     extra = 0
     filter_horizontal = ("parties",)
 
 
-class PersonalGuaranteeCollateralInline(admin.StackedInline):
+class PersonalGuaranteeCollateralInline(
+    admin.StackedInline[PersonalGuaranteeCollateral, Contract]
+):
     model = PersonalGuaranteeCollateral
     extra = 0
     filter_horizontal = ("parties",)
 
 
-class DepositPledgeCollateralInline(admin.StackedInline):
+class DepositPledgeCollateralInline(
+    admin.StackedInline[DepositPledgeCollateral, Contract]
+):
     model = DepositPledgeCollateral
     extra = 0
     filter_horizontal = ("parties",)
 
 
-class OtherCollateralInline(admin.StackedInline):
+class OtherCollateralInline(admin.StackedInline[OtherCollateral, Contract]):
     model = OtherCollateral
     extra = 0
     filter_horizontal = ("parties",)
 
 
 @admin.register(Contract)
-class ContractAdmin(admin.ModelAdmin):
+class ContractAdmin(admin.ModelAdmin[Contract]):
     list_display = (
         "title",
         "identifier",
@@ -298,14 +306,14 @@ class ContractAdmin(admin.ModelAdmin):
 
 
 @admin.register(ContractChange)
-class ContractChangeAdmin(admin.ModelAdmin):
+class ContractChangeAdmin(admin.ModelAdmin[ContractChange]):
     list_display = ("contract", "signing_date", "signing_deadline")
     search_fields = ("contract__identifier", "contract__agreement__identifier")
     autocomplete_fields = ("contract", "decision")
 
 
 @admin.register(MortgageDeedCollateral)
-class MortgageDeedCollateralAdmin(admin.ModelAdmin):
+class MortgageDeedCollateralAdmin(admin.ModelAdmin[MortgageDeedCollateral]):
     list_display = ("mortgage_deed_number", "contract", "amount", "returned_date")
     search_fields = ("mortgage_deed_number", "contract__identifier")
     autocomplete_fields = ("contract",)
@@ -313,7 +321,7 @@ class MortgageDeedCollateralAdmin(admin.ModelAdmin):
 
 
 @admin.register(CashDepositCollateral)
-class CashDepositCollateralAdmin(admin.ModelAdmin):
+class CashDepositCollateralAdmin(admin.ModelAdmin[CashDepositCollateral]):
     list_display = (
         "account_number",
         "contract",
@@ -327,7 +335,7 @@ class CashDepositCollateralAdmin(admin.ModelAdmin):
 
 
 @admin.register(PersonalGuaranteeCollateral)
-class PersonalGuaranteeCollateralAdmin(admin.ModelAdmin):
+class PersonalGuaranteeCollateralAdmin(admin.ModelAdmin[PersonalGuaranteeCollateral]):
     list_display = ("guarantee_identifier", "guarantor_name", "contract", "amount")
     search_fields = (
         "guarantee_identifier",
@@ -339,7 +347,7 @@ class PersonalGuaranteeCollateralAdmin(admin.ModelAdmin):
 
 
 @admin.register(DepositPledgeCollateral)
-class DepositPledgeCollateralAdmin(admin.ModelAdmin):
+class DepositPledgeCollateralAdmin(admin.ModelAdmin[DepositPledgeCollateral]):
     list_display = ("account_number", "guarantor_name", "contract", "amount")
     search_fields = ("account_number", "guarantor_name", "contract__identifier")
     autocomplete_fields = ("contract",)
@@ -347,20 +355,20 @@ class DepositPledgeCollateralAdmin(admin.ModelAdmin):
 
 
 @admin.register(OtherCollateral)
-class OtherCollateralAdmin(admin.ModelAdmin):
+class OtherCollateralAdmin(admin.ModelAdmin[OtherCollateral]):
     list_display = ("guarantor_name", "contract", "amount", "returned_date")
     search_fields = ("guarantor_name", "contract__identifier")
     autocomplete_fields = ("contract",)
     filter_horizontal = ("parties",)
 
 
-class DecisionConditionInline(admin.TabularInline):
+class DecisionConditionInline(admin.TabularInline[DecisionCondition, Decision]):
     model = DecisionCondition
     extra = 0
 
 
 @admin.register(Decision)
-class DecisionAdmin(admin.ModelAdmin):
+class DecisionAdmin(admin.ModelAdmin[Decision]):
     list_display = (
         "title",
         "decision_type",
@@ -375,7 +383,7 @@ class DecisionAdmin(admin.ModelAdmin):
 
 
 @admin.register(DecisionCondition)
-class DecisionConditionAdmin(admin.ModelAdmin):
+class DecisionConditionAdmin(admin.ModelAdmin[DecisionCondition]):
     list_display = ("decision", "condition_type", "supervision_date", "supervised_date")
     list_filter = ("condition_type",)
     search_fields = ("decision__title", "decision__agreement__identifier")
@@ -383,7 +391,7 @@ class DecisionConditionAdmin(admin.ModelAdmin):
 
 
 @admin.register(AgreementSite)
-class AgreementSiteAdmin(admin.ModelAdmin):
+class AgreementSiteAdmin(admin.ModelAdmin[AgreementSite]):
     list_display = (
         "identifier",
         "agreement",
@@ -398,27 +406,29 @@ class AgreementSiteAdmin(admin.ModelAdmin):
 
 
 @admin.register(SiteIntendedUse)
-class SiteIntendedUseAdmin(admin.ModelAdmin):
+class SiteIntendedUseAdmin(admin.ModelAdmin[SiteIntendedUse]):
     list_display = ("name",)
     search_fields = ("name",)
     ordering = ("name",)
 
 
 @admin.register(SiteTenureType)
-class SiteTenureTypeAdmin(admin.ModelAdmin):
+class SiteTenureTypeAdmin(admin.ModelAdmin[SiteTenureType]):
     list_display = ("name",)
     search_fields = ("name",)
     ordering = ("name",)
 
 
-class PaymentScheduleInstallmentInline(admin.TabularInline):
+class PaymentScheduleInstallmentInline(
+    admin.TabularInline[PaymentScheduleInstallment, PaymentSchedule]
+):
     model = PaymentScheduleInstallment
     extra = 0
     show_change_link = True
 
 
 @admin.register(PaymentSchedule)
-class PaymentScheduleAdmin(admin.ModelAdmin):
+class PaymentScheduleAdmin(admin.ModelAdmin[PaymentSchedule]):
     list_display = (
         "agreement",
         "contract",
@@ -436,13 +446,15 @@ class PaymentScheduleAdmin(admin.ModelAdmin):
     inlines = (PaymentScheduleInstallmentInline,)
 
 
-class PaymentScheduleInstallmentItemInline(admin.TabularInline):
+class PaymentScheduleInstallmentItemInline(
+    admin.TabularInline[PaymentScheduleInstallmentItem, PaymentScheduleInstallment]
+):
     model = PaymentScheduleInstallmentItem
     extra = 0
 
 
 @admin.register(PaymentScheduleInstallment)
-class PaymentScheduleInstallmentAdmin(admin.ModelAdmin):
+class PaymentScheduleInstallmentAdmin(admin.ModelAdmin[PaymentScheduleInstallment]):
     list_display = ("payment_schedule", "installment_sequence_number", "due_date")
     search_fields = ("payment_schedule__agreement__identifier",)
     autocomplete_fields = ("payment_schedule",)
@@ -450,23 +462,29 @@ class PaymentScheduleInstallmentAdmin(admin.ModelAdmin):
 
 
 @admin.register(PaymentScheduleInstallmentItem)
-class PaymentScheduleInstallmentItemAdmin(admin.ModelAdmin):
+class PaymentScheduleInstallmentItemAdmin(
+    admin.ModelAdmin[PaymentScheduleInstallmentItem]
+):
     list_display = ("installment", "item_type", "amount")
     list_filter = ("item_type",)
     autocomplete_fields = ("installment",)
 
 
-class InvoiceItemInline(admin.TabularInline):
+class InvoiceItemInline(admin.TabularInline[InvoiceItem, Invoice]):
     model = InvoiceItem
     extra = 0
 
 
-class ShadowSalesLedgerEntryInline(admin.TabularInline):
+class ShadowSalesLedgerEntryInline(
+    admin.TabularInline[ShadowSalesLedgerEntry, Invoice]
+):
     model = ShadowSalesLedgerEntry
     extra = 0
 
 
-class InvoiceRecipientSnapshotInline(admin.StackedInline):
+class InvoiceRecipientSnapshotInline(
+    admin.StackedInline[InvoiceRecipientSnapshot, Invoice]
+):
     model = InvoiceRecipientSnapshot
     extra = 0
     max_num = 1
@@ -492,7 +510,7 @@ class InvoiceRecipientSnapshotInline(admin.StackedInline):
 
 
 @admin.register(Invoice)
-class InvoiceAdmin(SapXmlDisplayMixin, admin.ModelAdmin):
+class InvoiceAdmin(SapXmlDisplayMixin, admin.ModelAdmin[Invoice]):
     list_display = (
         "invoice_identifier",
         "agreement",
@@ -528,14 +546,14 @@ class InvoiceAdmin(SapXmlDisplayMixin, admin.ModelAdmin):
 
 
 @admin.register(InvoiceItem)
-class InvoiceItemAdmin(admin.ModelAdmin):
+class InvoiceItemAdmin(admin.ModelAdmin[InvoiceItem]):
     list_display = ("invoice", "item_type", "amount")
     list_filter = ("item_type",)
     autocomplete_fields = ("invoice",)
 
 
 @admin.register(ShadowSalesLedgerEntry)
-class ShadowSalesLedgerEntryAdmin(admin.ModelAdmin):
+class ShadowSalesLedgerEntryAdmin(admin.ModelAdmin[ShadowSalesLedgerEntry]):
     list_display = ("invoice", "paid_amount", "paid_date", "filing_code")
     list_filter = ("paid_date",)
     search_fields = ("invoice__invoice_identifier", "filing_code")
@@ -543,7 +561,7 @@ class ShadowSalesLedgerEntryAdmin(admin.ModelAdmin):
 
 
 @admin.register(InvoiceRecipientSnapshot)
-class InvoiceRecipientSnapshotAdmin(admin.ModelAdmin):
+class InvoiceRecipientSnapshotAdmin(admin.ModelAdmin[InvoiceRecipientSnapshot]):
     list_display = ("invoice", "name", "business_id", "email")
     search_fields = ("invoice__invoice_identifier", "name", "business_id")
     autocomplete_fields = ("invoice",)
@@ -569,21 +587,21 @@ class InvoiceRecipientSnapshotAdmin(admin.ModelAdmin):
 
 
 @admin.register(ContactPerson)
-class ContactPersonAdmin(admin.ModelAdmin):
+class ContactPersonAdmin(admin.ModelAdmin[ContactPerson]):
     list_display = ("name", "phone", "email", "agreement_party")
     search_fields = ("name", "email", "agreement_party__name")
     autocomplete_fields = ("agreement_party",)
 
 
 @admin.register(BillingDetails)
-class BillingDetailsAdmin(admin.ModelAdmin):
+class BillingDetailsAdmin(admin.ModelAdmin[BillingDetails]):
     list_display = ("agreement_party", "sap_customer_number", "customer_reference")
     search_fields = ("sap_customer_number", "agreement_party__name")
     autocomplete_fields = ("agreement_party",)
 
 
 @admin.register(InvoiceRecipient)
-class InvoiceRecipientAdmin(admin.ModelAdmin):
+class InvoiceRecipientAdmin(admin.ModelAdmin[InvoiceRecipient]):
     list_display = ("name", "business_id", "email", "agreement_party")
     search_fields = ("name", "business_id", "email", "agreement_party__name")
     autocomplete_fields = ("agreement_party",)

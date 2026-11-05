@@ -1,10 +1,10 @@
 from collections.abc import Callable, Iterable
 from functools import partial
-from typing import Any, Protocol, TypeVar
+from typing import Any, TypeVar
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
-from django.db.models import Manager, Model, QuerySet
+from django.db.models import Model, QuerySet
 from django.db.models.deletion import ProtectedError
 from rest_framework import serializers
 from rest_framework.exceptions import APIException
@@ -20,6 +20,7 @@ from landuse.models.agreement import (
 from landuse.models.compensation import LandPolicyProgram, LandUseCompensation
 from landuse.models.contract import (
     CashDepositCollateral,
+    CollateralBase,
     Contract,
     ContractChange,
     DepositPledgeCollateral,
@@ -54,9 +55,13 @@ from landuse.models.site import (
 # Generic type hint for Django models with a manager
 ModelT = TypeVar("ModelT", bound=Model)
 
-
-class ModelWithManager(Protocol[ModelT]):
-    objects: Manager[ModelT]
+CollateralModel = (
+    type[MortgageDeedCollateral]
+    | type[CashDepositCollateral]
+    | type[PersonalGuaranteeCollateral]
+    | type[DepositPledgeCollateral]
+    | type[OtherCollateral]
+)
 
 
 class ReferencedResourceConflict(APIException):
@@ -65,33 +70,33 @@ class ReferencedResourceConflict(APIException):
 
 
 def set_one_to_one(
-    model: ModelWithManager[ModelT],
+    model: type[ModelT],
     parent_field: str,
     parent: Model,
     data: dict[str, Any] | None,
 ) -> None:
     lookup: dict[str, Any] = {parent_field: parent}
     if data is None:
-        model.objects.filter(**lookup).delete()
+        model._default_manager.filter(**lookup).delete()
     else:
-        model.objects.update_or_create(**lookup, defaults=data)
+        model._default_manager.update_or_create(**lookup, defaults=data)
 
 
 def save_children(
-    model: ModelWithManager[ModelT],
+    model: type[ModelT],
     parent_field: str,
     parent: Model,
     rows: list[dict[str, Any]],
 ) -> None:
     def save_row(obj: ModelT | None, data: dict[str, Any]) -> ModelT:
         if obj is None:
-            return model.objects.create(**{parent_field: parent}, **data)
+            return model._default_manager.create(**{parent_field: parent}, **data)
         for field, value in data.items():
             setattr(obj, field, value)
         obj.save()
         return obj
 
-    sync_rows(model.objects.filter(**{parent_field: parent}), rows, save_row)
+    sync_rows(model._default_manager.filter(**{parent_field: parent}), rows, save_row)
 
 
 def sync_rows(
@@ -122,14 +127,21 @@ def set_all_meta_fields_as_required(
     return extra_kwargs
 
 
-class ReplaceListSerializer(serializers.ListSerializer):
-    conflict_code = "referenced_resource"
-    conflict_detail = "Remove references before deleting these rows."
-    read_related = ()
-    read_prefetch = ()
+class ReplaceListSerializer(serializers.ListSerializer[Any]):
+    conflict_code: str = "referenced_resource"
+    conflict_detail: str = "Remove references before deleting these rows."
+    read_related: tuple[str, ...] = ()
+    read_prefetch: tuple[str, ...] = ()
+
+    @property
+    def _child_serializer(self) -> serializers.ModelSerializer[Model]:
+        assert isinstance(self.child, serializers.ModelSerializer)
+        return self.child
 
     @transaction.atomic
-    def update(self, instance, validated_data):
+    def update(
+        self, instance: QuerySet[Any], validated_data: list[dict[str, Any]]
+    ) -> QuerySet[Any]:
         self.check_replacement(instance, validated_data)
         try:
             saved_ids = sync_rows(instance, validated_data, self.save_item)
@@ -137,34 +149,37 @@ class ReplaceListSerializer(serializers.ListSerializer):
             raise ReferencedResourceConflict(
                 {"code": self.conflict_code, "detail": self.conflict_detail}
             ) from error
+        model: type[Model] = self._child_serializer.Meta.model
         return (
-            self.child.Meta.model.objects.filter(pk__in=saved_ids)
+            model._default_manager.filter(pk__in=saved_ids)
             .select_related(*self.read_related)
             .prefetch_related(*self.read_prefetch)
         )
 
-    def check_replacement(self, instance, validated_data):
-        """Runs reference and status checks before any write."""
+        def check_replacement(
+            self, instance: QuerySet[Any], validated_data: dict[str, Any]
+        ):
+            """Runs reference and status checks before any write."""
 
-    def save_item(self, obj, data):
+    def save_item(self, obj: Model | None, data: dict[str, Any]) -> Model:
         if obj is None:
-            return self.child.create(data)
-        return self.child.update(obj, data)
+            return self._child_serializer.create(data)
+        return self._child_serializer.update(obj, data)
 
 
-class DistrictSerializer(serializers.ModelSerializer):
+class DistrictSerializer(serializers.ModelSerializer[District]):
     class Meta:
         model = District
         fields = ("id", "name", "identifier")
 
 
-class AuthorizedSignatorySerializer(serializers.ModelSerializer):
+class AuthorizedSignatorySerializer(serializers.ModelSerializer[AuthorizedSignatory]):
     class Meta:
         model = AuthorizedSignatory
         fields = ("id", "name")
 
 
-class DetailedPlanSerializer(serializers.ModelSerializer):
+class DetailedPlanSerializer(serializers.ModelSerializer[DetailedPlan]):
     class Meta:
         model = DetailedPlan
         fields = (
@@ -178,13 +193,13 @@ class DetailedPlanSerializer(serializers.ModelSerializer):
         )
 
 
-class AgreementAddressSerializer(serializers.ModelSerializer):
+class AgreementAddressSerializer(serializers.ModelSerializer[AgreementAddress]):
     class Meta:
         model = AgreementAddress
         fields = ("id", "street_address", "postal_code", "city")
 
 
-class AgreementPreparerSerializer(serializers.ModelSerializer):
+class AgreementPreparerSerializer(serializers.ModelSerializer[AgreementPreparer]):
     preparer_name = serializers.CharField(
         source="preparer.get_full_name", read_only=True
     )
@@ -194,7 +209,7 @@ class AgreementPreparerSerializer(serializers.ModelSerializer):
         fields = ("id", "preparer", "preparer_name")
 
 
-class LandUseAgreementListSerializer(serializers.ModelSerializer):
+class LandUseAgreementListSerializer(serializers.ModelSerializer[LandUseAgreement]):
     district = DistrictSerializer(read_only=True)
     party = serializers.SerializerMethodField()
     zoning_plan_number = serializers.CharField(
@@ -203,10 +218,10 @@ class LandUseAgreementListSerializer(serializers.ModelSerializer):
     site = serializers.SerializerMethodField()
     status_label = serializers.CharField(source="get_status_display", read_only=True)
 
-    def get_party(self, agreement):
+    def get_party(self, agreement: LandUseAgreement) -> str:
         return ", ".join(party.name for party in agreement.parties.all() if party.name)
 
-    def get_site(self, agreement):
+    def get_site(self, agreement: LandUseAgreement) -> str:
         return ", ".join(
             site.identifier
             for site in agreement.compensation_sites.all()
@@ -232,7 +247,7 @@ class LandUseAgreementListSerializer(serializers.ModelSerializer):
         )
 
 
-class LandUseAgreementCreateSerializer(serializers.ModelSerializer):
+class LandUseAgreementCreateSerializer(serializers.ModelSerializer[LandUseAgreement]):
 
     class Meta:
         model = LandUseAgreement
@@ -246,7 +261,7 @@ class LandUseAgreementCreateSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "identifier", "created_at", "modified_at")
 
     @transaction.atomic
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str, Any]) -> Any:
         district = validated_data.get("district")
         if district is None:
             raise serializers.ValidationError({"district": "This field is required."})
@@ -266,7 +281,9 @@ class LandUseAgreementCreateSerializer(serializers.ModelSerializer):
         return agreement
 
 
-class LandUseAgreementCollateralSerializer(serializers.ModelSerializer):
+class LandUseAgreementCollateralSerializer(
+    serializers.ModelSerializer[LandUseAgreement]
+):
     collateral_multiplier = serializers.DecimalField(
         max_digits=3,
         decimal_places=2,
@@ -278,25 +295,32 @@ class LandUseAgreementCollateralSerializer(serializers.ModelSerializer):
         model = LandUseAgreement
         fields = ("collateral_multiplier",)
 
-    def update(self, instance, validated_data):
+    def update(self, instance: Any, validated_data: dict[str, Any]) -> Any:
         instance.collateral_multiplier = validated_data["collateral_multiplier"]
         instance.save(update_fields=("collateral_multiplier", "modified_at"))
         return instance
 
 
-class LandUseAgreementSummaryWriteSerializer(serializers.ModelSerializer):
+class LandUseAgreementSummaryWriteSerializer(
+    serializers.ModelSerializer[LandUseAgreement]
+):
     addresses = AgreementAddressSerializer(many=True, required=True)
     preparers = AgreementPreparerSerializer(many=True, required=True)
 
     @transaction.atomic
-    def update(self, instance, validated_data):
+    def update(self, instance: Any, validated_data: dict[str, Any]) -> Any:
         addresses = validated_data.pop("addresses", None)
         preparers = validated_data.pop("preparers", None)
         agreement = super().update(instance, validated_data)
         self._save_summary_relations(agreement, addresses, preparers)
         return agreement
 
-    def _save_summary_relations(self, agreement, addresses, preparers):
+    def _save_summary_relations(
+        self,
+        agreement: LandUseAgreement,
+        addresses: list[dict[str, Any]] | None,
+        preparers: list[dict[str, Any]] | None,
+    ) -> None:
         if addresses is not None:
             save_children(AgreementAddress, "agreement", agreement, addresses)
         if preparers is not None:
@@ -328,7 +352,7 @@ class LandUseAgreementSummaryWriteSerializer(serializers.ModelSerializer):
         )
 
 
-class LandUseAgreementSummarySerializer(serializers.ModelSerializer):
+class LandUseAgreementSummarySerializer(serializers.ModelSerializer[LandUseAgreement]):
     district = DistrictSerializer(read_only=True)
     authorized_signatory = AuthorizedSignatorySerializer(read_only=True)
     detailed_plan = DetailedPlanSerializer(read_only=True)
@@ -355,13 +379,13 @@ class LandUseAgreementSummarySerializer(serializers.ModelSerializer):
         )
 
 
-class ContactPersonSerializer(serializers.ModelSerializer):
+class ContactPersonSerializer(serializers.ModelSerializer[ContactPerson]):
     class Meta:
         model = ContactPerson
         fields = ("id", "name", "phone", "email")
 
 
-class ContactPersonWriteSerializer(serializers.ModelSerializer):
+class ContactPersonWriteSerializer(serializers.ModelSerializer[ContactPerson]):
     id = serializers.IntegerField(required=False)
 
     class Meta:
@@ -369,20 +393,20 @@ class ContactPersonWriteSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "phone", "email")
 
 
-class BillingDetailsSerializer(serializers.ModelSerializer):
+class BillingDetailsSerializer(serializers.ModelSerializer[BillingDetails]):
     class Meta:
         model = BillingDetails
         fields = ("id", "ovt_code", "sap_customer_number", "customer_reference")
 
 
 class CountryCodeField(serializers.ChoiceField):
-    def to_representation(self, value):
+    def to_representation(self, value: object) -> str:
         return super().to_representation(str(value))
 
 
-class InvoiceRecipientSerializer(serializers.ModelSerializer):
+class InvoiceRecipientSerializer(serializers.ModelSerializer[InvoiceRecipient]):
     country = CountryCodeField(
-        choices=InvoiceRecipient._meta.get_field("country").get_choices(),
+        choices=list(InvoiceRecipient._meta.get_field("country").get_choices()),
         required=False,
         allow_blank=True,
     )
@@ -407,7 +431,7 @@ class InvoiceRecipientSerializer(serializers.ModelSerializer):
         )
 
 
-class AgreementPartySerializer(serializers.ModelSerializer):
+class AgreementPartySerializer(serializers.ModelSerializer[AgreementParty]):
     country = serializers.CharField()
     contact_persons = ContactPersonSerializer(many=True, read_only=True)
     billing_details = BillingDetailsSerializer(read_only=True)
@@ -436,7 +460,7 @@ class AgreementPartySerializer(serializers.ModelSerializer):
             "invoice_recipient",
         )
 
-    def get_invoice_recipient(self, party):
+    def get_invoice_recipient(self, party: AgreementParty) -> dict[str, Any] | None:
         try:
             recipient = InvoiceRecipient.objects.get(agreement_party=party)
         except InvoiceRecipient.DoesNotExist:
@@ -449,7 +473,9 @@ class AgreementPartyListSerializer(ReplaceListSerializer):
     conflict_detail = "Remove financial references before deleting these parties."
     read_prefetch = ("contact_persons", "billing_details")
 
-    def check_replacement(self, instance, validated_data):
+    def check_replacement(
+        self, instance: QuerySet[Any], validated_data: list[dict[str, Any]]
+    ) -> None:
         retained_ids = {attrs.get("id") for attrs in validated_data}
         removed_ids = set(instance.values_list("pk", flat=True)) - retained_ids
         referenced_ids = set(
@@ -462,16 +488,15 @@ class AgreementPartyListSerializer(ReplaceListSerializer):
             )
         )
         if referenced_ids:
-            raise ReferencedResourceConflict(
-                {
-                    "code": self.conflict_code,
-                    "ids": sorted(referenced_ids),
-                    "detail": self.conflict_detail,
-                }
-            )
+            detail: dict[str, Any] = {
+                "code": self.conflict_code,
+                "ids": sorted(referenced_ids),
+                "detail": self.conflict_detail,
+            }
+            raise ReferencedResourceConflict(detail)
 
 
-class AgreementPartyWriteSerializer(serializers.ModelSerializer):
+class AgreementPartyWriteSerializer(serializers.ModelSerializer[AgreementParty]):
     id = serializers.IntegerField(required=False)
     contact_persons = ContactPersonWriteSerializer(many=True, required=False)
     billing_details = BillingDetailsSerializer(required=False, allow_null=True)
@@ -502,39 +527,45 @@ class AgreementPartyWriteSerializer(serializers.ModelSerializer):
         )
 
     @transaction.atomic
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str, Any]) -> Any:
         nested = self._pop_nested(validated_data)
         party = super().create(validated_data)
         self._save_nested(party, **nested)
         return party
 
     @transaction.atomic
-    def update(self, instance, validated_data):
+    def update(self, instance: Any, validated_data: dict[str, Any]) -> Any:
         nested = self._pop_nested(validated_data)
         party = super().update(instance, validated_data)
         self._save_nested(party, **nested)
         return party
 
-    def _pop_nested(self, validated_data):
+    def _pop_nested(self, validated_data: dict[str, Any]) -> dict[str, Any]:
         return {
             "contact_persons": validated_data.pop("contact_persons", []),
             "billing_details": validated_data.pop("billing_details", None),
             "invoice_recipient": validated_data.pop("invoice_recipient", None),
         }
 
-    def _save_nested(self, party, contact_persons, billing_details, invoice_recipient):
+    def _save_nested(
+        self,
+        party: AgreementParty,
+        contact_persons: list[dict[str, Any]],
+        billing_details: dict[str, Any] | None,
+        invoice_recipient: dict[str, Any] | None,
+    ) -> None:
         save_children(ContactPerson, "agreement_party", party, contact_persons)
         set_one_to_one(BillingDetails, "agreement_party", party, billing_details)
         set_one_to_one(InvoiceRecipient, "agreement_party", party, invoice_recipient)
 
 
-class LandPolicyProgramSerializer(serializers.ModelSerializer):
+class LandPolicyProgramSerializer(serializers.ModelSerializer[LandPolicyProgram]):
     class Meta:
         model = LandPolicyProgram
         fields = ("id", "name", "default_discount_percentage")
 
 
-class LandUseCompensationSerializer(serializers.ModelSerializer):
+class LandUseCompensationSerializer(serializers.ModelSerializer[LandUseCompensation]):
     land_policy_program = LandPolicyProgramSerializer(read_only=True)
 
     class Meta:
@@ -561,7 +592,9 @@ class LandUseCompensationSerializer(serializers.ModelSerializer):
         )
 
 
-class LandUseCompensationWriteSerializer(serializers.ModelSerializer):
+class LandUseCompensationWriteSerializer(
+    serializers.ModelSerializer[LandUseCompensation]
+):
     class Meta:
         model = LandUseCompensation
         fields = (
@@ -583,19 +616,19 @@ class LandUseCompensationWriteSerializer(serializers.ModelSerializer):
         )
 
 
-class SiteIntendedUseSerializer(serializers.ModelSerializer):
+class SiteIntendedUseSerializer(serializers.ModelSerializer[SiteIntendedUse]):
     class Meta:
         model = SiteIntendedUse
         fields = ("id", "name")
 
 
-class SiteTenureTypeSerializer(serializers.ModelSerializer):
+class SiteTenureTypeSerializer(serializers.ModelSerializer[SiteTenureType]):
     class Meta:
         model = SiteTenureType
         fields = ("id", "name")
 
 
-class AgreementSiteSerializer(serializers.ModelSerializer):
+class AgreementSiteSerializer(serializers.ModelSerializer[AgreementSite]):
     intended_use = SiteIntendedUseSerializer(read_only=True)
     tenure_types = SiteTenureTypeSerializer(many=True, read_only=True)
 
@@ -621,7 +654,7 @@ class AgreementSiteListSerializer(ReplaceListSerializer):
     read_prefetch = ("tenure_types",)
 
 
-class AgreementSiteWriteSerializer(serializers.ModelSerializer):
+class AgreementSiteWriteSerializer(serializers.ModelSerializer[AgreementSite]):
     id = serializers.IntegerField(required=False)
 
     class Meta:
@@ -639,25 +672,25 @@ class AgreementSiteWriteSerializer(serializers.ModelSerializer):
             "unit_price_euro_per_kem2",
         )
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str, Any]) -> Any:
         tenure_types = validated_data.pop("tenure_types", [])
         site = super().create(validated_data)
         site.tenure_types.set(tenure_types)
         return site
 
-    def update(self, instance, validated_data):
+    def update(self, instance: Any, validated_data: dict[str, Any]) -> Any:
         tenure_types = validated_data.pop("tenure_types", [])
         site = super().update(instance, validated_data)
         site.tenure_types.set(tenure_types)
         return site
 
 
-class CompensationWithSitesWriteSerializer(serializers.Serializer):
+class CompensationWithSitesWriteSerializer(serializers.Serializer[Any]):
     compensation = LandUseCompensationWriteSerializer()
     sites = AgreementSiteWriteSerializer(many=True)
 
 
-class DecisionConditionSerializer(serializers.ModelSerializer):
+class DecisionConditionSerializer(serializers.ModelSerializer[DecisionCondition]):
     class Meta:
         model = DecisionCondition
         fields = (
@@ -671,7 +704,7 @@ class DecisionConditionSerializer(serializers.ModelSerializer):
         )
 
 
-class DecisionSerializer(serializers.ModelSerializer):
+class DecisionSerializer(serializers.ModelSerializer[Decision]):
     conditions = DecisionConditionSerializer(many=True, read_only=True)
 
     class Meta:
@@ -691,7 +724,7 @@ class DecisionSerializer(serializers.ModelSerializer):
         )
 
 
-class DecisionConditionWriteSerializer(serializers.ModelSerializer):
+class DecisionConditionWriteSerializer(serializers.ModelSerializer[DecisionCondition]):
     id = serializers.IntegerField(required=False)
 
     class Meta:
@@ -710,7 +743,9 @@ class DecisionListSerializer(ReplaceListSerializer):
     conflict_detail = "Unlink contracts before deleting these decisions."
     read_prefetch = ("conditions",)
 
-    def check_replacement(self, instance, validated_data):
+    def check_replacement(
+        self, instance: QuerySet[Any], validated_data: list[dict[str, Any]]
+    ) -> None:
         retained_ids = {attrs.get("id") for attrs in validated_data}
         removed_ids = set(instance.values_list("pk", flat=True)) - retained_ids
         referenced_ids = set(
@@ -724,16 +759,15 @@ class DecisionListSerializer(ReplaceListSerializer):
             )
         )
         if referenced_ids:
-            raise ReferencedResourceConflict(
-                {
-                    "code": self.conflict_code,
-                    "ids": sorted(referenced_ids),
-                    "detail": self.conflict_detail,
-                }
-            )
+            detail: dict[str, Any] = {
+                "code": self.conflict_code,
+                "ids": sorted(referenced_ids),
+                "detail": self.conflict_detail,
+            }
+            raise ReferencedResourceConflict(detail)
 
 
-class DecisionWriteSerializer(serializers.ModelSerializer):
+class DecisionWriteSerializer(serializers.ModelSerializer[Decision]):
     id = serializers.IntegerField(required=False)
     conditions = DecisionConditionWriteSerializer(many=True, required=False)
 
@@ -752,20 +786,20 @@ class DecisionWriteSerializer(serializers.ModelSerializer):
             "conditions",
         )
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str, Any]) -> Any:
         conditions = validated_data.pop("conditions", [])
         decision = super().create(validated_data)
         save_children(DecisionCondition, "decision", decision, conditions)
         return decision
 
-    def update(self, instance, validated_data):
+    def update(self, instance: Any, validated_data: dict[str, Any]) -> Any:
         conditions = validated_data.pop("conditions", [])
         decision = super().update(instance, validated_data)
         save_children(DecisionCondition, "decision", decision, conditions)
         return decision
 
 
-class ContractChangeSerializer(serializers.ModelSerializer):
+class ContractChangeSerializer(serializers.ModelSerializer[ContractChange]):
     class Meta:
         model = ContractChange
         fields = (
@@ -782,9 +816,9 @@ class ContractChangeSerializer(serializers.ModelSerializer):
         )
 
 
-class CollateralSerializer(serializers.ModelSerializer):
+class CollateralSerializer(serializers.ModelSerializer[CollateralBase]):
     class Meta:
-        fields = (
+        fields: tuple[str, ...] = (
             "id",
             "guarantee_type",
             "parties",
@@ -866,7 +900,7 @@ class OtherCollateralSerializer(CollateralSerializer):
         )
 
 
-class ContractSerializer(serializers.ModelSerializer):
+class ContractSerializer(serializers.ModelSerializer[Contract]):
     changes = ContractChangeSerializer(many=True, read_only=True)
     mortgage_deed_collaterals = MortgageDeedCollateralSerializer(
         many=True,
@@ -918,7 +952,7 @@ class ContractSerializer(serializers.ModelSerializer):
         )
 
 
-class ContractChangeWriteSerializer(serializers.ModelSerializer):
+class ContractChangeWriteSerializer(serializers.ModelSerializer[ContractChange]):
     id = serializers.IntegerField(required=False)
 
     class Meta:
@@ -937,10 +971,10 @@ class ContractChangeWriteSerializer(serializers.ModelSerializer):
         )
 
 
-class CollateralWriteBaseSerializer(serializers.ModelSerializer):
+class CollateralWriteBaseSerializer(serializers.ModelSerializer[CollateralBase]):
     id = serializers.IntegerField(required=False)
 
-    def to_internal_value(self, data):
+    def to_internal_value(self, data: Any) -> Any:
         if isinstance(data, dict):
             not_applicable = {
                 key: "Not applicable to this collateral type."
@@ -1103,7 +1137,9 @@ class ContractListSerializer(ReplaceListSerializer):
         "othercollateral_collaterals__parties",
     )
 
-    def check_replacement(self, instance, validated_data):
+    def check_replacement(
+        self, instance: QuerySet[Any], validated_data: list[dict[str, Any]]
+    ) -> None:
         if not validated_data:
             return
         agreement = validated_data[0]["agreement"]
@@ -1129,7 +1165,7 @@ class ContractListSerializer(ReplaceListSerializer):
             )
 
 
-class ContractWriteSerializer(serializers.ModelSerializer):
+class ContractWriteSerializer(serializers.ModelSerializer[Contract]):
     id = serializers.IntegerField(required=False)
     changes = ContractChangeWriteSerializer(many=True, required=False)
     mortgage_deed_collaterals = MortgageDeedCollateralWriteSerializer(
@@ -1146,7 +1182,7 @@ class ContractWriteSerializer(serializers.ModelSerializer):
     )
     other_collaterals = OtherCollateralWriteSerializer(many=True, required=False)
 
-    COLLATERAL_MODELS = {
+    COLLATERAL_MODELS: dict[str, CollateralModel] = {
         "mortgage_deed_collaterals": MortgageDeedCollateral,
         "cash_deposit_collaterals": CashDepositCollateral,
         "personal_guarantee_collaterals": PersonalGuaranteeCollateral,
@@ -1178,7 +1214,7 @@ class ContractWriteSerializer(serializers.ModelSerializer):
             "other_collaterals",
         )
 
-    def to_internal_value(self, data):
+    def to_internal_value(self, data: Any) -> Any:
         if isinstance(data, dict) and "collaterals" in data:
             raise serializers.ValidationError(
                 {"collaterals": "Send collaterals under their per-type keys."}
@@ -1186,7 +1222,7 @@ class ContractWriteSerializer(serializers.ModelSerializer):
         return super().to_internal_value(data)
 
     @transaction.atomic
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str, Any]) -> Any:
         changes = validated_data.pop("changes", [])
         collaterals = {
             key: validated_data.pop(key, []) for key in self.COLLATERAL_MODELS
@@ -1196,7 +1232,7 @@ class ContractWriteSerializer(serializers.ModelSerializer):
         return contract
 
     @transaction.atomic
-    def update(self, instance, validated_data):
+    def update(self, instance: Any, validated_data: dict[str, Any]) -> Any:
         changes = validated_data.pop("changes", [])
         collaterals = {
             key: validated_data.pop(key, []) for key in self.COLLATERAL_MODELS
@@ -1205,7 +1241,12 @@ class ContractWriteSerializer(serializers.ModelSerializer):
         self._save_children(contract, changes, collaterals)
         return contract
 
-    def _save_children(self, contract, changes, collaterals):
+    def _save_children(
+        self,
+        contract: Contract,
+        changes: list[dict[str, Any]],
+        collaterals: dict[str, list[dict[str, Any]]],
+    ) -> None:
         sync_rows(
             contract.changes.all(),
             changes,
@@ -1213,12 +1254,14 @@ class ContractWriteSerializer(serializers.ModelSerializer):
         )
         for key, model in self.COLLATERAL_MODELS.items():
             sync_rows(
-                model.objects.filter(contract=contract),
+                model._default_manager.filter(contract=contract),
                 collaterals[key],
                 partial(self._save_collateral, contract, model),
             )
 
-    def _save_change(self, contract, change, data):
+    def _save_change(
+        self, contract: Contract, change: ContractChange | None, data: dict[str, Any]
+    ) -> ContractChange:
         if change is None:
             return ContractChange.objects.create(contract=contract, **data)
         for field, value in data.items():
@@ -1226,7 +1269,13 @@ class ContractWriteSerializer(serializers.ModelSerializer):
         change.save()
         return change
 
-    def _save_collateral(self, contract, model, collateral, data):
+    def _save_collateral(
+        self,
+        contract: Contract,
+        model: CollateralModel,
+        collateral: CollateralBase | None,
+        data: dict[str, Any],
+    ) -> CollateralBase:
         party_ids = data.pop("parties", [])
         if collateral is None:
             collateral = model(contract=contract, **data)
@@ -1243,7 +1292,9 @@ class ContractWriteSerializer(serializers.ModelSerializer):
         return collateral
 
 
-class PaymentScheduleInstallmentItemSerializer(serializers.ModelSerializer):
+class PaymentScheduleInstallmentItemSerializer(
+    serializers.ModelSerializer[PaymentScheduleInstallmentItem]
+):
     class Meta:
         model = PaymentScheduleInstallmentItem
         fields = (
@@ -1256,7 +1307,9 @@ class PaymentScheduleInstallmentItemSerializer(serializers.ModelSerializer):
         )
 
 
-class PaymentScheduleInstallmentSerializer(serializers.ModelSerializer):
+class PaymentScheduleInstallmentSerializer(
+    serializers.ModelSerializer[PaymentScheduleInstallment]
+):
     items = PaymentScheduleInstallmentItemSerializer(many=True, read_only=True)
 
     class Meta:
@@ -1274,7 +1327,7 @@ class PaymentScheduleInstallmentSerializer(serializers.ModelSerializer):
         )
 
 
-class PaymentScheduleSerializer(serializers.ModelSerializer):
+class PaymentScheduleSerializer(serializers.ModelSerializer[PaymentSchedule]):
     installments = PaymentScheduleInstallmentSerializer(many=True, read_only=True)
 
     class Meta:
@@ -1296,7 +1349,9 @@ class PaymentScheduleSerializer(serializers.ModelSerializer):
         read_only_fields = ("status", "rejected_reason")
 
 
-class PaymentScheduleInstallmentItemWriteSerializer(serializers.ModelSerializer):
+class PaymentScheduleInstallmentItemWriteSerializer(
+    serializers.ModelSerializer[PaymentScheduleInstallmentItem]
+):
     id = serializers.IntegerField(required=False)
 
     class Meta:
@@ -1304,7 +1359,9 @@ class PaymentScheduleInstallmentItemWriteSerializer(serializers.ModelSerializer)
         fields = ("id", "item_type", "description", "amount")
 
 
-class PaymentScheduleInstallmentWriteSerializer(serializers.ModelSerializer):
+class PaymentScheduleInstallmentWriteSerializer(
+    serializers.ModelSerializer[PaymentScheduleInstallment]
+):
     id = serializers.IntegerField(required=False)
     items = PaymentScheduleInstallmentItemWriteSerializer(many=True)
 
@@ -1328,7 +1385,9 @@ class PaymentScheduleListSerializer(ReplaceListSerializer):
     read_related = ("recipient_party", "contract")
     read_prefetch = ("installments__items",)
 
-    def check_replacement(self, instance, validated_data):
+    def check_replacement(
+        self, instance: QuerySet[Any], validated_data: list[dict[str, Any]]
+    ) -> None:
         retained_ids = {attrs["id"] for attrs in validated_data if "id" in attrs}
         removed = instance.exclude(pk__in=retained_ids).exclude(
             status__in=EDITABLE_SCHEDULE_STATUSES
@@ -1339,7 +1398,7 @@ class PaymentScheduleListSerializer(ReplaceListSerializer):
             )
 
 
-class PaymentScheduleWriteSerializer(serializers.ModelSerializer):
+class PaymentScheduleWriteSerializer(serializers.ModelSerializer[PaymentSchedule]):
     id = serializers.IntegerField(required=False)
     installments = PaymentScheduleInstallmentWriteSerializer(many=True)
 
@@ -1358,7 +1417,7 @@ class PaymentScheduleWriteSerializer(serializers.ModelSerializer):
         )
 
     @transaction.atomic
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str, Any]) -> Any:
         installments = validated_data.pop("installments")
         self._check_references(validated_data["agreement"], validated_data)
         schedule = super().create(validated_data)
@@ -1366,7 +1425,7 @@ class PaymentScheduleWriteSerializer(serializers.ModelSerializer):
         return schedule
 
     @transaction.atomic
-    def update(self, instance, validated_data):
+    def update(self, instance: Any, validated_data: dict[str, Any]) -> Any:
         if instance.status not in EDITABLE_SCHEDULE_STATUSES:
             raise serializers.ValidationError(
                 {"status": "Only draft or rejected schedules can be edited."}
@@ -1377,7 +1436,9 @@ class PaymentScheduleWriteSerializer(serializers.ModelSerializer):
         self._finish(schedule, installments)
         return schedule
 
-    def _check_references(self, agreement, data):
+    def _check_references(
+        self, agreement: LandUseAgreement, data: dict[str, Any]
+    ) -> None:
         if (
             data["recipient_party"].agreement_id != agreement.pk
             or data["contract"].agreement_id != agreement.pk
@@ -1391,7 +1452,9 @@ class PaymentScheduleWriteSerializer(serializers.ModelSerializer):
                 }
             )
 
-    def _finish(self, schedule, installments):
+    def _finish(
+        self, schedule: PaymentSchedule, installments: list[dict[str, Any]]
+    ) -> None:
         try:
             schedule.full_clean()
         except DjangoValidationError as error:
@@ -1409,7 +1472,12 @@ class PaymentScheduleWriteSerializer(serializers.ModelSerializer):
             lambda obj, data: self._save_installment(schedule, obj, data),
         )
 
-    def _save_installment(self, schedule, installment, data):
+    def _save_installment(
+        self,
+        schedule: PaymentSchedule,
+        installment: PaymentScheduleInstallment | None,
+        data: dict[str, Any],
+    ) -> PaymentScheduleInstallment:
         items = data.pop("items")
         if installment is None:
             installment = PaymentScheduleInstallment.objects.create(
@@ -1426,7 +1494,12 @@ class PaymentScheduleWriteSerializer(serializers.ModelSerializer):
         )
         return installment
 
-    def _save_item(self, installment, item, data):
+    def _save_item(
+        self,
+        installment: PaymentScheduleInstallment,
+        item: PaymentScheduleInstallmentItem | None,
+        data: dict[str, Any],
+    ) -> PaymentScheduleInstallmentItem:
         if item is None:
             return PaymentScheduleInstallmentItem.objects.create(
                 installment=installment, **data
@@ -1437,11 +1510,11 @@ class PaymentScheduleWriteSerializer(serializers.ModelSerializer):
         return item
 
 
-class PaymentScheduleRejectionSerializer(serializers.Serializer):
+class PaymentScheduleRejectionSerializer(serializers.Serializer[Any]):
     reason = serializers.CharField(allow_blank=False)
 
 
-class InvoiceItemSerializer(serializers.ModelSerializer):
+class InvoiceItemSerializer(serializers.ModelSerializer[InvoiceItem]):
     class Meta:
         model = InvoiceItem
         fields = (
@@ -1454,7 +1527,9 @@ class InvoiceItemSerializer(serializers.ModelSerializer):
         )
 
 
-class ShadowSalesLedgerEntrySerializer(serializers.ModelSerializer):
+class ShadowSalesLedgerEntrySerializer(
+    serializers.ModelSerializer[ShadowSalesLedgerEntry]
+):
     class Meta:
         model = ShadowSalesLedgerEntry
         fields = (
@@ -1467,7 +1542,9 @@ class ShadowSalesLedgerEntrySerializer(serializers.ModelSerializer):
         )
 
 
-class InvoiceRecipientSnapshotSerializer(serializers.ModelSerializer):
+class InvoiceRecipientSnapshotSerializer(
+    serializers.ModelSerializer[InvoiceRecipientSnapshot]
+):
     country = serializers.CharField()
 
     class Meta:
@@ -1493,7 +1570,7 @@ class InvoiceRecipientSnapshotSerializer(serializers.ModelSerializer):
         )
 
 
-class InvoiceSerializer(serializers.ModelSerializer):
+class InvoiceSerializer(serializers.ModelSerializer[Invoice]):
     items = InvoiceItemSerializer(many=True, read_only=True)
     payments = ShadowSalesLedgerEntrySerializer(many=True, read_only=True)
     recipient_snapshot = InvoiceRecipientSnapshotSerializer(read_only=True)

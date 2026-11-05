@@ -1,3 +1,6 @@
+from typing import TypeVar
+
+from django.db.models import Model
 from rest_framework import viewsets
 
 from landuse.models.agreement import AuthorizedSignatory, DetailedPlan, District
@@ -14,44 +17,48 @@ from landuse.serializers.agreement import (
 )
 from landuse.views.mixins import LandUseApiEnabledFlagMixin, LandUsePaginationMixin
 
+ModelType = TypeVar("ModelT", bound=Model)
+
 
 class LandUseLookupViewSet(
-    LandUseApiEnabledFlagMixin, LandUsePaginationMixin, viewsets.ReadOnlyModelViewSet
+    LandUseApiEnabledFlagMixin,
+    LandUsePaginationMixin,
+    viewsets.ReadOnlyModelViewSet[ModelType],
 ):
     permission_classes = [LanduseDjangoModelPermissions]
 
 
-class DistrictViewSet(LandUseLookupViewSet):
+class DistrictViewSet(LandUseLookupViewSet[District]):
     queryset = District.objects.all()
     serializer_class = DistrictSerializer
     filterset_fields = ("identifier", "name")
 
 
-class AuthorizedSignatoryViewSet(LandUseLookupViewSet):
+class AuthorizedSignatoryViewSet(LandUseLookupViewSet[AuthorizedSignatory]):
     queryset = AuthorizedSignatory.objects.order_by("name", "pk")
     serializer_class = AuthorizedSignatorySerializer
     filterset_fields = ("name",)
 
 
-class DetailedPlanViewSet(LandUseLookupViewSet):
+class DetailedPlanViewSet(LandUseLookupViewSet[DetailedPlan]):
     queryset = DetailedPlan.objects.order_by("plan_number", "pk")
     serializer_class = DetailedPlanSerializer
     filterset_fields = ("plan_number", "processing_stage")
 
 
-class LandPolicyProgramViewSet(LandUseLookupViewSet):
+class LandPolicyProgramViewSet(LandUseLookupViewSet[LandPolicyProgram]):
     queryset = LandPolicyProgram.objects.order_by("name", "pk")
     serializer_class = LandPolicyProgramSerializer
     filterset_fields = ("name",)
 
 
-class SiteIntendedUseViewSet(LandUseLookupViewSet):
+class SiteIntendedUseViewSet(LandUseLookupViewSet[SiteIntendedUse]):
     queryset = SiteIntendedUse.objects.order_by("name", "pk")
     serializer_class = SiteIntendedUseSerializer
     filterset_fields = ("name",)
 
 
-class SiteTenureTypeViewSet(LandUseLookupViewSet):
+class SiteTenureTypeViewSet(LandUseLookupViewSet[SiteTenureType]):
     queryset = SiteTenureType.objects.order_by("name", "pk")
     serializer_class = SiteTenureTypeSerializer
     filterset_fields = ("name",)

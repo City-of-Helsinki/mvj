@@ -1,9 +1,12 @@
+from typing import Any
+
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import BasePermission, IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from landuse.models.invoice import Invoice, LandUseInvoiceExportError
@@ -20,7 +23,7 @@ from landuse.views.mixins import LandUseApiEnabledFlagMixin, LandUsePaginationMi
 class PaymentSchedulePermission(BasePermission):
     message = "You do not have permission to perform this payment schedule operation."
 
-    def has_permission(self, request, view):
+    def has_permission(self, request: Request, view: Any) -> bool:
         permission = {
             "list": "landuse.view_tab_payment_schedules",
             "retrieve": "landuse.view_tab_payment_schedules",
@@ -34,7 +37,7 @@ class PaymentSchedulePermission(BasePermission):
 class InvoicePermission(BasePermission):
     message = "You do not have permission to perform this invoice operation."
 
-    def has_permission(self, request, view):
+    def has_permission(self, request: Request, view: Any) -> bool:
         permission = {
             "list": "landuse.view_tab_invoices",
             "retrieve": "landuse.view_tab_invoices",
@@ -44,7 +47,9 @@ class InvoicePermission(BasePermission):
 
 
 class PaymentScheduleViewSet(
-    LandUseApiEnabledFlagMixin, LandUsePaginationMixin, viewsets.ReadOnlyModelViewSet
+    LandUseApiEnabledFlagMixin,
+    LandUsePaginationMixin,
+    viewsets.ReadOnlyModelViewSet[PaymentSchedule],
 ):
     queryset = PaymentSchedule.objects.select_related(
         "agreement", "recipient_party", "contract"
@@ -53,21 +58,21 @@ class PaymentScheduleViewSet(
     permission_classes = (IsAuthenticated, PaymentSchedulePermission)
 
     @action(detail=True, methods=("post",))
-    def submit(self, request, pk=None):
+    def submit(self, request: Request, pk: str | None = None) -> Response:
         return self._transition(pk, "submit")
 
     @action(detail=True, methods=("post",))
-    def approve(self, request, pk=None):
+    def approve(self, request: Request, pk: str | None = None) -> Response:
         return self._transition(pk, "approve")
 
     @action(detail=True, methods=("post",))
-    def reject(self, request, pk=None):
+    def reject(self, request: Request, pk: str | None = None) -> Response:
         serializer = PaymentScheduleRejectionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         return self._transition(pk, "reject", serializer.validated_data["reason"])
 
     @transaction.atomic
-    def _transition(self, pk, operation, *args):
+    def _transition(self, pk: str | None, operation: str, *args: str) -> Response:
         schedule = self.get_object()
         schedule = self.get_queryset().select_for_update().get(pk=schedule.pk)
         try:
@@ -80,7 +85,9 @@ class PaymentScheduleViewSet(
 
 
 class InvoiceViewSet(
-    LandUseApiEnabledFlagMixin, LandUsePaginationMixin, viewsets.ReadOnlyModelViewSet
+    LandUseApiEnabledFlagMixin,
+    LandUsePaginationMixin,
+    viewsets.ReadOnlyModelViewSet[Invoice],
 ):
     queryset = Invoice.objects.select_related(
         "agreement", "recipient_party", "recipient_snapshot"
@@ -90,7 +97,7 @@ class InvoiceViewSet(
 
     @action(detail=True, methods=("post",), url_path="send-to-sap")
     @transaction.atomic
-    def send_to_sap(self, request, pk=None):
+    def send_to_sap(self, request: Request, pk: str | None = None) -> Response:
         invoice = self.get_object()
         invoice = Invoice.objects.select_for_update().get(pk=invoice.pk)
         try:

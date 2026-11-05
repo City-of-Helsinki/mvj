@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
@@ -154,7 +156,7 @@ class CollateralBase(models.Model):
     class Meta:
         abstract = True
 
-    def save(self, *args, **kwargs):
+    def save(self, *args: Any, **kwargs: Any) -> None:
         if any([self.returned_date, self.marked_returned_by]) and not all(
             [self.returned_date, self.marked_returned_by]
         ):
@@ -247,7 +249,7 @@ class MortgageDeedCollateral(CollateralBase, CollateralDocumentDetailsBase):
         blank=True,
     )
 
-    def save(self, *args, **kwargs):
+    def save(self, *args: Any, **kwargs: Any) -> None:
         if (
             self.target == MortgageDeedCollateral.CollateralTarget.PROPERTY
             and self.facility_identifier

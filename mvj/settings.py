@@ -7,7 +7,7 @@ import sentry_sdk
 from django.utils.translation import gettext_lazy as _
 from sentry_sdk.integrations.django import DjangoIntegration
 
-from landuse.types import SapLanduseExportValues
+from landuse.landuse_types import SapLanduseExportValues
 
 django_stubs_ext.monkeypatch()
 project_root = environ.Path(__file__) - 2

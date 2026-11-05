@@ -3,7 +3,7 @@ from pathlib import PurePosixPath
 
 from django.conf import settings
 
-from landuse.types import SapLanduseExportValues
+from landuse.landuse_types import SapLanduseExportValues
 from laske_export.sftp_manager import SFTPManager
 
 

@@ -110,9 +110,10 @@ class Invoice(TimeStampedModel):
     sap_xml = models.TextField(null=True, blank=True)
 
     if TYPE_CHECKING:
-        payments: models.Manager["ShadowSalesLedgerEntry"]
+        # Reverse relationships
+        payments: models.QuerySet["ShadowSalesLedgerEntry"]
+        items: models.QuerySet["InvoiceItem"]
         recipient_snapshot: "InvoiceRecipientSnapshot"
-        items: models.Manager["InvoiceItem"]
 
     @transaction.atomic
     def save(self, *args: Any, **kwargs: Any) -> None:

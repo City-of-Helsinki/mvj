@@ -1,7 +1,7 @@
 import json
 import os
 import subprocess
-from typing import Any
+from typing import Any, cast
 
 from django.contrib.auth.models import Permission
 from django.core import serializers
@@ -133,19 +133,20 @@ class Command(BaseCommand):
             admin_user_backups = serializers.deserialize("json", f)
 
             for backup in admin_user_backups:
+                backup_user = cast(User, backup.object)
                 user, created = User.objects.get_or_create(
-                    username=backup.object.username,
-                    password=backup.object.password,
-                    first_name=backup.object.first_name,
-                    last_name=backup.object.last_name,
-                    email=backup.object.email,
-                    is_superuser=backup.object.is_superuser,
-                    is_staff=backup.object.is_staff,
-                    is_active=backup.object.is_active,
+                    username=backup_user.username,
+                    password=backup_user.password,
+                    first_name=backup_user.first_name,
+                    last_name=backup_user.last_name,
+                    email=backup_user.email,
+                    is_superuser=backup_user.is_superuser,
+                    is_staff=backup_user.is_staff,
+                    is_active=backup_user.is_active,
                 )
                 if created:
                     # Restore user's service unit associations
-                    user.service_units.set(backup.object.service_units.all())
+                    user.service_units.set(backup_user.service_units.all())
 
                     self.stdout.write(
                         f"Admin user restored: {user.username} (ID: {user.pk})"
@@ -209,17 +210,18 @@ class Command(BaseCommand):
             contact_backups = serializers.deserialize("json", f)
 
             for backup in contact_backups:
+                backup_contact = cast(Contact, backup.object)
                 lessor, created = Contact.objects.update_or_create(
                     is_lessor=True,
-                    type=backup.object.type,
-                    service_unit=backup.object.service_unit,
+                    type=backup_contact.type,
+                    service_unit=backup_contact.service_unit,
                     defaults={
-                        "name": backup.object.name,
-                        "address": backup.object.address,
-                        "postal_code": backup.object.postal_code,
-                        "city": backup.object.city,
-                        "email": backup.object.email,
-                        "sap_sales_office": backup.object.sap_sales_office,
+                        "name": backup_contact.name,
+                        "address": backup_contact.address,
+                        "postal_code": backup_contact.postal_code,
+                        "city": backup_contact.city,
+                        "email": backup_contact.email,
+                        "sap_sales_office": backup_contact.sap_sales_office,
                     },
                 )
                 action = "created" if created else "restored"
@@ -237,7 +239,7 @@ class Command(BaseCommand):
         with open(batchrun_scheduledjob_backup_path, "r") as f:
             schedule_backups = serializers.deserialize("json", f)
             for backup in schedule_backups:
-                schedule = backup.object
+                schedule = cast(ScheduledJob, backup.object)
                 schedule.save()
                 self.stdout.write(
                     f"Batchrun schedule restored: {schedule.comment} (ID: {schedule.pk})"

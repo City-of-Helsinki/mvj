@@ -1,8 +1,12 @@
+from typing import Any
+
 from django.db import transaction
-from django.db.models import Prefetch
+from django.db.models import Prefetch, QuerySet
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
+from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.serializers import BaseSerializer
 
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.compensation import LandUseCompensation
@@ -42,7 +46,7 @@ class LandUseAgreementViewSet(
     LandUsePaginationMixin,
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
-    viewsets.GenericViewSet,
+    viewsets.GenericViewSet[LandUseAgreement],
 ):
     serializer_class = LandUseAgreementCreateSerializer
     filterset_fields = (
@@ -55,7 +59,7 @@ class LandUseAgreementViewSet(
     )
     permission_classes = [LanduseDjangoModelPermissions]
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[LandUseAgreement]:
         queryset = LandUseAgreement.objects.order_by("-modified_at", "pk")
 
         if self.action == "list":
@@ -128,14 +132,16 @@ class LandUseAgreementViewSet(
 
         return queryset
 
-    def get_serializer_class(self):
+    def get_serializer_class(self) -> type[BaseSerializer[Any]]:
         if self.action == "list":
             return LandUseAgreementListSerializer
         if self.action == "create":
             return LandUseAgreementCreateSerializer
         return self.serializer_class
 
-    def get_paginated_serializer_response(self, queryset, serializer_class):
+    def get_paginated_serializer_response(
+        self, queryset: QuerySet[Any], serializer_class: type[BaseSerializer[Any]]
+    ) -> Response:
         page = self.paginate_queryset(queryset)
         if page is not None:
             return self.get_paginated_response(serializer_class(page, many=True).data)
@@ -146,7 +152,7 @@ class LandUseAgreementViewSet(
         methods=("get", "put"),
         permission_classes=[LanduseDjangoModelPermissions],
     )
-    def summary(self, request, pk=None):
+    def summary(self, request: Request, pk: str | None = None) -> Response:
         agreement = self.get_object()
         if request.method == "PUT":
             serializer = LandUseAgreementSummaryWriteSerializer(
@@ -156,8 +162,7 @@ class LandUseAgreementViewSet(
             )
             serializer.is_valid(raise_exception=True)
             agreement = serializer.save()
-            if getattr(agreement, "_prefetched_objects_cache", None):
-                agreement._prefetched_objects_cache = {}
+            agreement = self.get_queryset().get(pk=agreement.pk)
         return Response(LandUseAgreementSummarySerializer(agreement).data)
 
     @action(
@@ -165,7 +170,7 @@ class LandUseAgreementViewSet(
         methods=("get", "put"),
         permission_classes=[LanduseDjangoModelPermissions],
     )
-    def collaterals(self, request, pk=None):
+    def collaterals(self, request: Request, pk: str | None = None) -> Response:
         agreement = self.get_object()
         if request.method == "PUT":
             serializer = LandUseAgreementCollateralSerializer(
@@ -182,7 +187,7 @@ class LandUseAgreementViewSet(
         methods=("get", "put"),
         permission_classes=[tab_permission("parties")],
     )
-    def parties(self, request, pk=None):
+    def parties(self, request: Request, pk: str | None = None) -> Response:
         agreement = self.get_object()
 
         if request.method == "PUT":
@@ -202,7 +207,7 @@ class LandUseAgreementViewSet(
         methods=("get", "put"),
         permission_classes=[tab_permission("compensation")],
     )
-    def compensation(self, request, pk=None):
+    def compensation(self, request: Request, pk: str | None = None) -> Response:
         agreement = self.get_object()
 
         if request.method == "PUT":
@@ -226,7 +231,9 @@ class LandUseAgreementViewSet(
         permission_classes=[tab_permission("compensation"), tab_permission("sites")],
     )
     @transaction.atomic
-    def compensation_with_sites(self, request, pk=None):
+    def compensation_with_sites(
+        self, request: Request, pk: str | None = None
+    ) -> Response:
         agreement = self.get_object()
         serializer = CompensationWithSitesWriteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -234,7 +241,9 @@ class LandUseAgreementViewSet(
             agreement=agreement, defaults=serializer.validated_data["compensation"]
         )
         sites_serializer = AgreementSiteWriteSerializer(
-            agreement.compensation_sites.all(), data=request.data["sites"], many=True
+            agreement.compensation_sites.all(),
+            data=serializer.initial_data["sites"],
+            many=True,
         )
         sites_serializer.is_valid(raise_exception=True)
         sites = sites_serializer.save(agreement=agreement)
@@ -250,7 +259,7 @@ class LandUseAgreementViewSet(
         methods=("get", "put"),
         permission_classes=[tab_permission("sites")],
     )
-    def sites(self, request, pk=None):
+    def sites(self, request: Request, pk: str | None = None) -> Response:
         agreement = self.get_object()
 
         if request.method == "PUT":
@@ -274,7 +283,7 @@ class LandUseAgreementViewSet(
         methods=("get", "put"),
         permission_classes=[tab_permission("decisions")],
     )
-    def decisions(self, request, pk=None):
+    def decisions(self, request: Request, pk: str | None = None) -> Response:
         agreement = self.get_object()
 
         if request.method == "PUT":
@@ -294,7 +303,7 @@ class LandUseAgreementViewSet(
         methods=("get", "put"),
         permission_classes=[tab_permission("contracts")],
     )
-    def contracts(self, request, pk=None):
+    def contracts(self, request: Request, pk: str | None = None) -> Response:
         agreement = self.get_object()
         if request.method == "PUT":
             serializer = ContractWriteSerializer(
@@ -313,7 +322,7 @@ class LandUseAgreementViewSet(
         url_path="payment-schedules",
         permission_classes=[tab_permission("payment_schedules")],
     )
-    def payment_schedules(self, request, pk=None):
+    def payment_schedules(self, request: Request, pk: str | None = None) -> Response:
         agreement = self.get_object()
         if request.method == "PUT":
             serializer = PaymentScheduleWriteSerializer(
@@ -329,7 +338,7 @@ class LandUseAgreementViewSet(
     @action(
         detail=True, methods=("get",), permission_classes=[tab_permission("invoices")]
     )
-    def invoices(self, request, pk=None):
+    def invoices(self, request: Request, pk: str | None = None) -> Response:
         agreement = self.get_object()
         return self.get_paginated_serializer_response(
             agreement.invoices.all(), InvoiceSerializer
