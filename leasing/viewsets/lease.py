@@ -2,12 +2,14 @@ import datetime
 import re
 
 from dateutil.parser import ParserError, parse, parserinfo
+from django.contrib.gis.db.models.aggregates import Union
 from django.db.models import DurationField, Exists, OuterRef, Q, QuerySet, Subquery
 from django.db.models.functions import Cast
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated
@@ -15,7 +17,7 @@ from rest_framework.response import Response
 from rest_framework_gis.filters import InBBoxFilter
 
 from field_permissions.viewsets import FieldPermissionsViewsetMixin
-from leasing.enums import LeaseState, PreparationState, RentType
+from leasing.enums import LeaseState, LocationType, PreparationState, RentType
 from leasing.filters import (
     DistrictFilter,
     IntendedUseFilter,
@@ -45,6 +47,7 @@ from leasing.models.land_area import ConstructabilityDescription, LeaseArea
 from leasing.models.rent import Rent
 from leasing.models.utils import normalize_property_identifier
 from leasing.serializers.common import ManagementSerializer
+from leasing.serializers.land_area import ArchivedLeaseAreaMapSerializer
 from leasing.serializers.lease import (
     DistrictSerializer,
     FinancingSerializer,
@@ -183,6 +186,9 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
         example: .../lease/?identifier=S0120-219
         `search` query parameter can be used to find leases by identifier and multiple other fields
         """
+        if self.action == "intersecting_archived_areas":
+            return Lease.objects.all()
+
         succinct = self.request.query_params.get("succinct")
         queryset: QuerySet[Lease]
 
@@ -709,6 +715,44 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
             )
 
         return queryset
+
+    @action(detail=True, methods=["get"])
+    def intersecting_archived_areas(self, request, pk=None):
+        lease = self.get_object()
+        for permission in ("lease_lease_areas", "leasearea_geometry"):
+            if not any(
+                request.user.has_perm(f"leasing.{access}_{permission}")
+                for access in ("view", "change")
+            ):
+                raise PermissionDenied()
+
+        geometry = lease.lease_areas.filter(archived_at__isnull=True).aggregate(
+            geometry=Union("geometry")
+        )["geometry"]
+        areas = LeaseArea.objects.none()
+        if geometry and not geometry.empty:
+            areas = (
+                LeaseArea.objects.filter(
+                    lease__in=Lease.objects.filter(end_date__lte=timezone.localdate()),
+                    geometry__intersects=geometry,
+                )
+                .exclude(lease=lease)
+                .exclude(location=LocationType.UNDERGROUND)
+                .select_related("lease__identifier", "lease__service_unit")
+                .order_by("id")
+            )
+
+        serialized = ArchivedLeaseAreaMapSerializer(
+            areas, many=True, context=self.get_serializer_context()
+        ).data
+        features = []
+        for area in serialized:
+            area_geometry = area.pop("geometry", None)
+            if area_geometry:
+                features.append(
+                    {"type": "Feature", "geometry": area_geometry, "properties": area}
+                )
+        return Response({"type": "FeatureCollection", "features": features})
 
     def get_serializer_class(self):
         if self.action in ("create", "metadata"):
