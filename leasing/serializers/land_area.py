@@ -14,11 +14,12 @@ from leasing.models.land_area import (
     UsageDistribution,
 )
 from leasing.serializers.decision import DecisionSerializer
+from leasing.serializers.service_unit import ServiceUnitSerializer
 from plotsearch.serializers.info_links import PlotSearchTargetInfoLinkSerializer
 from users.models import User
 from users.serializers import UserSerializer
 
-from ..models import LeaseArea, PlanUnit, PlanUnitState, PlanUnitType, Plot
+from ..models import Lease, LeaseArea, PlanUnit, PlanUnitState, PlanUnitType, Plot
 from .utils import (
     InstanceDictPrimaryKeyRelatedField,
     NameModelSerializer,
@@ -446,6 +447,28 @@ class CustomDetailedPlanSerializer(
             "usage_distributions",
             "geometry",
         )
+
+
+class ArchivedLeaseMapSerializer(
+    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+):
+    identifier = serializers.CharField(source="identifier.identifier", read_only=True)
+    service_unit = ServiceUnitSerializer(read_only=True)
+
+    class Meta:
+        model = Lease
+        fields = ("id", "identifier", "end_date", "service_unit")
+
+
+class ArchivedLeaseAreaMapSerializer(
+    FieldPermissionsSerializerMixin, serializers.ModelSerializer
+):
+    geometry = GeometryField(read_only=True)
+    lease = ArchivedLeaseMapSerializer(read_only=True)
+
+    class Meta:
+        model = LeaseArea
+        fields = ("id", "identifier", "geometry", "lease")
 
 
 class LeaseAreaSerializer(
