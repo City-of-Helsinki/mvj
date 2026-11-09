@@ -32,9 +32,9 @@ class AgreementSite(TimeStampedModel):
         In Finnish: Asemakaavan suojelumerkintä
         """
 
-        SR1 = ("SR1", "SR1")
-        SR2 = ("SR2", "SR2")
-        SR3 = ("SR3", "SR3")
+        SR1 = ("sr1", "SR1")
+        SR2 = ("sr2", "SR2")
+        SR3 = ("sr3", "SR3")
 
     # In Finnish: Maankäyttösopimus
     agreement = models.ForeignKey(

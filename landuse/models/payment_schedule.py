@@ -32,10 +32,10 @@ class PaymentScheduleStatus(models.TextChoices):
     In Finnish: Maksusuunnitelman tila
     """
 
-    DRAFT = ("DRAFT", "Luonnos")
-    PENDING_APPROVAL = ("PENDING_APPROVAL", "Odottaa hyväksyntää")
-    APPROVED = ("APPROVED", "Hyväksytty")
-    REJECTED = ("REJECTED", "Hylätty")
+    DRAFT = ("draft", "Luonnos")
+    PENDING_APPROVAL = ("pending_approval", "Odottaa hyväksyntää")
+    APPROVED = ("approved", "Hyväksytty")
+    REJECTED = ("rejected", "Hylätty")
 
 
 class PaymentSchedule(TimeStampedModel):

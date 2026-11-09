@@ -1387,7 +1387,7 @@ class PaymentScheduleInstallmentWriteSerializer(
         )
 
 
-EDITABLE_SCHEDULE_STATUSES = ("DRAFT", "REJECTED")
+EDITABLE_SCHEDULE_STATUSES = ("draft", "rejected")
 
 
 class PaymentScheduleListSerializer(ReplaceListSerializer):

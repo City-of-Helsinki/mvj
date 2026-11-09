@@ -7,13 +7,13 @@ from utils.mixins import TimeStampedModel
 
 
 class PartyType(models.TextChoices):
-    COMPANY = ("COMPANY", "Yritys")
-    PERSON = ("PERSON", "Henkilö")
+    COMPANY = ("company", "Yritys")
+    PERSON = ("person", "Henkilö")
 
 
 class AgreementPartyRole(models.TextChoices):
-    LAND_OWNER = ("LAND_OWNER", "Maanomistaja")
-    DEVELOPER = ("DEVELOPER", "Toteuttaja")
+    LAND_OWNER = ("land_owner", "Maanomistaja")
+    DEVELOPER = ("developer", "Toteuttaja")
 
 
 class PartyDetailsBase(models.Model):

@@ -53,12 +53,12 @@ class Contract(ContractDetailsBase):
     """
 
     class ContractType(models.TextChoices):
-        LAND_USE_AGREEMENT = ("LAND_USE_AGREEMENT", "Maankäyttösopimus")
+        LAND_USE_AGREEMENT = ("land_use_agreement", "Maankäyttösopimus")
         REAL_ESTATE_PRELIMINARY_AGREEMENT = (
-            "REAL_ESTATE_PRELIMINARY_AGREEMENT",
+            "real_estate_preliminary_agreement",
             "Kiinteistökaupan esitietosopimus",
         )
-        OTHER = ("OTHER", "Muu")
+        OTHER = ("other", "Muu")
 
     # In Finnish: Maankäyttösopimus
     agreement = models.ForeignKey(
@@ -184,8 +184,8 @@ class CollateralDocumentDetailsBase(models.Model):
     """
 
     class DocumentCategory(models.TextChoices):
-        ELECTRONIC = ("ELECTRONIC", "Sähköinen")
-        PAPER = ("PAPER", "Paperinen")
+        ELECTRONIC = ("electronic", "Sähköinen")
+        PAPER = ("paper", "Paperinen")
 
     # In Finnish: Vakuusasiakirjan laji
     document_type = models.CharField(
@@ -221,8 +221,8 @@ class MortgageDeedCollateral(CollateralBase, CollateralDocumentDetailsBase):
     """
 
     class CollateralTarget(models.TextChoices):
-        PROPERTY = ("PROPERTY", "Kiinteistö")
-        FACILITY = ("FACILITY", "Laitos")
+        PROPERTY = ("property", "Kiinteistö")
+        FACILITY = ("facility", "Laitos")
 
     # In Finnish: Kohde (Kiinteistö vai laitos)
     target = models.CharField(
