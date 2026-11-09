@@ -1,0 +1,38 @@
+[
+{
+  "model": "landuse.sitetenuretype",
+  "pk": 3,
+  "fields": {
+    "created_at": "2026-11-09T08:40:48.141Z",
+    "modified_at": "2026-11-09T08:40:48.141Z",
+    "name": "Lyhyt korkotuki (ARA 10)"
+  }
+},
+{
+  "model": "landuse.sitetenuretype",
+  "pk": 4,
+  "fields": {
+    "created_at": "2026-11-09T08:40:55.016Z",
+    "modified_at": "2026-11-09T08:40:55.016Z",
+    "name": "Pitkä korkotuki (ARA)"
+  }
+},
+{
+  "model": "landuse.sitetenuretype",
+  "pk": 5,
+  "fields": {
+    "created_at": "2026-11-09T08:41:00.794Z",
+    "modified_at": "2026-11-09T08:41:00.794Z",
+    "name": "Vapaarahoitteinen omistus"
+  }
+},
+{
+  "model": "landuse.sitetenuretype",
+  "pk": 6,
+  "fields": {
+    "created_at": "2026-11-09T08:41:09.135Z",
+    "modified_at": "2026-11-09T08:41:09.135Z",
+    "name": "Vapaarahoitteinen vuokra"
+  }
+}
+]
