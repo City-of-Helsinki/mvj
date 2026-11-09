@@ -21,10 +21,10 @@ def test_ui_metadata_returns_choices(admin_client):
         {"value": code, "label": str(label)} for code, label in countries
     ]
     assert response.json()["agreement_statuses"] == [
-        {"value": "DRAFT", "label": "Luonnos"},
-        {"value": "IN_PROGRESS", "label": "Vireillä"},
-        {"value": "NEGOTIATION", "label": "Neuvottelu"},
-        {"value": "DECISION", "label": "Päätös"},
-        {"value": "SIGNATURE", "label": "Allekirjoitus"},
-        {"value": "NO_AGREEMENT", "label": "Ei sopimusta"},
+        {"value": "draft", "label": "Luonnos"},
+        {"value": "in_progress", "label": "Vireillä"},
+        {"value": "negotiation", "label": "Neuvottelu"},
+        {"value": "decision", "label": "Päätös"},
+        {"value": "signature", "label": "Allekirjoitus"},
+        {"value": "no_agreement", "label": "Ei sopimusta"},
     ]

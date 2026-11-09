@@ -217,7 +217,7 @@ def test_agreement_crud_keeps_standard_permissions(
     if action == "collaterals":
         payload = {"collateral_multiplier": "1.25"}
     elif action == "summary":
-        payload = summary_payload(status="DRAFT")
+        payload = summary_payload(status="draft")
     request = getattr(client, method)
     request_data = None if method == "get" else payload
     assert (
@@ -266,11 +266,11 @@ def test_party_and_alternate_recipient_codes_round_trip(
         url,
         [
             {
-                "party_type": "COMPANY",
+                "party_type": "company",
                 "language": language,
                 "country": country,
                 "invoice_recipient": {
-                    "party_type": "PERSON",
+                    "party_type": "person",
                     "language": language,
                     "country": country,
                 },
@@ -311,7 +311,7 @@ def test_agreement_list_includes_searchable_projections_and_status_label(
         identifier="M-LIST",
         detailed_plan=plan,
         is_promotion_area=True,
-        status="IN_PROGRESS",
+        status="in_progress",
     )
     AgreementParty.objects.create(agreement=agreement, name="List party")
     AgreementSite.objects.create(agreement=agreement, identifier="List site")
@@ -324,7 +324,7 @@ def test_agreement_list_includes_searchable_projections_and_status_label(
     assert listed["zoning_plan_number"] == "12345"
     assert listed["site"] == "List site"
     assert listed["is_promotion_area"] is True
-    assert listed["status"] == "IN_PROGRESS"
+    assert listed["status"] == "in_progress"
     assert listed["status_label"] == "Vireillä"
 
 
@@ -436,7 +436,7 @@ def test_contracts_replace_nested_contract_changes_and_collaterals(admin_client)
         {
             "contract_number": "C-1",
             "title": "Contract",
-            "contract_type": "OTHER",
+            "contract_type": "other",
             "decision": decision.pk,
             "contract_changes": [{"contract_number": "C-1A", "decision": decision.pk}],
             "other_collaterals": [
@@ -499,7 +499,7 @@ def test_payment_schedules_replace_nested_rows_and_reject_foreign_contract(
                     "installment_count_total": 1,
                     "items": [
                         {
-                            "item_type": "LAND_USE_COMPENSATION",
+                            "item_type": "land_use_compensation",
                             "description": "Compensation",
                             "amount": "10.00",
                         }
@@ -528,7 +528,7 @@ def test_unchanged_contact_persons_keep_their_primary_key(admin_client):
     url = reverse("v1:landuse:agreement-parties", args=(agreement.pk,))
     payload = [
         {
-            "party_type": "COMPANY",
+            "party_type": "company",
             "name": "Party",
             "contact_persons": [{"name": "Alice", "phone": "1", "email": "a@x.fi"}],
         }
@@ -549,7 +549,7 @@ def test_changed_contact_person_keeps_its_id(admin_client):
         url,
         [
             {
-                "party_type": "COMPANY",
+                "party_type": "company",
                 "name": "Party",
                 "contact_persons": [{"name": "Alice"}],
             }
@@ -581,14 +581,14 @@ def test_legacy_flat_collaterals_key_is_rejected(admin_client):
     agreement = LandUseAgreement.objects.create(identifier="M-COLL-LEGACY")
     contract = Contract.objects.create(agreement=agreement)
     collateral = OtherCollateral.objects.create(
-        contract=contract, collateral_type="OTHER"
+        contract=contract, collateral_type="other"
     )
 
     response = _put_contract(
         admin_client,
         agreement,
         contract,
-        {"collaterals": [{"collateral_type": "OTHER"}]},
+        {"collaterals": [{"collateral_type": "other"}]},
     )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -602,7 +602,7 @@ def test_collateral_id_from_another_contract_is_rejected(admin_client):
     contract = Contract.objects.create(agreement=agreement)
     other_contract = Contract.objects.create(agreement=agreement)
     foreign = OtherCollateral.objects.create(
-        contract=other_contract, collateral_type="OTHER"
+        contract=other_contract, collateral_type="other"
     )
 
     response = _put_contract(
@@ -622,7 +622,7 @@ def test_invalid_collateral_party_rolls_back_whole_contract_write(admin_client):
     agreement = LandUseAgreement.objects.create(identifier="M-COLL-ROLLBACK")
     contract = Contract.objects.create(agreement=agreement)
     kept = OtherCollateral.objects.create(
-        contract=contract, collateral_type="OTHER", pledgor_name="Original"
+        contract=contract, collateral_type="other", pledgor_name="Original"
     )
     foreign_party = AgreementParty.objects.create(
         agreement=LandUseAgreement.objects.create(identifier="M-COLL-FOREIGN-PARTY"),
@@ -681,7 +681,7 @@ def test_fields_not_applicable_to_collateral_type_are_rejected(admin_client):
         admin_client,
         agreement,
         contract,
-        {"financial_guarantee_collaterals": [{"document_type": "X"}]},
+        {"financial_guarantee_collaterals": [{"document_type": "WRONG_TYPE"}]},
     )
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -706,7 +706,7 @@ def test_unreferenced_rows_can_be_removed(admin_client, resource):
     assert not model.objects.filter(agreement=agreement).exists()
 
 
-@pytest.mark.parametrize("designation", ["SR1", "SR2", "SR3", None, ""])
+@pytest.mark.parametrize("designation", ["sr1", "sr2", "sr3", None, ""])
 def test_site_preservation_selection_and_clearing(admin_client, designation):
     agreement = LandUseAgreement.objects.create(identifier="M-PRESERVATION")
     tenure_type = SiteTenureType.objects.create(name="Rental")
@@ -863,7 +863,7 @@ def test_agreement_updates_summary_relations(admin_client, django_user_model):
     response = admin_client.put(
         url,
         summary_payload(
-            status="DRAFT",
+            status="draft",
             addresses=[
                 {"street_address": "New", "postal_code": "00200", "city": "Helsinki"}
             ],
@@ -889,7 +889,7 @@ def test_agreement_updates_summary_relations(admin_client, django_user_model):
 
 def test_agreement_collaterals_endpoint_reads_and_updates_only_multiplier(admin_client):
     agreement = LandUseAgreement.objects.create(
-        identifier="M-COLLATERALS", status="DRAFT", collateral_multiplier="1.25"
+        identifier="M-COLLATERALS", status="draft", collateral_multiplier="1.25"
     )
     url = reverse("v1:landuse:agreement-collaterals", args=(agreement.pk,))
 
@@ -904,7 +904,7 @@ def test_agreement_collaterals_endpoint_reads_and_updates_only_multiplier(admin_
     assert response.json() == {"collateral_multiplier": "1.50"}
     agreement.refresh_from_db()
     assert agreement.collateral_multiplier == Decimal("1.50")
-    assert agreement.status == "DRAFT"
+    assert agreement.status == "draft"
 
     response = admin_client.put(
         url, {"collateral_multiplier": None}, content_type="application/json"
@@ -926,30 +926,30 @@ def test_agreement_collaterals_endpoint_reads_and_updates_only_multiplier(admin_
 
 def test_summary_put_replaces_summary_and_preserves_collateral_fields(admin_client):
     agreement = LandUseAgreement.objects.create(
-        identifier="M-PARTIAL", status="DRAFT", collateral_multiplier="1.25"
+        identifier="M-PARTIAL", status="draft", collateral_multiplier="1.25"
     )
     summary_url = reverse("v1:landuse:agreement-summary", args=(agreement.pk,))
     collateral_url = reverse("v1:landuse:agreement-collaterals", args=(agreement.pk,))
 
     response = admin_client.put(
-        summary_url, {"status": "IN_PROGRESS"}, content_type="application/json"
+        summary_url, {"status": "in_progress"}, content_type="application/json"
     )
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     response = admin_client.patch(
         summary_url,
-        summary_payload(status="IN_PROGRESS"),
+        summary_payload(status="in_progress"),
         content_type="application/json",
     )
     assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
 
     response = admin_client.put(
         summary_url,
-        summary_payload(status="IN_PROGRESS"),
+        summary_payload(status="in_progress"),
         content_type="application/json",
     )
     assert response.status_code == status.HTTP_200_OK
-    assert response.json()["status"] == "IN_PROGRESS"
+    assert response.json()["status"] == "in_progress"
     assert response.json() == admin_client.get(summary_url).json()
     agreement.refresh_from_db()
     assert agreement.collateral_multiplier == Decimal("1.25")
@@ -962,7 +962,7 @@ def test_summary_put_replaces_summary_and_preserves_collateral_fields(admin_clie
     assert response.status_code == status.HTTP_200_OK
     assert response.json()["collateral_multiplier"] == "1.50"
     agreement.refresh_from_db()
-    assert agreement.status == "IN_PROGRESS"
+    assert agreement.status == "in_progress"
 
 
 def test_agreement_detail_route_is_not_exposed(admin_client):
@@ -973,7 +973,7 @@ def test_agreement_detail_route_is_not_exposed(admin_client):
     assert admin_client.get(url).status_code == status.HTTP_404_NOT_FOUND
     assert (
         admin_client.patch(
-            url, {"status": "DRAFT"}, content_type="application/json"
+            url, {"status": "draft"}, content_type="application/json"
         ).status_code
         == status.HTTP_404_NOT_FOUND
     )

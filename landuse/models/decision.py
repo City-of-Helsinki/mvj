@@ -10,20 +10,20 @@ class Decision(TimeStampedModel):
     """
 
     class DecisionMaker(models.TextChoices):
-        LAND_MANAGER = ("LAND_MANAGER", "Tonttipäällikkö")
+        LAND_MANAGER = ("land_manager", "Tonttipäällikkö")
         URBAN_ENVIRONMENT_COMMITTEE = (
-            "URBAN_ENVIRONMENT_COMMITTEE",
+            "urban_environment_committee",
             "Kaupunkiympäristölautakunta",
         )
-        CITY_BOARD = ("CITY_BOARD", "Kaupunginhallitus")
+        CITY_BOARD = ("city_board", "Kaupunginhallitus")
 
     class DecisionType(models.TextChoices):
         EASEMENT_CONDITION_ADDITION = (
-            "EASEMENT_CONDITION_ADDITION",
+            "easement_condition_addition",
             "Rasite- ja/tai rasitteenluont.ehdon lis. (1 ehto)",
         )
         LAND_USE_AGREEMENT_APPROVAL = (
-            "LAND_USE_AGREEMENT_APPROVAL",
+            "land_use_agreement_approval",
             "Maankäyttösopimuksen hyväksyntä",
         )
 
@@ -69,10 +69,10 @@ class DecisionCondition(TimeStampedModel):
 
     class ConditionType(models.TextChoices):
         EASEMENT_OR_EASEMENT_LIKE_CONDITION = (
-            "EASEMENT_OR_EASEMENT_LIKE_CONDITION",
+            "easement_or_easement_like_condition",
             "Rasite ja/tai rasitteenluonteinen ehto",
         )
-        OTHER = ("OTHER", "Muu ehto")
+        OTHER = ("other", "Muu ehto")
 
     # In Finnish: Päätös
     decision = models.ForeignKey(

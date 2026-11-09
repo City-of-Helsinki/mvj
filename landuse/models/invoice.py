@@ -25,25 +25,25 @@ class LandUseInvoiceExportError(Exception):
 
 
 class InvoiceType(models.TextChoices):
-    LAND_USE_COMPENSATION = ("LAND_USE_COMPENSATION", "Maankäyttökorvaus")
-    PENALTY = ("PENALTY", "Sakko")
+    LAND_USE_COMPENSATION = ("land_use_compensation", "Maankäyttökorvaus")
+    PENALTY = ("penalty", "Sakko")
 
 
 class InvoiceStatus(models.TextChoices):
-    DRAFT = ("DRAFT", "Luonnos")
-    OPEN = ("OPEN", "Avoin")
-    PAID = ("PAID", "Maksettu")
-    CREDITED = ("CREDITED", "Hyvitetty")
+    DRAFT = ("draft", "Luonnos")
+    OPEN = ("open", "Avoin")
+    PAID = ("paid", "Maksettu")
+    CREDITED = ("credited", "Hyvitetty")
 
 
 class InvoiceItemType(models.TextChoices):
     LAND_USE_COMPENSATION = (
-        "LAND_USE_COMPENSATION",
+        "land_use_compensation",
         "Maankäyttökorvaus",
     )
-    INCREASE = ("INCREASE", "Korotus")
-    INTEREST = ("INTEREST", "Korko")
-    PENALTY = ("PENALTY", "Sakko")
+    INCREASE = ("increase", "Korotus")
+    INTEREST = ("interest", "Korko")
+    PENALTY = ("penalty", "Sakko")
 
 
 class Invoice(TimeStampedModel):

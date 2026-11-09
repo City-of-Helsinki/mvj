@@ -6,18 +6,18 @@ from utils.mixins import TimeStampedModel
 
 
 class LandUseAgreementStatus(models.TextChoices):
-    DRAFT = ("DRAFT", "Luonnos")
-    IN_PROGRESS = ("IN_PROGRESS", "Vireillä")
-    NEGOTIATION = ("NEGOTIATION", "Neuvottelu")
-    DECISION = ("DECISION", "Päätös")
-    SIGNATURE = ("SIGNATURE", "Allekirjoitus")
-    NO_AGREEMENT = ("NO_AGREEMENT", "Ei sopimusta")
+    DRAFT = ("draft", "Luonnos")
+    IN_PROGRESS = ("in_progress", "Vireillä")
+    NEGOTIATION = ("negotiation", "Neuvottelu")
+    DECISION = ("decision", "Päätös")
+    SIGNATURE = ("signature", "Allekirjoitus")
+    NO_AGREEMENT = ("no_agreement", "Ei sopimusta")
 
 
 class DetailedPlanProcessingStage(models.TextChoices):
-    DRAFT = ("DRAFT", "Vireillä")
-    EFFECTIVE = ("EFFECTIVE", "Lainvoimainen")
-    REVOKED = ("REVOKED", "Kumottu")
+    DRAFT = ("draft", "Vireillä")
+    EFFECTIVE = ("effective", "Lainvoimainen")
+    REVOKED = ("revoked", "Kumottu")
 
 
 class District(TimeStampedModel):
