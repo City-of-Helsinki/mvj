@@ -128,8 +128,13 @@ LANDUSE_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
     AgreementAddress: {
         "model": {
             AG.MAANKAYTTOSOPIMUSTEN_SELAILIJA: ("view",),
-            AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA: ("view", "add", "change"),
-            AG.MAANKAYTTOSOPIMUSTEN_SOPIMUSVALMISTELIJA: ("view", "add", "change"),
+            AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA: ("view", "add", "change", "delete"),
+            AG.MAANKAYTTOSOPIMUSTEN_SOPIMUSVALMISTELIJA: (
+                "view",
+                "add",
+                "change",
+                "delete",
+            ),
             AG.MAANKAYTTOSOPIMUSTEN_LASKUTTAJA: ("view",),
             AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA: ("view", "add", "change", "delete"),
         },
@@ -138,10 +143,15 @@ LANDUSE_GROUP_MODEL_PERMISSIONS: GroupModelPermissions = {
     AgreementPreparer: {
         "model": {
             AG.MAANKAYTTOSOPIMUSTEN_SELAILIJA: ("view",),
-            AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA: ("view",),
-            AG.MAANKAYTTOSOPIMUSTEN_SOPIMUSVALMISTELIJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_VALMISTELIJA: ("view", "add", "change", "delete"),
+            AG.MAANKAYTTOSOPIMUSTEN_SOPIMUSVALMISTELIJA: (
+                "view",
+                "add",
+                "change",
+                "delete",
+            ),
             AG.MAANKAYTTOSOPIMUSTEN_LASKUTTAJA: ("view",),
-            AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA: ("view",),
+            AG.MAANKAYTTOSOPIMUSTEN_PAAKAYTTAJA: ("view", "add", "change", "delete"),
         },
         "fields": {},
     },
