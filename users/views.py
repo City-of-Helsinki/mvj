@@ -1,10 +1,11 @@
 from django.contrib import auth
 from django.contrib.auth.models import Permission
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import ViewSetMixin
+from rest_framework.viewsets import ViewSet
 
 from leasing.serializers.service_unit import ServiceUnitSerializer
 
@@ -47,14 +48,34 @@ class UsersPermissions(APIView):
         )
 
 
-class LandUseUsersPermissions(ViewSetMixin, UsersPermissions):
-    excluded_permission_apps = ()
+class LandUseUsersPermissions(ViewSet):
+    permission_classes = (IsAuthenticated,)
+    included_permission_apps = ("landuse",)
 
     def list(self, request, format=None):
-        permissions = super().get(request, format)
-        permissions.data["permissions"] = [
-            permission
-            for permission in permissions.data["permissions"]
-            if permission["app"] == "landuse"
-        ]
-        return permissions
+        permissions = Permission.objects.filter(
+            content_type__app_label__in=self.included_permission_apps
+        ).select_related("content_type")
+
+        if not request.user.is_active:
+            permissions = permissions.none()
+        elif not request.user.is_superuser:
+            permissions = permissions.filter(
+                Q(user=request.user) | Q(group__user=request.user)
+            ).distinct()
+
+        groups = [g.name for g in request.user.groups.all()]
+
+        return Response(
+            {
+                "groups": groups,
+                "permissions": [
+                    {
+                        "app": p.content_type.app_label,
+                        "name": p.name,
+                        "codename": p.codename,
+                    }
+                    for p in permissions
+                ],
+            }
+        )
