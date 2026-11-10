@@ -153,7 +153,7 @@ from plotsearch.views.plot_search import (
     RelatedPlotApplicationViewSet,
     TargetStatusGeneratePDF,
 )
-from users.views import UsersPermissions
+from users.views import LandUseUsersPermissions, UsersPermissions
 from users.viewsets import OfficerViewSet, UserViewSet
 
 router = routers.DefaultRouter()
@@ -367,6 +367,12 @@ landuse_router.register(
 )
 landuse_router.register("invoices", LandUseInvoiceViewSet, basename="invoice")
 
+landuse_router.register(
+    "user_permissions",
+    LandUseUsersPermissions,
+    basename="landuse-users-permissions",
+)
+
 additional_api_paths = [
     path(
         "target_status_pdf/",
@@ -486,7 +492,10 @@ landuse_urls = [
         LandUseUiMetadataView.as_view(),
         name="landuse-ui-metadata",
     ),
-    path("landuse/", include((landuse_router.urls, "landuse"))),
+    path(
+        "landuse/",
+        include((landuse_router.urls, "landuse")),
+    ),
 ]
 
 v1_urls = api_urls + credit_integration_urls + pub_api_urls + landuse_urls
