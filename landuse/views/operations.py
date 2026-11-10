@@ -2,6 +2,7 @@ from typing import Any
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
+from django.utils.translation import gettext_lazy as _
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -21,7 +22,9 @@ from landuse.views.mixins import LandUseApiEnabledFlagMixin, LandUsePaginationMi
 
 
 class PaymentSchedulePermission(BasePermission):
-    message = "You do not have permission to perform this payment schedule operation."
+    message = _(
+        "You do not have permission to perform this payment schedule operation."
+    )
 
     def has_permission(self, request: Request, view: Any) -> bool:
         permission = {
@@ -35,7 +38,7 @@ class PaymentSchedulePermission(BasePermission):
 
 
 class InvoicePermission(BasePermission):
-    message = "You do not have permission to perform this invoice operation."
+    message = _("You do not have permission to perform this invoice operation.")
 
     def has_permission(self, request: Request, view: Any) -> bool:
         permission = {
