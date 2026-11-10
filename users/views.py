@@ -4,12 +4,14 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.viewsets import ViewSetMixin
 
 from leasing.serializers.service_unit import ServiceUnitSerializer
 
 
 class UsersPermissions(APIView):
     permission_classes = (IsAuthenticated,)
+    excluded_permission_apps = ("landuse",)
 
     def get_view_name(self):
         return _("Users permissions")
@@ -33,7 +35,26 @@ class UsersPermissions(APIView):
                 "groups": groups,
                 "service_units": service_units_serializer.data,
                 "permissions": [
-                    {"name": p.name, "codename": p.codename} for p in permissions
+                    {
+                        "app": p.content_type.app_label,
+                        "name": p.name,
+                        "codename": p.codename,
+                    }
+                    for p in permissions
+                    if p.content_type.app_label not in self.excluded_permission_apps
                 ],
             }
         )
+
+
+class LandUseUsersPermissions(ViewSetMixin, UsersPermissions):
+    excluded_permission_apps = ()
+
+    def list(self, request, format=None):
+        permissions = super().get(request, format)
+        permissions.data["permissions"] = [
+            permission
+            for permission in permissions.data["permissions"]
+            if permission["app"] == "landuse"
+        ]
+        return permissions
