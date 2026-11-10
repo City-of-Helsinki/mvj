@@ -1,4 +1,3 @@
-from django.contrib import auth
 from django.contrib.auth.models import Permission
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
@@ -18,14 +17,19 @@ class UsersPermissions(APIView):
         return _("Users permissions")
 
     def get(self, request, format=None):
-        if request.user.is_superuser:
-            permissions = Permission.objects.all()
-        else:
-            permissions = set()
-            for backend in auth.get_backends():
-                if hasattr(backend, "get_all_permissions"):
-                    permissions.update(backend._get_user_permissions(request.user))
-                    permissions.update(backend._get_group_permissions(request.user))
+        permissions = Permission.objects.exclude(
+            # Ensures no conflicts with landuse apps models that share same names.
+            # Leasing app checks permissions only with codename and doesn't take app label,
+            # into consideration (which is incorrect).
+            content_type__app_label__in=self.excluded_permission_apps
+        ).select_related("content_type")
+
+        if not request.user.is_active:
+            permissions = permissions.none()
+        elif not request.user.is_superuser:
+            permissions = permissions.filter(
+                Q(user=request.user) | Q(group__user=request.user)
+            ).distinct()
 
         groups = [g.name for g in request.user.groups.all()]
         service_units = request.user.service_units.all()
@@ -38,11 +42,9 @@ class UsersPermissions(APIView):
                 "permissions": [
                     {
                         "app": p.content_type.app_label,
-                        "name": p.name,
                         "codename": p.codename,
                     }
                     for p in permissions
-                    if p.content_type.app_label not in self.excluded_permission_apps
                 ],
             }
         )
@@ -72,7 +74,6 @@ class LandUseUsersPermissions(ViewSet):
                 "permissions": [
                     {
                         "app": p.content_type.app_label,
-                        "name": p.name,
                         "codename": p.codename,
                     }
                     for p in permissions
