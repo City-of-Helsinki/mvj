@@ -1,6 +1,7 @@
 from typing import Any
 
 from django.conf import settings
+from django.utils.translation import gettext_lazy as _
 from django_countries import countries
 from rest_framework.permissions import BasePermission
 from rest_framework.request import Request
@@ -29,7 +30,7 @@ from landuse.views.mixins import LandUseApiEnabledFlagMixin
 
 
 class CanViewLandUseUiMetadata(BasePermission):
-    message = "You do not have permission to access Land Use metadata."
+    message = _("You do not have permission to access Land Use metadata.")
 
     def has_permission(self, request: Request, view: APIView) -> bool:
         return request.user.has_perm("landuse.view_landuseagreement")
