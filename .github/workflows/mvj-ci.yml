@@ -59,6 +59,9 @@ jobs:
           flake8
           isort . --check-only --diff
 
+      - name: Mypy type checks
+        run: ./run-type-checks
+
       - name: Check and run migrations
         env:
           DATABASE_URL:  ${{ env.DATABASE_URL }}
@@ -85,9 +88,6 @@ jobs:
         with:
           path: coverage.xml
           key: cache-${{ github.run_id }}-${{ github.run_attempt }}
-
-      - name: Mypy type checks
-        run: ./run-type-checks
 
       - name: Run codecov
         run: codecov
