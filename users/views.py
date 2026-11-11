@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet
 
+from landuse.views.mixins import LandUseApiEnabledFlagMixin
 from leasing.serializers.service_unit import ServiceUnitSerializer
 
 
@@ -50,7 +51,7 @@ class UsersPermissions(APIView):
         )
 
 
-class LandUseUsersPermissions(ViewSet):
+class LandUseUsersPermissions(LandUseApiEnabledFlagMixin, ViewSet):
     permission_classes = (IsAuthenticated,)
     included_permission_apps = ("landuse",)
 
