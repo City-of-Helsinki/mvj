@@ -1,4 +1,5 @@
 from decimal import Decimal
+from unittest.mock import patch
 
 import pytest
 from django.contrib.auth.models import Permission
@@ -326,6 +327,83 @@ def test_agreement_list_includes_searchable_projections_and_status_label(
     assert listed["is_promotion_area"] is True
     assert listed["status"] == "in_progress"
     assert listed["status_label"] == "Vireillä"
+
+
+@pytest.mark.parametrize("district_identifier", ["7", "07"])
+@pytest.mark.parametrize(
+    "identifiers,leasing_max_sequence,expected",
+    [
+        ([], 0, "MA107-1"),
+        (["MA107-9", "MA107-10", "MA108-999"], 5, "MA107-11"),
+        (["MA107-126", "MA107-42"], 100, "MA107-127"),
+        (["MA107-", "MA107-invalid", "MA107-12-extra"], 0, "MA107-1"),
+        (["MA107-0009", "MA107-2"], 0, "MA107-10"),
+        ([], 42, "MA107-43"),
+        (["MA107-9", "MA107-10"], 126, "MA107-127"),
+        (["MA107-42"], 42, "MA107-43"),
+    ],
+)
+def test_get_next_identifier(
+    district_identifier, identifiers, leasing_max_sequence, expected
+):
+    for identifier in identifiers:
+        LandUseAgreement.objects.create(identifier=identifier)
+
+    with patch("leasing.models.LeaseIdentifier.objects.filter") as leasing_filter:
+        leasing_aggregate = (
+            leasing_filter.return_value.annotate.return_value.filter.return_value.aggregate
+        )
+        leasing_aggregate.return_value = {"max_sequence": leasing_max_sequence}
+
+        assert LandUseAgreement.get_next_identifier(district_identifier) == expected
+
+    leasing_filter.assert_called_once_with(identifier__startswith="MA107-")
+    leasing_aggregate.assert_called_once()
+
+
+def test_agreement_model_generates_identifier_and_preserves_imports_and_updates():
+    district = District.objects.create(name="District", identifier="07")
+    first = LandUseAgreement.objects.create(district=district)
+    assert first.identifier == "MA107-1"
+
+    LandUseAgreement.objects.create(identifier="MA107-42", district=district)
+    agreement = LandUseAgreement(district=district)
+    agreement.save()
+    agreement.refresh_from_db()
+    assert agreement.identifier == "MA107-43"
+
+    imported = LandUseAgreement.objects.create(identifier="MA107-12", district=district)
+    imported.refresh_from_db()
+    assert imported.identifier == "MA107-12"
+
+    first.status = "in_progress"
+    first.save()
+    first.refresh_from_db()
+    assert first.identifier == "MA107-1"
+    assert LandUseAgreement.objects.create(district=district).identifier == "MA107-44"
+
+
+def test_agreement_model_requires_district_to_generate_identifier():
+    from django.core.exceptions import ValidationError
+
+    with pytest.raises(ValidationError) as error:
+        LandUseAgreement.objects.create()
+
+    assert "district" in error.value.message_dict
+    assert not LandUseAgreement.objects.exists()
+
+
+@pytest.mark.parametrize("payload", [{}, {"district": None}])
+def test_agreement_creation_requires_district(admin_client, payload):
+    response = admin_client.post(
+        reverse("v1:landuse:agreement-list"),
+        payload,
+        content_type="application/json",
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert "district" in response.json()
+    assert not LandUseAgreement.objects.exists()
 
 
 def test_agreement_creation_uses_official_district_identifier(admin_client):

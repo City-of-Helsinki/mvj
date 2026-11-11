@@ -1,5 +1,9 @@
+from typing import Any
+
 from django.contrib.postgres.fields import ArrayField
-from django.db import models
+from django.core.exceptions import ValidationError
+from django.db import models, transaction
+from django.db.models.functions import Cast, Substr
 
 from users.models import User
 from utils.mixins import TimeStampedModel
@@ -119,6 +123,56 @@ class LandUseAgreement(TimeStampedModel):
         null=True,
         blank=True,
     )
+
+    @transaction.atomic
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        if self._state.adding and not self.identifier:
+            if self.district is None:
+                raise ValidationError(
+                    {"district": "A district is required to generate an identifier."}
+                )
+            district = District.objects.select_for_update().get(pk=self.district.pk)
+            self.identifier = self.get_next_identifier(district.identifier)
+        super().save(*args, **kwargs)
+
+    @staticmethod
+    def get_next_identifier(district_identifier: str) -> str:
+        prefix = f"MA1{district_identifier.zfill(2)}-"
+        sequence = LandUseAgreement.get_next_sequence_number(district_identifier)
+        return f"{prefix}{sequence}"
+
+    @staticmethod
+    def get_next_sequence_number(district_identifier: str) -> int:
+        """
+        Only applicable for municipality 1 (Helsinki) as the Landuse app currently
+        only uses Helsinki municipality.
+        """
+        from leasing.models import LeaseIdentifier
+
+        prefix = f"MA1{district_identifier.zfill(2)}-"
+
+        max_landuse_sequence = (
+            LandUseAgreement.objects.filter(identifier__startswith=prefix)
+            .annotate(sequence_suffix=Substr("identifier", len(prefix) + 1))
+            .filter(sequence_suffix__regex=r"^[0-9]+$")
+            .aggregate(
+                max_sequence=models.Max(
+                    Cast("sequence_suffix", models.PositiveIntegerField()), default=0
+                )
+            )["max_sequence"]
+        )
+        max_leasing_sequence = (
+            LeaseIdentifier.objects.filter(identifier__startswith=prefix)
+            .annotate(sequence_suffix=Substr("identifier", len(prefix) + 1))
+            .filter(sequence_suffix__regex=r"^[0-9]+$")
+            .aggregate(
+                max_sequence=models.Max(
+                    Cast("sequence_suffix", models.PositiveIntegerField()), default=0
+                )
+            )["max_sequence"]
+        )
+        max_sequence: int = max(max_landuse_sequence, max_leasing_sequence)
+        return max_sequence + 1
 
     class Meta:
         permissions = [
