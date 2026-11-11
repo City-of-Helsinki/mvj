@@ -16,7 +16,7 @@ jobs:
       DATABASE_PASSWORD: 'postgres'
       PRIVATE_FILES_LOCATION: '/tmp/private_files'
 
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         python: ["3.12"]
