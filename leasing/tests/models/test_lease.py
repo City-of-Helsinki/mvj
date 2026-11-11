@@ -9,6 +9,7 @@ from django.db.models.aggregates import Sum
 from django.utils import timezone
 from rest_framework import exceptions
 
+from landuse.models.agreement import LandUseAgreement
 from leasing.enums import (
     ContactType,
     DueDatesType,
@@ -21,8 +22,12 @@ from leasing.enums import (
 from leasing.management.commands.create_invoices import Command as CreateInvoicesCommand
 from leasing.management.commands.create_invoices import create_invoices_for_lease
 from leasing.models import (
+    District,
     Invoice,
     Lease,
+    LeaseIdentifier,
+    LeaseType,
+    Municipality,
     OldDwellingsInHousingCompaniesPriceIndex,
     ReceivableType,
     Rent,
@@ -33,6 +38,102 @@ from leasing.models.invoice import InvoiceRow
 from leasing.models.rent import ContractRent
 from leasing.models.service_unit import ServiceUnit
 from leasing.models.tenant import Tenant, TenantContact, TenantRentShare
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "type_identifier,municipality_identifier,legacy_sequence,expected_sequence",
+    [
+        ("MA", "1", 9, 43),  # Old identifier smaller than new LandUseAgreement sequence
+        ("MA", "1", 50, 51),  # Old identifier larger than new LandUseAgreement sequence
+        ("A1", "1", 9, 10),  # Lease type not MA
+        ("MA", "2", 9, 10),  # Municipality not Helsinki
+    ],
+)
+def test_create_identifier_uses_shared_sequence_only_for_helsinki_landuse(
+    type_identifier,
+    municipality_identifier,
+    legacy_sequence,
+    expected_sequence,
+    lease_factory,
+):
+    lease_type, _ = LeaseType.objects.get_or_create(identifier=type_identifier)
+    municipality, _ = Municipality.objects.get_or_create(
+        identifier=municipality_identifier
+    )
+    district, _ = District.objects.get_or_create(
+        municipality=municipality, identifier="7"
+    )
+    LeaseIdentifier.objects.create(
+        type=lease_type,
+        municipality=municipality,
+        district=district,
+        sequence=legacy_sequence,
+    )
+    LandUseAgreement.objects.create(identifier="MA107-42")
+    lease = Lease(type=lease_type, municipality=municipality, district=district)
+
+    with patch.object(
+        LandUseAgreement,
+        "get_next_sequence_number",
+        wraps=LandUseAgreement.get_next_sequence_number,
+    ) as shared_sequence:
+        lease.create_identifier()
+
+        if type_identifier == "MA" and municipality_identifier == "1":
+            shared_sequence.assert_called_once_with("7")
+        else:
+            shared_sequence.assert_not_called()
+
+        identifier_pk = lease.identifier.pk
+        lease.create_identifier()
+        assert lease.identifier.pk == identifier_pk
+        assert shared_sequence.call_count == (
+            1 if type_identifier == "MA" and municipality_identifier == "1" else 0
+        )
+
+    lease.identifier.refresh_from_db()
+    assert lease.identifier.sequence == expected_sequence
+    assert lease.identifier.identifier == (
+        f"{type_identifier}{municipality_identifier}07-{expected_sequence}"
+    )
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "type_identifier,municipality_identifier,expected_sequence",
+    [("MA", "1", 43), ("A1", "1", 1), ("MA", "2", 1)],
+)
+def test_new_lease_generates_correct_identifier_sequence_with_existing_landuse_agreement(
+    lease_factory, type_identifier, municipality_identifier, expected_sequence
+):
+    lease_type, _ = LeaseType.objects.get_or_create(identifier=type_identifier)
+    municipality, _ = Municipality.objects.get_or_create(
+        identifier=municipality_identifier
+    )
+    district, _ = District.objects.get_or_create(
+        municipality=municipality, identifier="7"
+    )
+    LandUseAgreement.objects.create(identifier="MA107-42")
+
+    lease = lease_factory(type=lease_type, municipality=municipality, district=district)
+    lease.refresh_from_db()
+
+    assert lease.identifier.sequence == expected_sequence
+    assert lease.identifier.identifier == (
+        f"{type_identifier}{municipality_identifier}07-{expected_sequence}"
+    )
+
+    next_lease = lease_factory(
+        type=lease_type, municipality=municipality, district=district
+    )
+    next_lease.refresh_from_db()
+
+    assert next_lease.identifier.sequence == expected_sequence + 1
+    assert next_lease.identifier.identifier == (
+        f"{type_identifier}{municipality_identifier}07-{expected_sequence + 1}"
+    )
+    assert next_lease.identifier_id != lease.identifier_id
 
 
 @pytest.mark.django_db

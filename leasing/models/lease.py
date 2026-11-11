@@ -774,18 +774,28 @@ class Lease(TimeStampedSafeDeleteModel):
         with connection.cursor() as cursor:
             cursor.execute("LOCK TABLE %s" % self._meta.db_table)
 
-        max_sequence = LeaseIdentifier.objects.filter(
-            type=self.type, municipality=self.municipality, district=self.district
-        ).aggregate(Max("sequence"))["sequence__max"]
+        if self.type.identifier == "MA" and self.municipality.identifier == "1":
+            # Note: only for municipality 1 (Helsinki) for now, because the
+            # Landuse app currently only uses the Helsinki municipality.
+            from landuse.models.agreement import LandUseAgreement
 
-        if not max_sequence:
-            max_sequence = 0
+            sequence = LandUseAgreement.get_next_sequence_number(
+                self.district.identifier
+            )
+        else:
+            max_sequence = LeaseIdentifier.objects.filter(
+                type=self.type, municipality=self.municipality, district=self.district
+            ).aggregate(Max("sequence"))["sequence__max"]
+
+            if not max_sequence:
+                max_sequence = 0
+            sequence = max_sequence + 1
 
         lease_identifier = LeaseIdentifier.objects.create(
             type=self.type,
             municipality=self.municipality,
             district=self.district,
-            sequence=max_sequence + 1,
+            sequence=sequence,
         )
 
         self.identifier = lease_identifier

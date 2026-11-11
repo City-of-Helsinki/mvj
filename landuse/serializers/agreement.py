@@ -262,26 +262,7 @@ class LandUseAgreementCreateSerializer(serializers.ModelSerializer[LandUseAgreem
             "district",
         )
         read_only_fields = ("id", "identifier", "created_at", "modified_at")
-
-    @transaction.atomic
-    def create(self, validated_data: dict[str, Any]) -> Any:
-        district = validated_data.get("district")
-        if district is None:
-            raise serializers.ValidationError({"district": "This field is required."})
-
-        district = District.objects.select_for_update().get(pk=district.pk)
-        prefix = f"MA1{district.identifier.zfill(2)}-"
-        existing_identifiers = LandUseAgreement.objects.filter(
-            identifier__startswith=prefix
-        ).values_list("identifier", flat=True)
-        sequence_numbers = [
-            int(identifier.removeprefix(prefix))
-            for identifier in existing_identifiers
-            if identifier.removeprefix(prefix).isdigit()
-        ]
-        validated_data["identifier"] = f"{prefix}{max(sequence_numbers, default=0) + 1}"
-        agreement = super().create(validated_data)
-        return agreement
+        extra_kwargs = {"district": {"required": True, "allow_null": False}}
 
 
 class LandUseAgreementCollateralSerializer(
