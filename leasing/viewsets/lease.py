@@ -738,7 +738,7 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
                 )
                 .exclude(lease=lease)
                 .exclude(location=LocationType.UNDERGROUND)
-                .select_related("lease__identifier", "lease__service_unit")
+                .select_related("lease__identifier", "lease__intended_use")
                 .order_by("id")
             )
 

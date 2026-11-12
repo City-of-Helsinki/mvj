@@ -14,7 +14,6 @@ from leasing.models.land_area import (
     UsageDistribution,
 )
 from leasing.serializers.decision import DecisionSerializer
-from leasing.serializers.service_unit import ServiceUnitSerializer
 from plotsearch.serializers.info_links import PlotSearchTargetInfoLinkSerializer
 from users.models import User
 from users.serializers import UserSerializer
@@ -453,11 +452,25 @@ class ArchivedLeaseMapSerializer(
     FieldPermissionsSerializerMixin, serializers.ModelSerializer
 ):
     identifier = serializers.CharField(source="identifier.identifier", read_only=True)
-    service_unit = ServiceUnitSerializer(read_only=True)
+    state = serializers.CharField(read_only=True)
+    intended_use = serializers.CharField(read_only=True)
 
     class Meta:
         model = Lease
-        fields = ("id", "identifier", "end_date", "service_unit")
+        fields = (
+            "id",
+            "identifier",
+            "end_date",
+            "state",
+            "intended_use",
+        )
+        read_only_fields = (
+            "id",
+            "identifier",
+            "end_date",
+            "state",
+            "intended_use",
+        )
 
 
 class ArchivedLeaseAreaMapSerializer(
