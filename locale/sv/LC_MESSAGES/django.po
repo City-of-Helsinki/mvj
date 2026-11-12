@@ -3076,6 +3076,59 @@ msgstr "Startdatum för arrendering"
 msgid "Lease end date"
 msgstr "Slutdatum för arrendering"
 
+msgid "Invoice details and forecast"
+msgstr ""
+
+msgid ""
+"Shows existing invoices for a selected year and forecasts the rest of the "
+"year's invoices"
+msgstr ""
+
+msgid "Invoice id"
+msgstr ""
+
+msgid "District id"
+msgstr ""
+
+msgid "Subject to VAT"
+msgstr ""
+
+msgid "Billed amount including VAT"
+msgstr ""
+
+msgid "Receivable types"
+msgstr ""
+
+msgid "Share numerator"
+msgstr ""
+
+msgid "Share denominator"
+msgstr ""
+
+msgid "Billing contact"
+msgstr ""
+
+msgid "Intended uses"
+msgstr ""
+
+msgid "SAP material codes"
+msgstr ""
+
+msgid "SAP order item numbers"
+msgstr ""
+
+msgid "SAP project numbers"
+msgstr ""
+
+msgid "Invoice type"
+msgstr ""
+
+msgid "Rent types"
+msgstr ""
+
+msgid "Rent cycles"
+msgstr ""
+
 msgid ""
 "Show all the payments that have been paid between the start and the end date"
 msgstr "Visa betalningar mellan startdatum och slutdatum"

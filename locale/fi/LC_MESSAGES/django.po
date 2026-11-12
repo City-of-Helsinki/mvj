@@ -3080,6 +3080,61 @@ msgstr "Vuokrauksen alkupvm"
 msgid "Lease end date"
 msgstr "Vuokrauksen loppupvm"
 
+msgid "Invoice details and forecast"
+msgstr "Lähetetyt ja tulevat laskut"
+
+msgid ""
+"Shows existing invoices for a selected year and forecasts the rest of the "
+"year's invoices"
+msgstr ""
+"Näyttää jo lähetetyt laskut valitulle vuodelle, sekä ennustaa loput vuoden "
+"laskuista."
+
+msgid "Invoice id"
+msgstr "Laskun tunnus"
+
+msgid "District id"
+msgstr "Kaupunginosan tunnus"
+
+msgid "Subject to VAT"
+msgstr "ALV:n alainen"
+
+msgid "Billed amount including VAT"
+msgstr "Laskutettu määrä sis. ALV"
+
+msgid "Receivable types"
+msgstr "Saamislajit"
+
+msgid "Share numerator"
+msgstr "Hallintaosuuden jaettava"
+
+msgid "Share denominator"
+msgstr "Hallintaosuuden jakaja"
+
+msgid "Billing contact"
+msgstr "Laskunsaaja"
+
+msgid "Intended uses"
+msgstr "Käyttötarkoitukset"
+
+msgid "SAP material codes"
+msgstr "SAP materiaalinumerot"
+
+msgid "SAP order item numbers"
+msgstr "SAP tilausnumerot"
+
+msgid "SAP project numbers"
+msgstr "SAP projektinumerot"
+
+msgid "Invoice type"
+msgstr "Laskun tyyppi"
+
+msgid "Rent types"
+msgstr "Vuokralajit"
+
+msgid "Rent cycles"
+msgstr "Vuokrakaudet"
+
 msgid ""
 "Show all the payments that have been paid between the start and the end date"
 msgstr "Näytä maksusuoritukset, jotka on maksettu alkupvm ja loppupvm välillä"
