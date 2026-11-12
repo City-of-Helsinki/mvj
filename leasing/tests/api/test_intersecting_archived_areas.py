@@ -6,7 +6,7 @@ from django.contrib.gis.geos import MultiPolygon, Polygon
 from django.urls import reverse
 from django.utils import timezone
 
-from leasing.enums import LocationType
+from leasing.enums import LeaseState, LocationType
 
 
 def geometry(left=0, bottom=0, right=1, top=1):
@@ -18,7 +18,9 @@ def url(lease):
 
 
 @pytest.mark.django_db
-def test_intersections(admin_client, lease_factory, lease_area_factory):
+def test_intersections(
+    admin_client, lease_factory, lease_area_factory, intended_use_factory
+):
     today = timezone.localdate()
     current = lease_factory(end_date=today)
     lease_area_factory(lease=current, geometry=geometry())
@@ -26,7 +28,13 @@ def test_intersections(admin_client, lease_factory, lease_area_factory):
     lease_area_factory(
         lease=current, geometry=geometry(10, 10, 11, 11), archived_at=timezone.now()
     )
-    expired = lease_factory(end_date=today - datetime.timedelta(days=1))
+    intended_use = intended_use_factory()
+    expired = lease_factory(
+        end_date=today - datetime.timedelta(days=1),
+        state=LeaseState.LEASE,
+        intended_use=intended_use,
+        service_unit=intended_use.service_unit,
+    )
     expected = [
         lease_area_factory(lease=expired, geometry=geometry(1, 0, 2, 1)),
         lease_area_factory(lease=expired, geometry=geometry(1, 1, 2, 2)),
@@ -64,13 +72,8 @@ def test_intersections(admin_client, lease_factory, lease_area_factory):
     feature = response.data["features"][0]
     assert feature["geometry"]["type"] == "MultiPolygon"
     assert feature["properties"]["lease"]["identifier"] == str(expired.identifier)
-    assert (
-        feature["properties"]["lease"]["service_unit"]["id"] == expired.service_unit_id
-    )
-    assert (
-        feature["properties"]["lease"]["service_unit"]["name"]
-        == expired.service_unit.name
-    )
+    assert feature["properties"]["lease"]["state"] == expired.state.label
+    assert feature["properties"]["lease"]["intended_use"] == expired.intended_use.name
 
 
 @pytest.mark.django_db
@@ -111,8 +114,10 @@ def test_area_field_permissions(
         return permission not in (
             "leasing.view_leasearea_identifier",
             "leasing.change_leasearea_identifier",
-            "leasing.view_lease_service_unit",
-            "leasing.change_lease_service_unit",
+            "leasing.view_lease_state",
+            "leasing.change_lease_state",
+            "leasing.view_lease_intended_use",
+            "leasing.change_lease_intended_use",
         )
 
     with patch.object(admin_user.__class__, "has_perm", has_permission):
@@ -120,7 +125,8 @@ def test_area_field_permissions(
     assert response.status_code == 200
     assert len(response.data["features"]) == 1
     assert "identifier" not in response.data["features"][0]["properties"]
-    assert "service_unit" not in response.data["features"][0]["properties"]["lease"]
+    assert "state" not in response.data["features"][0]["properties"]["lease"]
+    assert "intended_use" not in response.data["features"][0]["properties"]["lease"]
 
 
 @pytest.mark.django_db
