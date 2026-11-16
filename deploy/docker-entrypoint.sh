@@ -10,8 +10,6 @@ start_api() {
         echo "Running in initialization container mode"
         # Create required directories in init container
         bash deploy/init-create-dirs.sh
-        # Run migrations in init container
-        bash deploy/init-migrate.sh
         # Update django permissions
         echo "Run: set_group_field_permissions"
         ./manage.py set_group_field_permissions
