@@ -140,7 +140,9 @@ class PaymentSchedule(TimeStampedModel):
     def approve(self) -> None:
         if self.status != PaymentScheduleStatus.PENDING_APPROVAL:
             raise ValidationError("Only pending schedules can be approved.")
-        for installment in self.installments.prefetch_related("items"):
+        for installment in self.installments.filter(
+            invoice__isnull=True
+        ).prefetch_related("items"):
             invoice = Invoice.objects.create(
                 agreement=self.agreement,
                 recipient_party=self.recipient_party,
@@ -163,6 +165,31 @@ class PaymentSchedule(TimeStampedModel):
                 ]
             )
         self.status = PaymentScheduleStatus.APPROVED
+        self.rejected_reason = ""
+        self.save(update_fields=("status", "rejected_reason", "modified_at"))
+
+    @transaction.atomic
+    def return_to_draft(self) -> None:
+        if self.status not in (
+            PaymentScheduleStatus.APPROVED,
+            PaymentScheduleStatus.PENDING_APPROVAL,
+        ):
+            raise ValidationError(
+                "Only approved or pending schedules can be returned to draft."
+            )
+        invoices = list(
+            Invoice.objects.select_for_update().filter(
+                source_payment_schedule_installment__payment_schedule=self
+            )
+        )
+        deletable_ids = [
+            invoice.pk
+            for invoice in invoices
+            if invoice.status == InvoiceStatus.WAITING_TO_BE_SENT
+            and invoice.sent_at is None
+        ]
+        Invoice.objects.filter(pk__in=deletable_ids).delete()
+        self.status = PaymentScheduleStatus.DRAFT
         self.rejected_reason = ""
         self.save(update_fields=("status", "rejected_reason", "modified_at"))
 
