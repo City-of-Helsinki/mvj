@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 13:04+0200\n"
+"POT-Creation-Date: 2026-11-19 13:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3835,6 +3835,9 @@ msgstr "Fakturan har redan skickats till SAP"
 
 msgid "Can't send invoices that already have a number to SAP"
 msgstr "Numrerade fakturor går inte att skicka till SAP"
+
+msgid "Query parameter must be a number"
+msgstr ""
 
 msgid "No permission. Can only delete own empty leases."
 msgstr "Ingen behörighet. Du kan endast ta bort egna tomma arrenderingar."

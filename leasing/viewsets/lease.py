@@ -5,6 +5,7 @@ from dateutil.parser import ParserError, parse, parserinfo
 from django.contrib.gis.db.models.aggregates import Union
 from django.db.models import DurationField, Exists, OuterRef, Q, QuerySet, Subquery
 from django.db.models.functions import Cast
+from django.http import Http404
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
@@ -13,6 +14,7 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework_gis.filters import InBBoxFilter
 
@@ -715,6 +717,60 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
             )
 
         return queryset
+
+    @action(detail=False, methods=["get"])
+    def identifier_by_id(self, request: Request):
+        if not any(
+            request.user.has_perm(f"leasing.{access}_lease_identifier")
+            for access in ("view", "change")
+        ):
+            raise PermissionDenied()
+
+        lease_id: str | None = request.query_params.get("id")
+        if not lease_id or not lease_id.isdecimal():
+            return Response(
+                {"detail": _("Query parameter must be a number")},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            identifier = (
+                self.get_queryset()
+                .values_list("identifier__identifier", flat=True)
+                .get(pk=lease_id)
+            )
+        except Lease.DoesNotExist:
+            raise Http404
+
+        return Response(identifier)
+
+    @action(detail=False, methods=["get"])
+    def id_by_identifier(self, request: Request):
+        if not any(
+            request.user.has_perm(f"leasing.{access}_lease_id")
+            for access in ("view", "change")
+        ):
+            raise PermissionDenied()
+
+        identifier: str | None = request.query_params.get("identifier")
+        if identifier:
+            identifier = identifier.upper()
+        if not identifier:
+            return Response(
+                {"detail": _('Query parameter "identifier" is mandatory')},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            lease_id = (
+                self.get_queryset()
+                .values_list("pk", flat=True)
+                .get(identifier__identifier=identifier)
+            )
+        except Lease.DoesNotExist:
+            raise Http404
+
+        return Response({"id": lease_id})
 
     @action(detail=True, methods=["get"])
     def intersecting_archived_areas(self, request, pk=None):
