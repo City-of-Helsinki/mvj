@@ -600,6 +600,74 @@ def test_payment_schedules_replace_nested_rows_and_reject_foreign_contract(
     assert agreement.payment_schedules.count() == 1
 
 
+@pytest.mark.parametrize("schedule_status", ["approved", "pending_approval"])
+def test_can_add_schedule_while_retaining_locked_schedule(
+    admin_client, schedule_status
+):
+    from landuse.models.contract import Contract
+    from landuse.models.payment_schedule import PaymentSchedule
+
+    agreement = LandUseAgreement.objects.create(identifier="M-LOCKED-SCHEDULE")
+    party = AgreementParty.objects.create(agreement=agreement, name="Recipient")
+    contract = Contract.objects.create(agreement=agreement)
+    locked = PaymentSchedule.objects.create(
+        agreement=agreement,
+        recipient_party=party,
+        contract=contract,
+        status=schedule_status,
+    )
+    original_modified_at = locked.modified_at
+    url = reverse("v1:landuse:agreement-payment-schedules", args=(agreement.pk,))
+    new_schedule = {
+        "recipient_party": party.pk,
+        "contract": contract.pk,
+        "installments": [
+            {
+                "installment_sequence_number": 1,
+                "installment_count_total": 1,
+                "items": [],
+            }
+        ],
+    }
+
+    response = admin_client.put(url, [new_schedule], content_type="application/json")
+
+    assert response.status_code == status.HTTP_200_OK
+    assert agreement.payment_schedules.count() == 2
+    locked.refresh_from_db()
+    assert locked.status == schedule_status
+    assert locked.modified_at == original_modified_at
+    created = agreement.payment_schedules.exclude(pk=locked.pk).get()
+    assert created.status == "draft"
+
+    response = admin_client.put(
+        url,
+        [{**new_schedule, "id": locked.pk}, {**new_schedule, "id": created.pk}],
+        content_type="application/json",
+    )
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    editable_payload = {
+        **new_schedule,
+        "id": created.pk,
+        "installments": [
+            {
+                **new_schedule["installments"][0],
+                "id": created.installments.get().pk,
+            }
+        ],
+    }
+    response = admin_client.put(
+        url, [editable_payload], content_type="application/json"
+    )
+    assert response.status_code == status.HTTP_200_OK
+    assert agreement.payment_schedules.count() == 2
+    response = admin_client.put(url, [], content_type="application/json")
+    assert response.status_code == status.HTTP_200_OK
+    locked.refresh_from_db()
+    assert locked.modified_at == original_modified_at
+    assert agreement.payment_schedules.count() == 1
+
+
 def test_unchanged_contact_persons_keep_their_primary_key(admin_client):
     agreement = LandUseAgreement.objects.create(identifier="M-KEEP-CONTACTS")
     url = reverse("v1:landuse:agreement-parties", args=(agreement.pk,))

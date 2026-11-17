@@ -1301,6 +1301,14 @@ class PaymentScheduleInstallmentSerializer(
     serializers.ModelSerializer[PaymentScheduleInstallment]
 ):
     items = PaymentScheduleInstallmentItemSerializer(many=True, read_only=True)
+    invoice = serializers.SerializerMethodField()
+
+    def get_invoice(self, instance: PaymentScheduleInstallment) -> Any:
+        invoice = getattr(instance, "invoice", None)
+        if not invoice:
+            return
+
+        return InvoiceSerializer(invoice, context=self.context).data
 
     class Meta:
         model = PaymentScheduleInstallment
@@ -1314,6 +1322,7 @@ class PaymentScheduleInstallmentSerializer(
             "interest_calculation_period_start_date",
             "interest_calculation_period_end_date",
             "items",
+            "invoice",
         )
 
 
@@ -1375,17 +1384,37 @@ class PaymentScheduleListSerializer(ReplaceListSerializer):
     read_related = ("recipient_party", "contract")
     read_prefetch = ("installments__items",)
 
+    @transaction.atomic
+    def update(
+        self, instance: QuerySet[Any], validated_data: list[dict[str, Any]]
+    ) -> QuerySet[PaymentSchedule]:
+        """
+        Makes sure to update only the payment schedules that are editable.
+        The following payment schedules can't be updated:
+        - Sent for approval, should not be changed during approval process.
+        - Approved, invoices are created.
+        - Invoices sent to SAP, everything is immutable after that.
+        """
+        locked_ids = list(
+            instance.exclude(status__in=EDITABLE_SCHEDULE_STATUSES).values_list(
+                "pk", flat=True
+            )
+        )
+        saved = super().update(
+            instance.filter(status__in=EDITABLE_SCHEDULE_STATUSES), validated_data
+        )
+        saved_ids = list(saved.values_list("pk", flat=True))
+        return (
+            PaymentSchedule.objects.filter(pk__in=[*locked_ids, *saved_ids])
+            .select_related(*self.read_related)
+            .prefetch_related(*self.read_prefetch)
+        )
+
     def check_replacement(
         self, instance: QuerySet[Any], validated_data: list[dict[str, Any]]
     ) -> None:
-        retained_ids = {attrs["id"] for attrs in validated_data if "id" in attrs}
-        removed = instance.exclude(pk__in=retained_ids).exclude(
-            status__in=EDITABLE_SCHEDULE_STATUSES
-        )
-        if removed.exists():
-            raise serializers.ValidationError(
-                {"status": "Only draft or rejected schedules can be deleted."}
-            )
+        """Override parent method not used here."""
+        return
 
 
 class PaymentScheduleWriteSerializer(serializers.ModelSerializer[PaymentSchedule]):
