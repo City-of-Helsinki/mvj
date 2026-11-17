@@ -1413,8 +1413,15 @@ class PaymentScheduleListSerializer(ReplaceListSerializer):
     def check_replacement(
         self, instance: QuerySet[Any], validated_data: list[dict[str, Any]]
     ) -> None:
-        """Override parent method not used here."""
-        return
+        retained_ids = {attrs["id"] for attrs in validated_data if "id" in attrs}
+        if (
+            instance.exclude(pk__in=retained_ids)
+            .filter(installments__invoice__isnull=False)
+            .exists()
+        ):
+            raise serializers.ValidationError(
+                {"status": "Schedules with existing invoices cannot be deleted."}
+            )
 
 
 class PaymentScheduleWriteSerializer(serializers.ModelSerializer[PaymentSchedule]):
@@ -1451,6 +1458,14 @@ class PaymentScheduleWriteSerializer(serializers.ModelSerializer[PaymentSchedule
             )
         installments = validated_data.pop("installments")
         self._check_references(instance.agreement, validated_data)
+        if instance.installments.filter(invoice__isnull=False).exists():
+            for field in ("recipient_party", "contract"):
+                if validated_data[field].pk != getattr(instance, f"{field}_id"):
+                    raise serializers.ValidationError(
+                        {
+                            field: "Cannot change references on a schedule with existing invoices."
+                        }
+                    )
         schedule = super().update(instance, validated_data)
         self._finish(schedule, installments)
         return schedule
@@ -1480,13 +1495,17 @@ class PaymentScheduleWriteSerializer(serializers.ModelSerializer[PaymentSchedule
             raise serializers.ValidationError(error.message_dict) from error
         schedule.save()
 
+        locked_installments = schedule.installments.filter(invoice__isnull=False)
         sequences = [i["installment_sequence_number"] for i in installments]
+        sequences.extend(
+            locked_installments.values_list("installment_sequence_number", flat=True)
+        )
         if len(sequences) != len(set(sequences)):
             raise serializers.ValidationError(
                 {"installments": "Installment sequence numbers must be unique."}
             )
         sync_rows(
-            schedule.installments.all(),
+            schedule.installments.filter(invoice__isnull=True),
             installments,
             lambda obj, data: self._save_installment(schedule, obj, data),
         )

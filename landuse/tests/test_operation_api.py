@@ -3,13 +3,18 @@ from unittest.mock import patch
 import pytest
 from django.contrib.auth.models import Permission
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework import status
 
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.contract import Contract
-from landuse.models.invoice import Invoice
+from landuse.models.invoice import Invoice, InvoiceStatus
 from landuse.models.party import AgreementParty
-from landuse.models.payment_schedule import PaymentSchedule, PaymentScheduleStatus
+from landuse.models.payment_schedule import (
+    PaymentSchedule,
+    PaymentScheduleInstallment,
+    PaymentScheduleStatus,
+)
 from landuse.views.operations import InvoicePermission, PaymentSchedulePermission
 from utils.enums import AuthGroupId as AG
 
@@ -104,6 +109,100 @@ def test_send_invoice_to_sap_requires_operation_permission(
     send_invoice_xml.assert_called_once()
     invoice.refresh_from_db()
     assert invoice.sent_at is not None
+
+
+@pytest.mark.parametrize("schedule_status", ["approved", "pending_approval"])
+def test_return_to_draft_preserves_sent_installments_and_reapproves_only_editable(
+    admin_client, client, user_factory, schedule_status
+):
+    schedule, _ = create_agreement_financial_data()
+    for sequence_number in (1, 2, 3):
+        PaymentScheduleInstallment.objects.create(
+            payment_schedule=schedule,
+            installment_sequence_number=sequence_number,
+            installment_count_total=3,
+        )
+    schedule.approve()
+    installments = list(schedule.installments.order_by("installment_sequence_number"))
+    sent_invoice = installments[0].invoice
+    sent_invoice.sent_at = timezone.now()
+    sent_invoice.save()
+    retained_invoice = installments[2].invoice
+    retained_invoice.status = InvoiceStatus.OPEN
+    retained_invoice.save()
+    deleted_invoice_id = installments[1].invoice.pk
+    schedule.status = schedule_status
+    schedule.save()
+    url = reverse("v1:landuse:payment-schedule-return-to-draft", args=(schedule.pk,))
+    client.force_login(user_factory())
+    assert client.post(url).status_code == status.HTTP_403_FORBIDDEN
+
+    response = admin_client.post(url)
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()["status"] == "draft"
+    assert response.json()["installments"][1]["invoice"] is None
+    assert not Invoice.objects.filter(pk=deleted_invoice_id).exists()
+    assert Invoice.objects.filter(pk=sent_invoice.pk).exists()
+    assert Invoice.objects.filter(pk=retained_invoice.pk).exists()
+    assert admin_client.post(url).status_code == status.HTTP_400_BAD_REQUEST
+    write_url = reverse(
+        "v1:landuse:agreement-payment-schedules", args=(schedule.agreement_id,)
+    )
+    assert (
+        admin_client.put(write_url, [], content_type="application/json").status_code
+        == status.HTTP_400_BAD_REQUEST
+    )
+    payload = {
+        "id": schedule.pk,
+        "recipient_party": schedule.recipient_party_id,
+        "contract": schedule.contract_id,
+        "installments": [
+            {
+                "id": installments[0].pk,
+                "installment_sequence_number": 1,
+                "installment_count_total": 3,
+                "due_date": "2027-01-01",
+                "items": [],
+            }
+        ],
+    }
+    response = admin_client.put(write_url, [payload], content_type="application/json")
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    payload["installments"] = [
+        {
+            "id": installments[1].pk,
+            "installment_sequence_number": 2,
+            "installment_count_total": 3,
+            "due_date": "2027-01-01",
+            "items": [],
+        }
+    ]
+    assert (
+        admin_client.put(
+            write_url, [payload], content_type="application/json"
+        ).status_code
+        == status.HTTP_200_OK
+    )
+    installments[0].refresh_from_db()
+    assert installments[0].due_date is None
+    assert schedule.installments.count() == 3
+    schedule.refresh_from_db()
+    schedule.submit()
+    schedule.approve()
+    assert (
+        Invoice.objects.filter(
+            source_payment_schedule_installment__payment_schedule=schedule
+        ).count()
+        == 3
+    )
+    assert (
+        schedule.installments.get(pk=installments[0].pk).invoice.pk == sent_invoice.pk
+    )
+    assert (
+        schedule.installments.get(pk=installments[1].pk).invoice.pk
+        != deleted_invoice_id
+    )
 
 
 def test_billing_role_can_reject_but_cannot_edit_schedule(client, tab_role_user):

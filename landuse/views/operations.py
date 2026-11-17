@@ -31,6 +31,7 @@ class PaymentSchedulePermission(BasePermission):
             "list": "landuse.view_tab_payment_schedules",
             "retrieve": "landuse.view_tab_payment_schedules",
             "submit": "landuse.change_tab_payment_schedules",
+            "return_to_draft": "landuse.change_tab_payment_schedules",
             "approve": "landuse.approve_paymentschedule",
             "reject": "landuse.approve_paymentschedule",
         }.get(view.action)
@@ -73,6 +74,10 @@ class PaymentScheduleViewSet(
     def approve(self, request: Request, pk: str | None = None) -> Response:
         return self._transition(pk, "approve")
 
+    @action(detail=True, methods=("post",), url_path="return-to-draft")
+    def return_to_draft(self, request: Request, pk: str | None = None) -> Response:
+        return self._transition(pk, "return_to_draft")
+
     @action(detail=True, methods=("post",))
     def reject(self, request: Request, pk: str | None = None) -> Response:
         serializer = PaymentScheduleRejectionSerializer(data=request.data)
@@ -89,7 +94,9 @@ class PaymentScheduleViewSet(
             raise ValidationError(
                 error.message_dict if hasattr(error, "message_dict") else error.messages
             )
-        return Response(PaymentScheduleSerializer(schedule).data)
+        return Response(
+            PaymentScheduleSerializer(self.get_queryset().get(pk=schedule.pk)).data
+        )
 
 
 class InvoiceViewSet(
