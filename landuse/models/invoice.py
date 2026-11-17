@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.db.models import Sum
 from django.utils import timezone
+from sequences import get_next_value
 
 from landuse.invoice_xml import render_invoice_xml
 from landuse.models.agreement import LandUseAgreement
@@ -31,6 +32,7 @@ class InvoiceType(models.TextChoices):
 
 class InvoiceStatus(models.TextChoices):
     DRAFT = ("draft", "Luonnos")
+    WAITING_TO_BE_SENT = ("waiting_to_be_sent", "Odottaa lähettämistä")
     OPEN = ("open", "Avoin")
     PAID = ("paid", "Maksettu")
     CREDITED = ("credited", "Hyvitetty")
@@ -84,7 +86,7 @@ class Invoice(TimeStampedModel):
     due_date = models.DateField(null=True, blank=True)
 
     # In Finnish: Laskun tunniste
-    invoice_identifier = models.CharField(blank=True, unique=True)
+    invoice_identifier = models.PositiveIntegerField(unique=True, editable=False)
 
     # In Finnish: Laskun tyyppi
     invoice_type = models.CharField(choices=InvoiceType, blank=True)
@@ -118,6 +120,23 @@ class Invoice(TimeStampedModel):
     @transaction.atomic
     def save(self, *args: Any, **kwargs: Any) -> None:
         is_creating = self._state.adding
+        if is_creating and self.invoice_identifier is not None:
+            raise ValidationError(
+                {
+                    "invoice_identifier": "Invoice identifiers are generated automatically."
+                }
+            )
+
+        if (
+            not is_creating
+            and not Invoice.objects.filter(
+                pk=self.pk,
+                invoice_identifier=self.invoice_identifier,
+            ).exists()
+        ):
+            raise ValidationError(
+                {"invoice_identifier": "Invoice identifiers cannot be changed."}
+            )
         if (
             self.installment_count_total
             and self.installment_sequence_number
@@ -125,6 +144,11 @@ class Invoice(TimeStampedModel):
         ):
             raise ValueError(
                 "Installment sequence number cannot be greater than the total installment count."
+            )
+
+        if is_creating:
+            self.invoice_identifier = get_next_value(
+                "landuse_invoice_identifiers", initial_value=1_000_000_000
             )
 
         super().save(*args, **kwargs)
