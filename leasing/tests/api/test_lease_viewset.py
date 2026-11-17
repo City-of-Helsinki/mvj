@@ -230,3 +230,37 @@ def test_set_invoicing_state_checks_service_unit(
         )
         lease.refresh_from_db()
         assert lease.invoicing_enabled_at is None
+
+
+@pytest.mark.django_db
+def test_lease_id_by_identifier_returns_an_id(
+    django_db_setup, admin_client, lease_factory
+):
+    lease = lease_factory(
+        type_id=1, municipality_id=1, district_id=1, notice_period_id=1
+    )
+
+    identifier = str(lease.identifier)
+    response = admin_client.get(
+        reverse("v1:lease-id-by-identifier"),
+        data={"identifier": identifier},
+    )
+
+    assert response.status_code == 200
+    assert response.data == {"id": lease.id}
+
+
+@pytest.mark.django_db
+def test_lease_identifier_by_id_returns_identifier(
+    django_db_setup, admin_client, lease_factory
+):
+    lease = lease_factory(
+        type_id=1, municipality_id=1, district_id=1, notice_period_id=1
+    )
+
+    response = admin_client.get(
+        reverse("v1:lease-identifier-by-id"), data={"id": lease.id}
+    )
+
+    assert response.status_code == 200
+    assert response.data == str(lease.identifier)

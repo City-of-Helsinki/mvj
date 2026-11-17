@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MVJ 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 13:04+0200\n"
+"POT-Creation-Date: 2026-11-19 13:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language: fi\n"
@@ -3857,6 +3857,9 @@ msgstr "Lasku on jo lähetetty SAP:iin"
 
 msgid "Can't send invoices that already have a number to SAP"
 msgstr "Numeroitua laskua ei voi lähettää SAP:iin"
+
+msgid "Query parameter must be a number"
+msgstr "Hakuparametrin täytyy olla numero"
 
 msgid "No permission. Can only delete own empty leases."
 msgstr "Ei oikeutta. Voit poistaa vain omia tyhjiä vuokrauksia."

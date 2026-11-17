@@ -433,7 +433,7 @@ class LeaseManager(SafeDeleteManager):
 
     def get_by_identifier(self, identifier):
         id_match = re.match(
-            r"(?P<lease_type>\w\d)(?P<municipality>\d)(?P<district>\d{2})-(?P<sequence>\d+)$",
+            r"(?P<lease_type>\w{2})(?P<municipality>\d)(?P<district>\d{2})-(?P<sequence>\d+)$",
             identifier,
         )
 

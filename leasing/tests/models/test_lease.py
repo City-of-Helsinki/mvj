@@ -164,6 +164,19 @@ def test_lease_manager_get_by_identifier(django_db_setup, lease_factory):
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize("type_identifier", ["A1", "MA", "TY", "MY", "VS"])
+def test_lease_manager_get_by_identifier_two_letter_type(
+    type_identifier, lease_factory
+):
+    lease_type, _ = LeaseType.objects.get_or_create(identifier=type_identifier)
+    lease = lease_factory(
+        type=lease_type, municipality_id=1, district_id=5, notice_period_id=1
+    )
+
+    assert Lease.objects.get_by_identifier(lease.identifier.identifier) == lease
+
+
+@pytest.mark.django_db
 def test_lease_manager_get_by_identifier_zero_padded_sequence(
     django_db_setup, lease_factory
 ):
