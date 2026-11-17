@@ -4,7 +4,13 @@ from django.core.exceptions import ValidationError
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.contract import Contract
 from landuse.models.party import AgreementParty
-from landuse.models.payment_schedule import PaymentSchedule, PaymentScheduleStatus
+from landuse.models.payment_schedule import (
+    PaymentSchedule,
+    PaymentScheduleInstallment,
+    PaymentScheduleInstallmentItem,
+    PaymentScheduleStatus,
+)
+from landuse.serializers.agreement import PaymentScheduleSerializer
 
 
 @pytest.mark.django_db
@@ -47,3 +53,46 @@ def test_payment_schedule_transition_rules():
 
     with pytest.raises(ValidationError, match="Only pending schedules"):
         schedule.reject("Too late")
+
+
+@pytest.mark.django_db
+def test_schedule_serializes_invoice_snapshot_after_party_and_installment_change():
+    agreement = LandUseAgreement.objects.create(identifier="M-2026-1")
+    party = AgreementParty.objects.create(
+        agreement=agreement, name="Original recipient"
+    )
+    contract = Contract.objects.create(agreement=agreement)
+    schedule = PaymentSchedule.objects.create(
+        agreement=agreement,
+        recipient_party=party,
+        contract=contract,
+        status=PaymentScheduleStatus.PENDING_APPROVAL,
+    )
+    installment = PaymentScheduleInstallment.objects.create(
+        payment_schedule=schedule,
+        installment_sequence_number=1,
+        installment_count_total=1,
+        due_date="2026-12-01",
+    )
+    item = PaymentScheduleInstallmentItem.objects.create(
+        installment=installment,
+        item_type="land_use_compensation",
+        description="Original item",
+        amount="100.00",
+    )
+    assert (
+        PaymentScheduleSerializer(schedule).data["installments"][0]["invoice"] is None
+    )
+    schedule.approve()
+    party.name = "Changed recipient"
+    party.save()
+    installment.due_date = "2026-12-31"
+    installment.save()
+    item.amount = "999.00"
+    item.save()
+
+    invoice = PaymentScheduleSerializer(schedule).data["installments"][0]["invoice"]
+
+    assert invoice["recipient_snapshot"]["name"] == "Original recipient"
+    assert invoice["due_date"] == "2026-12-01"
+    assert invoice["items"][0]["amount"] == "100.00"

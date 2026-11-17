@@ -117,7 +117,12 @@ class LandUseAgreementViewSet(
                     "payment_schedules",
                     queryset=PaymentSchedule.objects.select_related(
                         "recipient_party", "contract"
-                    ).prefetch_related("installments__items"),
+                    ).prefetch_related(
+                        "installments__items",
+                        "installments__invoice__recipient_snapshot",
+                        "installments__invoice__items",
+                        "installments__invoice__payments",
+                    ),
                 )
             )
         if self.action == "invoices":

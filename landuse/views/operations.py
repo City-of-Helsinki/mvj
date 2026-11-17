@@ -56,7 +56,12 @@ class PaymentScheduleViewSet(
 ):
     queryset = PaymentSchedule.objects.select_related(
         "agreement", "recipient_party", "contract"
-    ).prefetch_related("installments__items")
+    ).prefetch_related(
+        "installments__items",
+        "installments__invoice__recipient_snapshot",
+        "installments__invoice__items",
+        "installments__invoice__payments",
+    )
     serializer_class = PaymentScheduleSerializer
     permission_classes = (IsAuthenticated, PaymentSchedulePermission)
 
