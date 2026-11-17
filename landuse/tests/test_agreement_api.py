@@ -470,7 +470,6 @@ def test_invoice_party_removal_rolls_back_retained_party_edits(admin_client):
     Invoice.objects.create(
         agreement=agreement,
         recipient_party=removed,
-        invoice_identifier="INV-CONFLICT",
         installment_sequence_number=1,
         installment_count_total=1,
     )

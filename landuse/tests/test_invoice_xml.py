@@ -4,6 +4,7 @@ from decimal import Decimal
 from unittest.mock import patch
 
 import pytest
+from django.core.exceptions import ValidationError
 
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.invoice import (
@@ -47,7 +48,6 @@ def invoice(db, settings) -> Invoice:
         installment_sequence_number=1,
         installment_count_total=2,
         due_date=date(2026, 10, 31),
-        invoice_identifier="INV-1",
         invoice_type=InvoiceType.LAND_USE_COMPENSATION,
         billed_amount=Decimal("1250.50"),
     )
@@ -58,7 +58,6 @@ def invoice(db, settings) -> Invoice:
 def test_invoice_xml_is_generated_only_when_sent(send_invoice_xml, invoice: Invoice):
     assert invoice.sap_xml is None
 
-    invoice.invoice_identifier = "INV-2"
     invoice.save()
     assert invoice.sap_xml is None
 
@@ -70,7 +69,7 @@ def test_invoice_xml_is_generated_only_when_sent(send_invoice_xml, invoice: Invo
     assert root.tag == "SBO_SalesOrderContainer"
     assert sales_order is not None
     assert sales_order.findtext("SenderId") == "ID990"
-    assert sales_order.findtext("Reference") == "INV-2"
+    assert sales_order.findtext("Reference") == str(invoice.invoice_identifier)
     assert sales_order.findtext("ContractNumber") == "M-2026-1"
     assert sales_order.findtext("OrderType") == "ZTY1"
     assert sales_order.findtext("BillingDate") == "20261031"
@@ -115,7 +114,7 @@ def test_generate_sap_xml_returns_saved_xml(send_invoice_xml, invoice: Invoice):
     saved_xml = invoice.sap_xml
 
     # Once XML is stored it should be immutable and not change.
-    invoice.invoice_identifier = "CHANGING VALUE SHOULD NOT CHANGE XML OUTPUT"
+    invoice.invoice_identifier = 1_000_000_011
 
     assert invoice.get_sap_xml() == saved_xml
 
@@ -132,7 +131,7 @@ def test_xml_is_immutable_after_invoice_is_sent(send_invoice_xml, invoice: Invoi
     invoice.send_to_sap()
     original_xml = invoice.sap_xml
 
-    invoice.invoice_identifier = "CHANGED"
+    invoice.due_date = date(2026, 12, 31)
     invoice.save()
     InvoiceItem.objects.create(
         invoice=invoice,
@@ -145,3 +144,27 @@ def test_xml_is_immutable_after_invoice_is_sent(send_invoice_xml, invoice: Invoi
 
     invoice.refresh_from_db()
     assert invoice.sap_xml == original_xml
+
+
+@pytest.mark.django_db
+def test_manual_invoice_identifier_is_rejected_on_creation(invoice: Invoice):
+    with pytest.raises(ValidationError, match="generated automatically"):
+        Invoice.objects.create(
+            agreement=invoice.agreement,
+            recipient_party=invoice.recipient_party,
+            installment_sequence_number=1,
+            installment_count_total=1,
+            invoice_identifier=1_000_000_020,
+        )
+
+
+@pytest.mark.django_db
+def test_invoice_identifier_cannot_be_changed(invoice: Invoice):
+    original_identifier = invoice.invoice_identifier
+    invoice.invoice_identifier += 1
+
+    with pytest.raises(ValidationError, match="cannot be changed"):
+        invoice.save()
+
+    invoice.refresh_from_db()
+    assert invoice.invoice_identifier == original_identifier

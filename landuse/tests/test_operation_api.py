@@ -40,7 +40,6 @@ def create_agreement_financial_data():
         recipient_party=party,
         installment_sequence_number=1,
         installment_count_total=1,
-        invoice_identifier="INV-1",
     )
     return schedule, invoice
 

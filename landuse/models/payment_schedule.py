@@ -1,11 +1,17 @@
 from typing import Any
 
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db import models, transaction
 
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.contract import Contract
-from landuse.models.invoice import InvoiceItemType
+from landuse.models.invoice import (
+    Invoice,
+    InvoiceItem,
+    InvoiceItemType,
+    InvoiceStatus,
+    InvoiceType,
+)
 from landuse.models.party import AgreementParty
 from utils.mixins import TimeStampedModel
 
@@ -130,9 +136,32 @@ class PaymentSchedule(TimeStampedModel):
         self.rejected_reason = ""
         self.save(update_fields=("status", "rejected_reason", "modified_at"))
 
+    @transaction.atomic
     def approve(self) -> None:
         if self.status != PaymentScheduleStatus.PENDING_APPROVAL:
             raise ValidationError("Only pending schedules can be approved.")
+        for installment in self.installments.prefetch_related("items"):
+            invoice = Invoice.objects.create(
+                agreement=self.agreement,
+                recipient_party=self.recipient_party,
+                source_payment_schedule_installment=installment,
+                installment_sequence_number=installment.installment_sequence_number,
+                installment_count_total=installment.installment_count_total,
+                due_date=installment.due_date,
+                invoice_type=InvoiceType.LAND_USE_COMPENSATION,
+                status=InvoiceStatus.WAITING_TO_BE_SENT,
+            )
+            InvoiceItem.objects.bulk_create(
+                [
+                    InvoiceItem(
+                        invoice=invoice,
+                        item_type=item.item_type,
+                        description=item.description,
+                        amount=item.amount,
+                    )
+                    for item in installment.items.all()
+                ]
+            )
         self.status = PaymentScheduleStatus.APPROVED
         self.rejected_reason = ""
         self.save(update_fields=("status", "rejected_reason", "modified_at"))

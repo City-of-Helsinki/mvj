@@ -96,7 +96,7 @@ def render_invoice_xml(invoice: "Invoice") -> str:
     due_date = invoice.due_date.strftime("%Y%m%d") if invoice.due_date else ""
     context = SapSalesOrderContext(
         sender_id=_sap_value("sender_id"),
-        reference=invoice.invoice_identifier,
+        reference=str(invoice.invoice_identifier),
         contract_number=invoice.agreement.identifier,
         order_type=_sap_value("order_type") or "ZTY1",
         sales_org=_sap_value("sales_org"),

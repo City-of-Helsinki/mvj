@@ -100,6 +100,7 @@ class InvoiceViewSet(
 
     @action(detail=True, methods=("post",), url_path="send-to-sap")
     @transaction.atomic
+    # TODO: don't trigger when pressing "Hyväksy kaikki ja lähetä laskut"
     def send_to_sap(self, request: Request, pk: str | None = None) -> Response:
         invoice = self.get_object()
         invoice = Invoice.objects.select_for_update().get(pk=invoice.pk)
