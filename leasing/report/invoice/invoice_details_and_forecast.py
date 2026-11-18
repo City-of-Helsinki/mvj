@@ -249,12 +249,12 @@ class InvoiceDetailsAndForecastReport(AsyncReportBase):
                 else None
             ),
             "sap_id": invoice.sap_id,
-            "sap_material_codes": self._format_values(
+            "sap_material_codes": self._format_numeric_values(
                 row.receivable_type.sap_material_code
                 for row in invoice_rows
                 if row.receivable_type is not None
             ),
-            "sap_order_item_numbers": self._format_values(
+            "sap_order_item_numbers": self._format_numeric_values(
                 row.receivable_type.sap_order_item_number
                 for row in invoice_rows
                 if row.receivable_type is not None
@@ -272,6 +272,11 @@ class InvoiceDetailsAndForecastReport(AsyncReportBase):
     @staticmethod
     def _format_values(values):
         return ", ".join(sorted({str(value) for value in values if value is not None}))
+
+    @classmethod
+    def _format_numeric_values(cls, values):
+        value = cls._format_values(values)
+        return int(value) if value.isdecimal() else value
 
     @staticmethod
     def get_billed_amount_including_vat(lease: Lease, invoice: Invoice):
