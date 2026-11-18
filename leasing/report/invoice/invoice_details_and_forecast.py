@@ -11,6 +11,8 @@ from leasing.enums import InvoiceType
 from leasing.models import Invoice, ServiceUnit
 from leasing.models.invoice import InvoiceRow
 from leasing.models.lease import Lease
+from leasing.models.rent import Rent
+from leasing.models.tenant import Tenant
 from leasing.models.vat import Vat
 from leasing.report.excel import FormatType
 from leasing.report.report_base import AsyncReportBase
@@ -104,7 +106,7 @@ class InvoiceDetailsAndForecastReport(AsyncReportBase):
     async_task_timeout = 60 * 30
 
     def get_data(self, input_data):
-        service_units = input_data["service_unit"]
+        service_units: list[ServiceUnit] = input_data["service_unit"]
         year = input_data["year"]
         invoices = (
             Invoice.objects.select_related(
@@ -139,19 +141,15 @@ class InvoiceDetailsAndForecastReport(AsyncReportBase):
         )
         return rows
 
-    def _get_forecast_rows(self, year, service_units):
+    def _get_forecast_rows(self, year: int, service_units: list[ServiceUnit]):
         forecast_start = max(date(year, 1, 1), timezone.now().date())
         if forecast_start.year > year:
             return
 
-        leases = (
-            Lease.objects.filter(invoicing_enabled_at__isnull=False)
-            .filter(
-                Q(end_date__isnull=True) | Q(end_date__year__gte=year),
-                Q(start_date__isnull=True) | Q(start_date__year__lte=year),
-            )
-            .select_related("identifier__district", "service_unit", "type")
-        )
+        leases = Lease.objects.filter(
+            Q(end_date__isnull=True) | Q(end_date__year__gte=year),
+            Q(start_date__isnull=True) | Q(start_date__year__lte=year),
+        ).select_related("identifier__district", "service_unit", "type")
         if service_units:
             leases = leases.filter(service_unit__in=service_units)
 
@@ -195,11 +193,14 @@ class InvoiceDetailsAndForecastReport(AsyncReportBase):
 
                         yield self._get_row(invoice, invoice_rows=invoice_rows)
 
-    def _get_row(self, invoice: Invoice, invoice_rows=None):
+    def _get_row(self, invoice: Invoice, invoice_rows: list[InvoiceRow] | None = None):
         lease: Lease = invoice.lease
+        rents: list[Rent] = lease.rents.all()
         if invoice_rows is None:
             invoice_rows = invoice.rows.all()
-        tenants = {row.tenant for row in invoice_rows if row.tenant is not None}
+        tenants: set[Tenant] = {
+            row.tenant for row in invoice_rows if row.tenant is not None
+        }
         share = sum(
             (
                 Fraction(tenant.share_numerator, tenant.share_denominator)
@@ -225,8 +226,8 @@ class InvoiceDetailsAndForecastReport(AsyncReportBase):
             "billed_amount_including_vat": self.get_billed_amount_including_vat(
                 lease, invoice
             ),
-            "receivable_types": self._get_related_names(
-                invoice_rows, "receivable_type"
+            "receivable_types": self._format_values(
+                row.receivable_type for row in invoice_rows
             ),
             "share_numerator": share.numerator if tenants else None,
             "share_denominator": share.denominator if tenants else None,
@@ -238,7 +239,9 @@ class InvoiceDetailsAndForecastReport(AsyncReportBase):
             "business_id": (
                 invoice.recipient.business_id if invoice.recipient.business_id else None
             ),
-            "intended_uses": self._get_related_names(invoice_rows, "intended_use"),
+            "intended_uses": self._format_values(
+                row.intended_use for row in invoice_rows
+            ),
             "intended_use_note": lease.intended_use_note,
             "sent_to_sap_at": (
                 timezone.localtime(invoice.sent_to_sap_at).replace(tzinfo=None)
@@ -246,19 +249,29 @@ class InvoiceDetailsAndForecastReport(AsyncReportBase):
                 else None
             ),
             "sap_id": invoice.sap_id,
-            "sap_material_codes": self._get_related_attribute_values(
-                invoice_rows, "receivable_type", "sap_material_code"
+            "sap_material_codes": self._format_values(
+                row.receivable_type.sap_material_code
+                for row in invoice_rows
+                if row.receivable_type is not None
             ),
-            "sap_order_item_numbers": self._get_related_attribute_values(
-                invoice_rows, "receivable_type", "sap_order_item_number"
+            "sap_order_item_numbers": self._format_values(
+                row.receivable_type.sap_order_item_number
+                for row in invoice_rows
+                if row.receivable_type is not None
             ),
-            "sap_project_numbers": self._get_related_attribute_values(
-                invoice_rows, "receivable_type", "sap_project_number"
+            "sap_project_numbers": self._format_values(
+                row.receivable_type.sap_project_number
+                for row in invoice_rows
+                if row.receivable_type is not None
             ),
             "invoice_type": str(invoice.type),
-            "rent_types": self._get_attribute_values(lease.rents.all(), "type"),
-            "rent_cycles": self._get_attribute_values(lease.rents.all(), "cycle"),
+            "rent_types": self._format_values(rent.type for rent in rents),
+            "rent_cycles": self._format_values(rent.cycle for rent in rents),
         }
+
+    @staticmethod
+    def _format_values(values):
+        return ", ".join(sorted({str(value) for value in values if value is not None}))
 
     @staticmethod
     def get_billed_amount_including_vat(lease: Lease, invoice: Invoice):
@@ -268,34 +281,3 @@ class InvoiceDetailsAndForecastReport(AsyncReportBase):
             )
             return invoice.billed_amount * (1 + vat.percent / 100)
         return invoice.billed_amount
-
-    @staticmethod
-    def _get_related_names(rows, attribute):
-        return ", ".join(
-            sorted({str(value) for row in rows if (value := getattr(row, attribute))})
-        )
-
-    @staticmethod
-    def _get_attribute_values(objects, attribute):
-        return ", ".join(
-            sorted(
-                {
-                    str(value)
-                    for obj in objects
-                    if (value := getattr(obj, attribute)) is not None
-                }
-            )
-        )
-
-    @staticmethod
-    def _get_related_attribute_values(rows, related_attribute, attribute):
-        return ", ".join(
-            sorted(
-                {
-                    str(value)
-                    for row in rows
-                    if (related_object := getattr(row, related_attribute))
-                    and (value := getattr(related_object, attribute)) is not None
-                }
-            )
-        )
