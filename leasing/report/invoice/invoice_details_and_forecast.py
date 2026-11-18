@@ -3,7 +3,7 @@ from fractions import Fraction
 
 from dateutil.relativedelta import relativedelta
 from django import forms
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -144,12 +144,16 @@ class InvoiceDetailsAndForecastReport(AsyncReportBase):
     def _get_forecast_rows(self, year: int, service_units: list[ServiceUnit]):
         forecast_start = max(date(year, 1, 1), timezone.now().date())
         if forecast_start.year > year:
-            return
+            return []
 
-        leases = Lease.objects.filter(
-            Q(end_date__isnull=True) | Q(end_date__year__gte=year),
-            Q(start_date__isnull=True) | Q(start_date__year__lte=year),
-        ).select_related("identifier__district", "service_unit", "type")
+        leases = (
+            Lease.objects.filter(
+                Q(end_date__isnull=True) | Q(end_date__year__gte=year),
+                Q(start_date__isnull=True) | Q(start_date__year__lte=year),
+            )
+            .select_related("identifier__district", "service_unit", "type")
+            .prefetch_related("rents")
+        )
         if service_units:
             leases = leases.filter(service_unit__in=service_units)
 
@@ -195,7 +199,7 @@ class InvoiceDetailsAndForecastReport(AsyncReportBase):
 
     def _get_row(self, invoice: Invoice, invoice_rows: list[InvoiceRow] | None = None):
         lease: Lease = invoice.lease
-        rents: list[Rent] = lease.rents.all()
+        rents: QuerySet[Rent] = lease.rents.all()
         if invoice_rows is None:
             invoice_rows = invoice.rows.all()
         tenants: set[Tenant] = {
@@ -226,7 +230,7 @@ class InvoiceDetailsAndForecastReport(AsyncReportBase):
             "billed_amount_including_vat": self.get_billed_amount_including_vat(
                 lease, invoice
             ),
-            "receivable_types": self._format_values(
+            "receivable_types": self._join_uniquely_sorted_values(
                 row.receivable_type for row in invoice_rows
             ),
             "share_numerator": share.numerator if tenants else None,
@@ -239,7 +243,7 @@ class InvoiceDetailsAndForecastReport(AsyncReportBase):
             "business_id": (
                 invoice.recipient.business_id if invoice.recipient.business_id else None
             ),
-            "intended_uses": self._format_values(
+            "intended_uses": self._join_uniquely_sorted_values(
                 row.intended_use for row in invoice_rows
             ),
             "intended_use_note": lease.intended_use_note,
@@ -259,23 +263,27 @@ class InvoiceDetailsAndForecastReport(AsyncReportBase):
                 for row in invoice_rows
                 if row.receivable_type is not None
             ),
-            "sap_project_numbers": self._format_values(
+            "sap_project_numbers": self._join_uniquely_sorted_values(
                 row.receivable_type.sap_project_number
                 for row in invoice_rows
                 if row.receivable_type is not None
             ),
             "invoice_type": str(invoice.type),
-            "rent_types": self._format_values(rent.type for rent in rents),
-            "rent_cycles": self._format_values(rent.cycle for rent in rents),
+            "rent_types": self._join_uniquely_sorted_values(
+                rent.type for rent in rents
+            ),
+            "rent_cycles": self._join_uniquely_sorted_values(
+                rent.cycle for rent in rents
+            ),
         }
 
     @staticmethod
-    def _format_values(values):
+    def _join_uniquely_sorted_values(values):
         return ", ".join(sorted({str(value) for value in values if value is not None}))
 
     @classmethod
     def _format_numeric_values(cls, values):
-        value = cls._format_values(values)
+        value = cls._join_uniquely_sorted_values(values)
         return int(value) if value.isdecimal() else value
 
     @staticmethod
