@@ -1,7 +1,6 @@
 import logging
 
 from dateutil.relativedelta import relativedelta
-from django.conf import settings
 from django.contrib.postgres.aggregates import StringAgg
 from django.core.management.base import BaseCommand
 from django.db.models import (
@@ -23,6 +22,7 @@ from leasing.models.decision import Decision
 from leasing.models.land_area import LeaseArea
 from leasing.models.lease import Lease
 from leasing.models.report_storage import ReportStorage
+from leasing.report.lease.common_getters import get_lease_url
 
 logger = logging.getLogger(__name__)
 
@@ -97,9 +97,7 @@ class LeaseProcessingTimeReportSerializer(serializers.Serializer):
     )
 
     def get_url(self, obj: Lease):
-        if getattr(settings, "OFFICER_UI_URL", "").endswith("/"):
-            return f"{settings.OFFICER_UI_URL}vuokraukset/{obj.id}"
-        return f"{settings.OFFICER_UI_URL}/vuokraukset/{obj.id}"
+        return get_lease_url(obj.get_identifier_string())
 
 
 def get_lease_processing_time_report():

@@ -48,7 +48,7 @@ def get_lease_link_data_from_report_row(
                 "name": None,
             }
         return {
-            "url": get_lease_url(row.get("lease_id")),
+            "url": get_lease_url(row.get("lease_identifier")),
             "name": row.get("lease_identifier"),
         }
     except KeyError:

@@ -16,7 +16,7 @@ def get_lease_link_data_from_rent_adjustment(
 ) -> ReportURL:
     try:
         return {
-            "url": get_lease_url(rent_adjustment.rent.lease.id),
+            "url": get_lease_url(rent_adjustment.rent.lease.get_identifier_string()),
             "name": rent_adjustment.rent.lease.get_identifier_string(),
         }
     except AttributeError:
