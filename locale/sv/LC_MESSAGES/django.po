@@ -559,6 +559,11 @@ msgstr ""
 msgid "You do not have permission to perform this invoice operation."
 msgstr ""
 
+msgid ""
+"Unable to do {} for this schedule. All invoices for this payment schedule "
+"have already been sent to SAP."
+msgstr ""
+
 msgid "You do not have permission to access Land Use metadata."
 msgstr ""
 

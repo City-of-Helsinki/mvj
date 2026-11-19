@@ -1,4 +1,4 @@
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
@@ -105,6 +105,10 @@ class PaymentSchedule(TimeStampedModel):
         null=True,
         blank=True,
     )
+
+    if TYPE_CHECKING:
+        # Reverse relationships
+        installments: models.QuerySet["PaymentScheduleInstallment"]
 
     @staticmethod
     def get_interest_calculation_days_in_year() -> int:
@@ -236,6 +240,11 @@ class PaymentScheduleInstallment(TimeStampedModel):
 
     # In Finnish: Koron/korotuksen laskentajakson loppupäivä
     interest_calculation_period_end_date = models.DateField(null=True, blank=True)
+
+    if TYPE_CHECKING:
+        # Reverse relationships
+        items: models.QuerySet["PaymentScheduleInstallmentItem"]
+        invoice: models.QuerySet["Invoice"]
 
     class Meta:
         ordering = ("installment_sequence_number",)

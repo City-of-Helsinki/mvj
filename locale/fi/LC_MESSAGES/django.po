@@ -550,6 +550,13 @@ msgstr "Ei oikeutta suorittaa tätä toimintoa maksusuunnitelmille."
 msgid "You do not have permission to perform this invoice operation."
 msgstr "Ei oikeutta suorittaa tätä toimintoa laskuille."
 
+msgid ""
+"Unable to do {} for this schedule. All invoices for this payment schedule "
+"have already been sent to SAP."
+msgstr ""
+"Suunnitelmalle ei voi tehdä {}. Kaikki suunnitelmasta luodut laskut on jo "
+"lähetetty SAPiin."
+
 msgid "You do not have permission to access Land Use metadata."
 msgstr "Ei oikeutta hakea valintavaihtoehtoja."
 
