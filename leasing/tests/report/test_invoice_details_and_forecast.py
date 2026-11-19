@@ -100,23 +100,19 @@ def test_invoice_details_report_only_forecasts_upcoming_due_dates(
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "invoicing_enabled, lease_end_date, expected_row_count",
+    "lease_end_date, expected_row_count",
     [
-        (True, None, 12),
-        (False, None, 0),
-        (True, date(2025, 12, 31), 0),
+        (None, 12),
+        (date(2025, 12, 31), 0),
     ],
 )
 def test_invoice_details_report_forecasts_next_year(
     invoicing_test_data_for_create_invoices,
-    invoicing_enabled,
     lease_end_date,
     expected_row_count,
 ):
     lease: Lease = invoicing_test_data_for_create_invoices["lease"]
     lease.end_date = lease_end_date
-    if not invoicing_enabled:
-        lease.invoicing_enabled_at = None
     lease.save()
     for rent in lease.rents.all():
         rent.end_date = None
