@@ -38,6 +38,12 @@ class InvoiceStatus(models.TextChoices):
     CREDITED = ("credited", "Hyvitetty")
 
 
+INVOICE_STATUSES_BEFORE_SAP_EXPORT = (
+    InvoiceStatus.DRAFT,
+    InvoiceStatus.WAITING_TO_BE_SENT,
+)
+
+
 class InvoiceItemType(models.TextChoices):
     LAND_USE_COMPENSATION = (
         "land_use_compensation",
@@ -190,7 +196,7 @@ class Invoice(TimeStampedModel):
     @transaction.atomic
     def send_to_sap(self) -> None:
         """Send the invoice XML to SAP."""
-        if self.sent_at:
+        if self.sent_at or self.status not in INVOICE_STATUSES_BEFORE_SAP_EXPORT:
             # Must not re-send a sent invoice.
             raise LandUseInvoiceExportError("Invoice has already been sent to SAP.")
 
@@ -199,10 +205,12 @@ class Invoice(TimeStampedModel):
 
         self.sap_xml = sap_xml
         self.sent_at = timezone.now()
+        self.status = InvoiceStatus.OPEN
         super().save(
             update_fields=(
                 "sap_xml",
                 "sent_at",
+                "status",
                 "modified_at",
             )
         )

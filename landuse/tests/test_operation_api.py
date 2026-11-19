@@ -8,7 +8,11 @@ from rest_framework import status
 
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.contract import Contract
-from landuse.models.invoice import Invoice, InvoiceStatus
+from landuse.models.invoice import (
+    INVOICE_STATUSES_BEFORE_SAP_EXPORT,
+    Invoice,
+    InvoiceStatus,
+)
 from landuse.models.party import AgreementParty
 from landuse.models.payment_schedule import (
     PaymentSchedule,
@@ -87,6 +91,100 @@ def test_approve_payment_schedule_requires_operation_permission(client, user_fac
     assert allowed_response.status_code == status.HTTP_200_OK
     schedule.refresh_from_db()
     assert schedule.status == PaymentScheduleStatus.APPROVED
+
+
+@pytest.mark.parametrize(
+    "guarded_property",
+    [
+        "sent_at",
+        *(
+            status
+            for status, _ in InvoiceStatus.choices
+            if status not in INVOICE_STATUSES_BEFORE_SAP_EXPORT
+        ),
+    ],
+)
+def test_schedule_transitions_are_rejected_when_all_installment_invoices_were_sent(
+    admin_client, guarded_property
+):
+    schedule, _ = create_agreement_financial_data()
+    PaymentScheduleInstallment.objects.create(
+        payment_schedule=schedule,
+        installment_sequence_number=1,
+        installment_count_total=1,
+    )
+    schedule.approve()
+    invoice = Invoice.objects.get(
+        source_payment_schedule_installment__payment_schedule=schedule
+    )
+    # Test either the sent_at timestamp or the invoice status, because either can reject the transition.
+    if guarded_property == "sent_at":
+        invoice.sent_at = timezone.now()
+    else:
+        invoice.status = guarded_property
+    invoice.save()
+
+    transitions = (
+        ("submit", PaymentScheduleStatus.DRAFT, {}),
+        ("approve", PaymentScheduleStatus.PENDING_APPROVAL, {}),
+        ("return-to-draft", PaymentScheduleStatus.APPROVED, {}),
+        ("reject", PaymentScheduleStatus.PENDING_APPROVAL, {"reason": "Not approved"}),
+    )
+    for action, initial_status, data in transitions:
+        PaymentSchedule.objects.filter(pk=schedule.pk).update(status=initial_status)
+        response = admin_client.post(
+            reverse(f"v1:landuse:payment-schedule-{action}", args=(schedule.pk,)),
+            data,
+        )
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json() == {
+            "detail": (
+                f"Unable to do {action} for this schedule. "
+                "All invoices for this payment schedule have already been sent to SAP."
+            ).replace("return-to-draft", "return_to_draft")
+        }
+        schedule.refresh_from_db()
+        assert schedule.status == initial_status
+
+
+def test_schedule_transition_is_allowed_when_an_installment_has_no_invoice(
+    admin_client,
+):
+    schedule, _ = create_agreement_financial_data()
+    installments = [
+        PaymentScheduleInstallment.objects.create(
+            payment_schedule=schedule,
+            installment_sequence_number=sequence_number,
+            installment_count_total=2,
+        )
+        for sequence_number in (1, 2)
+    ]
+    invoice = Invoice.objects.create(
+        agreement=schedule.agreement,
+        recipient_party=schedule.recipient_party,
+        source_payment_schedule_installment=installments[0],
+        installment_sequence_number=1,
+        installment_count_total=2,
+        status=InvoiceStatus.OPEN,
+    )
+
+    response = admin_client.post(
+        reverse("v1:landuse:payment-schedule-approve", args=(schedule.pk,))
+    )
+
+    assert response.status_code == status.HTTP_200_OK
+    schedule.refresh_from_db()
+    assert schedule.status == PaymentScheduleStatus.APPROVED
+    assert schedule.installments.count() == 2
+    assert (
+        Invoice.objects.filter(
+            source_payment_schedule_installment__payment_schedule=schedule
+        ).count()
+        == 2
+    )
+    invoice.refresh_from_db()
+    assert invoice.status == InvoiceStatus.OPEN
 
 
 @patch("landuse.models.invoice.send_invoice_xml")

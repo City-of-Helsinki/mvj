@@ -8,9 +8,11 @@ from django.core.exceptions import ValidationError
 
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.invoice import (
+    INVOICE_STATUSES_BEFORE_SAP_EXPORT,
     Invoice,
     InvoiceItem,
     InvoiceItemType,
+    InvoiceStatus,
     InvoiceType,
     LandUseInvoiceExportError,
 )
@@ -63,7 +65,7 @@ def test_invoice_xml_is_generated_only_when_sent(send_invoice_xml, invoice: Invo
 
     invoice.send_to_sap()
 
-    root = ElementTree.fromstring(invoice.sap_xml)
+    root = ElementTree.fromstring(invoice.sap_xml or "")
     sales_order = root.find("SBO_SalesOrder")
 
     assert root.tag == "SBO_SalesOrderContainer"
@@ -77,6 +79,7 @@ def test_invoice_xml_is_generated_only_when_sent(send_invoice_xml, invoice: Invo
     assert sales_order.findtext("OrderParty/SAPCustomerID") == "1000123"
     assert sales_order.findtext("BillingParty1/CustomerOVT") == "003712345678"
     assert invoice.sent_at is not None
+    assert invoice.status == InvoiceStatus.OPEN
     send_invoice_xml.assert_called_once_with(invoice.pk, invoice.sap_xml)
 
 
@@ -144,6 +147,35 @@ def test_xml_is_immutable_after_invoice_is_sent(send_invoice_xml, invoice: Invoi
 
     invoice.refresh_from_db()
     assert invoice.sap_xml == original_xml
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "status, should_raise",
+    [
+        (
+            status,
+            status not in INVOICE_STATUSES_BEFORE_SAP_EXPORT,
+        )
+        for status, _ in InvoiceStatus.choices
+    ],
+)
+@patch("landuse.models.invoice.send_invoice_xml")
+def test_invoice_export_is_allowed_only_for_pre_export_statuses(
+    send_invoice_xml, invoice: Invoice, status, should_raise
+):
+    invoice.status = status
+    invoice.save()
+
+    if should_raise:
+        with pytest.raises(LandUseInvoiceExportError, match="already been sent to SAP"):
+            invoice.send_to_sap()
+        send_invoice_xml.assert_not_called()
+    else:
+        invoice.send_to_sap()
+        send_invoice_xml.assert_called_once_with(invoice.pk, invoice.sap_xml)
+        assert invoice.sent_at is not None
+        assert invoice.status == InvoiceStatus.OPEN
 
 
 @pytest.mark.django_db
