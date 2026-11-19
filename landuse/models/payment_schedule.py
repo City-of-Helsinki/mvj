@@ -209,6 +209,7 @@ class PaymentSchedule(TimeStampedModel):
         self.save(update_fields=("status", "rejected_reason", "modified_at"))
 
     class Meta:
+        ordering = ("created_at",)
         permissions = [
             ("approve_paymentschedule", "Can approve payment schedule"),
         ]
