@@ -19,7 +19,7 @@ def get_lease_link_data_from_invoice_payment(
 ) -> ReportURL:
     try:
         return {
-            "url": get_lease_url(invoice_payment.invoice.lease.id),
+            "url": get_lease_url(invoice_payment.invoice.lease.get_identifier_string()),
             "name": invoice_payment.invoice.lease.get_identifier_string(),
         }
     except AttributeError:

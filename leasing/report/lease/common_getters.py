@@ -38,13 +38,13 @@ def get_lease_identifier_string(lease: Lease) -> str:
     return lease.get_identifier_string()
 
 
-def get_lease_url(lease_id: str):
-    return f"{getattr(settings, 'OFFICER_UI_URL', '')}/vuokraukset/{lease_id}"
+def get_lease_url(lease_identifier: str) -> str:
+    return f"{getattr(settings, 'OFFICER_UI_URL', '')}/vuokraus/{lease_identifier}"
 
 
 def get_lease_link_data(lease: Lease) -> ReportURL:
     return {
-        "url": get_lease_url(lease.id),
+        "url": get_lease_url(lease.get_identifier_string()),
         "name": lease.get_identifier_string(),
     }
 
@@ -54,7 +54,7 @@ def get_lease_link_data_from_related_object(
 ) -> ReportURL:
     try:
         return {
-            "url": get_lease_url(lease_related_object.lease.id),
+            "url": get_lease_url(lease_related_object.lease.get_identifier_string()),
             "name": lease_related_object.lease.get_identifier_string(),
         }
     except AttributeError:

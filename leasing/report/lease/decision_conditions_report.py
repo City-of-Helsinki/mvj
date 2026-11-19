@@ -10,7 +10,7 @@ from leasing.report.report_base import ReportBase
 def get_lease_link_data_from_decision_condition(condition: Condition) -> ReportURL:
     try:
         return {
-            "url": get_lease_url(condition.decision.lease.id),
+            "url": get_lease_url(condition.decision.lease.get_identifier_string()),
             "name": condition.decision.lease.get_identifier_string(),
         }
     except AttributeError:

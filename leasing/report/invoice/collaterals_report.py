@@ -12,7 +12,7 @@ from leasing.report.report_base import ReportBase
 def get_lease_link_data_from_collateral(collateral: Collateral) -> ReportURL:
     try:
         return {
-            "url": get_lease_url(collateral.contract.lease.id),
+            "url": get_lease_url(collateral.contract.lease.get_identifier_string()),
             "name": collateral.contract.lease.get_identifier_string(),
         }
     except AttributeError:

@@ -32,7 +32,7 @@ def test_get_lease_link_data_from_related_object(
 ):
     lease = lease_factory()
     contract = contract_factory(lease=lease, type=leasing_contract_type)
-    lease_url = get_lease_url(lease.id)
+    lease_url = get_lease_url(lease.get_identifier_string())
 
     lease_link_data = get_lease_link_data_from_related_object(contract)
 

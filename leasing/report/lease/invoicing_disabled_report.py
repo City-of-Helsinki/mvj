@@ -14,10 +14,10 @@ def get_lease_link_data_from_invoicing_disabled_report_row(
     disabled_report_row: InvoicingDisabledReportRow,
 ) -> ReportURL:
     try:
-        id = disabled_report_row["lease_id"]
+        identifier = disabled_report_row["lease_identifier"]
         return {
-            "url": get_lease_url(id),
-            "name": disabled_report_row["lease_identifier"],
+            "url": get_lease_url(identifier),
+            "name": identifier,
         }
     except KeyError:
         return {
