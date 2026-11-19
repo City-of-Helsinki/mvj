@@ -124,7 +124,7 @@ class InvoiceDetailsAndForecastReport(AsyncReportBase):
 
         if service_units:
             invoices = invoices.filter(service_unit__in=service_units)
-        invoices = invoices.filter(due_date__year=year)
+        invoices = invoices.filter(billing_period_end_date__year=year)
 
         rows = []
         for invoice in invoices:

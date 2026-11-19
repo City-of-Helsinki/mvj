@@ -30,6 +30,7 @@ def test_invoice_details_report_includes_invoice_and_lease_data(
         notes="note",
         sent_to_sap_at=sent_to_sap_at,
         due_date=date(2026, 1, 1),
+        billing_period_end_date=date(2026, 1, 31),
     )
     vat: Vat = Vat.objects.get_for_date(invoice.due_date)
     billed_amount_including_vat = invoice.billed_amount * (1 + vat.percent / 100)
@@ -72,6 +73,7 @@ def test_invoice_details_report_only_forecasts_upcoming_due_dates(
         service_unit=lease.service_unit,
         recipient=recipient,
         due_date=date(2025, 4, 1),
+        billing_period_end_date=date(2025, 4, 30),
         total_amount=1000,
         billed_amount=1000,
     )
