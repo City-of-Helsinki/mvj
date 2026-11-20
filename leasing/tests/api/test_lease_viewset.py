@@ -3,11 +3,13 @@ from datetime import datetime
 from unittest.mock import patch
 
 import pytest
+from django.contrib.gis.geos import MultiPolygon
 from django.core.serializers.json import DjangoJSONEncoder
 from django.test import override_settings
 from django.urls import reverse
 from django.utils import timezone
 
+from leasing.enums import LocationType
 from leasing.models import Lease
 
 
@@ -264,3 +266,91 @@ def test_lease_identifier_by_id_returns_identifier(
 
     assert response.status_code == 200
     assert response.data == str(lease.identifier)
+
+
+@pytest.mark.django_db
+def test_related_areas_returns_areas_from_related_lease_graph(
+    admin_client, lease_factory, lease_area_factory, related_lease_factory
+):
+    root = lease_factory()
+    direct_relation = lease_factory()
+    transitive_relation = lease_factory()
+    unrelated = lease_factory()
+    related_lease_factory(from_lease=root, to_lease=direct_relation)
+    related_lease_factory(from_lease=direct_relation, to_lease=transitive_relation)
+
+    direct_area = lease_area_factory(
+        lease=direct_relation,
+        geometry=MultiPolygon(),
+    )
+    transitive_area = lease_area_factory(
+        lease=transitive_relation,
+        geometry=MultiPolygon(),
+    )
+    lease_area_factory(
+        lease=unrelated,
+        geometry=MultiPolygon(),
+    )
+
+    response = admin_client.get(reverse("v1:lease-related-areas", args=[root.pk]))
+
+    assert response.status_code == 200
+    assert response.data["type"] == "FeatureCollection"
+    assert {feature["properties"]["id"] for feature in response.data["features"]} == {
+        direct_area.id,
+        transitive_area.id,
+    }
+
+
+@pytest.mark.django_db
+def test_related_areas_excludes_archived_and_underground_areas(
+    admin_client, lease_factory, lease_area_factory, related_lease_factory
+):
+    root = lease_factory()
+    related = lease_factory()
+    related_lease_factory(from_lease=root, to_lease=related)
+
+    visible_area = lease_area_factory(
+        lease=related,
+        geometry=MultiPolygon(),
+    )
+    lease_area_factory(
+        lease=related,
+        geometry=MultiPolygon(),
+        archived_at=timezone.now(),
+    )
+    lease_area_factory(
+        lease=related,
+        geometry=MultiPolygon(),
+        location=LocationType.UNDERGROUND,
+    )
+
+    response = admin_client.get(reverse("v1:lease-related-areas", args=[root.pk]))
+
+    assert response.status_code == 200
+    assert {feature["properties"]["id"] for feature in response.data["features"]} == {
+        visible_area.id
+    }
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "required_permission",
+    ("lease_related_leases", "lease_lease_areas", "leasearea_geometry"),
+)
+def test_related_areas_requires_all_permissions(
+    admin_client, admin_user, lease_factory, required_permission
+):
+    lease = lease_factory()
+    denied_permissions = {
+        f"leasing.view_{required_permission}",
+        f"leasing.change_{required_permission}",
+    }
+
+    def has_permission(user, permission, obj=None):
+        return permission not in denied_permissions
+
+    with patch.object(admin_user.__class__, "has_perm", has_permission):
+        response = admin_client.get(reverse("v1:lease-related-areas", args=[lease.pk]))
+
+    assert response.status_code == 403

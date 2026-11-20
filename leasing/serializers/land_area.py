@@ -448,9 +448,7 @@ class CustomDetailedPlanSerializer(
         )
 
 
-class ArchivedLeaseMapSerializer(
-    FieldPermissionsSerializerMixin, serializers.ModelSerializer
-):
+class LeaseMapSerializer(FieldPermissionsSerializerMixin, serializers.ModelSerializer):
     identifier = serializers.CharField(source="identifier.identifier", read_only=True)
     state = serializers.CharField(read_only=True)
     intended_use = serializers.CharField(read_only=True)
@@ -473,11 +471,11 @@ class ArchivedLeaseMapSerializer(
         )
 
 
-class ArchivedLeaseAreaMapSerializer(
+class LeaseAreaMapSerializer(
     FieldPermissionsSerializerMixin, serializers.ModelSerializer
 ):
     geometry = GeometryField(read_only=True)
-    lease = ArchivedLeaseMapSerializer(read_only=True)
+    lease = LeaseMapSerializer(read_only=True)
 
     class Meta:
         model = LeaseArea
