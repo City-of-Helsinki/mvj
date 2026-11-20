@@ -49,7 +49,7 @@ from leasing.models.land_area import ConstructabilityDescription, LeaseArea
 from leasing.models.rent import Rent
 from leasing.models.utils import normalize_property_identifier
 from leasing.serializers.common import ManagementSerializer
-from leasing.serializers.land_area import ArchivedLeaseAreaMapSerializer
+from leasing.serializers.land_area import LeaseAreaMapSerializer
 from leasing.serializers.lease import (
     DistrictSerializer,
     FinancingSerializer,
@@ -70,6 +70,7 @@ from leasing.serializers.lease import (
     SpecialProjectSerializer,
     StatisticalUseSerializer,
     SupportiveHousingSerializer,
+    get_related_lease_edges,
 )
 
 from ..permissions import IsMemberOfSameServiceUnit, MvjDjangoModelPermissions
@@ -188,7 +189,7 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
         example: .../lease/?identifier=S0120-219
         `search` query parameter can be used to find leases by identifier and multiple other fields
         """
-        if self.action == "intersecting_archived_areas":
+        if self.action in ("intersecting_archived_areas", "related_areas"):
             return Lease.objects.all()
 
         succinct = self.request.query_params.get("succinct")
@@ -798,7 +799,37 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
                 .order_by("id")
             )
 
-        serialized = ArchivedLeaseAreaMapSerializer(
+        return Response(self._get_lease_areas_as_geojson(areas))
+
+    @action(detail=True, methods=["get"])
+    def related_areas(self, request, pk=None):
+        lease = self.get_object()
+        for permission in (
+            "lease_related_leases",
+            "lease_lease_areas",
+            "leasearea_geometry",
+        ):
+            if not any(
+                request.user.has_perm(f"leasing.{access}_{permission}")
+                for access in ("view", "change")
+            ):
+                raise PermissionDenied()
+
+        _, lease_ids = get_related_lease_edges(lease.id)
+        areas = (
+            LeaseArea.objects.filter(
+                lease__in=Lease.objects.filter(id__in=lease_ids),
+                archived_at__isnull=True,
+            )
+            .exclude(location=LocationType.UNDERGROUND)
+            .select_related("lease__identifier", "lease__intended_use")
+            .order_by("id")
+        )
+
+        return Response(self._get_lease_areas_as_geojson(areas))
+
+    def _get_lease_areas_as_geojson(self, areas):
+        serialized = LeaseAreaMapSerializer(
             areas, many=True, context=self.get_serializer_context()
         ).data
         features = []
@@ -808,7 +839,7 @@ class LeaseViewSet(FieldPermissionsViewsetMixin, AtomicTransactionModelViewSet):
                 features.append(
                     {"type": "Feature", "geometry": area_geometry, "properties": area}
                 )
-        return Response({"type": "FeatureCollection", "features": features})
+        return {"type": "FeatureCollection", "features": features}
 
     def get_serializer_class(self):
         if self.action in ("create", "metadata"):
