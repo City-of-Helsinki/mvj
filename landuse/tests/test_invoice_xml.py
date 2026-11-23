@@ -4,19 +4,23 @@ from decimal import Decimal
 from unittest.mock import patch
 
 import pytest
+from dateutil.relativedelta import relativedelta
 from django.core.exceptions import ValidationError
+from django.core.management import call_command
+from django.utils import timezone
 
+from landuse import invoice_xml
+from landuse.invoice_xml import render_invoices_xml
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.invoice import (
-    INVOICE_STATUSES_BEFORE_SAP_EXPORT,
     Invoice,
     InvoiceItem,
     InvoiceItemType,
     InvoiceStatus,
     InvoiceType,
-    LandUseInvoiceExportError,
 )
 from landuse.models.party import AgreementParty, BillingDetails
+from laske_export.models import LanduseInvoiceExportLog
 
 
 @pytest.fixture
@@ -56,14 +60,17 @@ def invoice(db, settings) -> Invoice:
 
 
 @pytest.mark.django_db
-@patch("landuse.models.invoice.send_invoice_xml")
-def test_invoice_xml_is_generated_only_when_sent(send_invoice_xml, invoice: Invoice):
+@patch("laske_export.management.commands.send_landuse_invoices.send_invoices_xml")
+def test_invoice_xml_is_generated_only_when_sent(send_invoices_xml, invoice: Invoice):
     assert invoice.sap_xml is None
 
+    invoice.status = InvoiceStatus.WAITING_TO_BE_SENT
+    invoice.due_date = timezone.localdate()
     invoice.save()
     assert invoice.sap_xml is None
 
-    invoice.send_to_sap()
+    call_command("send_landuse_invoices")
+    invoice.refresh_from_db()
 
     root = ElementTree.fromstring(invoice.sap_xml or "")
     sales_order = root.find("SBO_SalesOrder")
@@ -74,13 +81,48 @@ def test_invoice_xml_is_generated_only_when_sent(send_invoice_xml, invoice: Invo
     assert sales_order.findtext("Reference") == str(invoice.invoice_identifier)
     assert sales_order.findtext("ContractNumber") == "M-2026-1"
     assert sales_order.findtext("OrderType") == "ZTY1"
-    assert sales_order.findtext("BillingDate") == "20261031"
+    assert sales_order.findtext("BillingDate") == invoice.due_date.strftime("%Y%m%d")
     assert sales_order.findtext("OrderParty/PriorityName1") == "Example & Sons"
     assert sales_order.findtext("OrderParty/SAPCustomerID") == "1000123"
     assert sales_order.findtext("BillingParty1/CustomerOVT") == "003712345678"
     assert invoice.sent_at is not None
     assert invoice.status == InvoiceStatus.OPEN
-    send_invoice_xml.assert_called_once_with(invoice.pk, invoice.sap_xml)
+    send_invoices_xml.assert_called_once_with(
+        LanduseInvoiceExportLog.objects.get().pk, invoice.sap_xml
+    )
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "description",
+    [
+        "Land-use compensation",
+        'Compensation & interest <2026> "quoted"',
+        "Korvaus \u00e4\u00f6\u00e5",
+    ],
+)
+def test_invoice_generation_creates_valid_xml(invoice: Invoice, description):
+    InvoiceItem.objects.create(
+        invoice=invoice,
+        item_type=InvoiceItemType.LAND_USE_COMPENSATION,
+        description=description,
+        amount=Decimal("1250.50"),
+    )
+
+    xml = invoice.get_sap_xml()
+    root = ElementTree.fromstring(xml.encode("utf-8"))
+
+    assert xml.startswith('<?xml version="1.0" encoding="UTF-8"?>')
+    assert root.tag == "SBO_SalesOrderContainer"
+    assert len(root) == 1
+    sales_order = root[0]
+    assert sales_order.tag == "SBO_SalesOrder"
+    assert sales_order.findtext("Reference") == str(invoice.invoice_identifier)
+    assert sales_order.findtext("OrderParty/PriorityName1") == "Example & Sons"
+    assert len(sales_order.findall("LineItem")) == 1
+    assert sales_order.findtext("LineItem/LineTextL1") == description
+    assert sales_order.findtext("LineItem/Quantity") == "1,00"
+    assert sales_order.findtext("LineItem/NetPrice") == "1250,50"
 
 
 @pytest.mark.django_db
@@ -111,9 +153,13 @@ def test_generate_sap_xml_requires_saved_invoice():
 
 
 @pytest.mark.django_db
-@patch("landuse.models.invoice.send_invoice_xml")
-def test_generate_sap_xml_returns_saved_xml(send_invoice_xml, invoice: Invoice):
-    invoice.send_to_sap()
+@patch("laske_export.management.commands.send_landuse_invoices.send_invoices_xml")
+def test_generate_sap_xml_returns_saved_xml(send_invoices_xml, invoice: Invoice):
+    invoice.status = InvoiceStatus.WAITING_TO_BE_SENT
+    invoice.due_date = timezone.localdate()
+    invoice.save()
+    call_command("send_landuse_invoices")
+    invoice.refresh_from_db()
     saved_xml = invoice.sap_xml
 
     # Once XML is stored it should be immutable and not change.
@@ -123,15 +169,19 @@ def test_generate_sap_xml_returns_saved_xml(send_invoice_xml, invoice: Invoice):
 
 
 @pytest.mark.django_db
-@patch("landuse.models.invoice.send_invoice_xml")
-def test_xml_is_immutable_after_invoice_is_sent(send_invoice_xml, invoice: Invoice):
+@patch("laske_export.management.commands.send_landuse_invoices.send_invoices_xml")
+def test_xml_is_immutable_after_invoice_is_sent(send_invoices_xml, invoice: Invoice):
     InvoiceItem.objects.create(
         invoice=invoice,
         item_type=InvoiceItemType.LAND_USE_COMPENSATION,
         description="Original item",
         amount=Decimal("1250.50"),
     )
-    invoice.send_to_sap()
+    invoice.status = InvoiceStatus.WAITING_TO_BE_SENT
+    invoice.due_date = timezone.localdate()
+    invoice.save()
+    call_command("send_landuse_invoices")
+    invoice.refresh_from_db()
     original_xml = invoice.sap_xml
 
     invoice.due_date = date(2026, 12, 31)
@@ -142,40 +192,11 @@ def test_xml_is_immutable_after_invoice_is_sent(send_invoice_xml, invoice: Invoi
         description="Late item",
         amount=Decimal("1.00"),
     )
-    with pytest.raises(LandUseInvoiceExportError, match="already been sent to SAP"):
-        invoice.send_to_sap()
+    call_command("send_landuse_invoices")
+    send_invoices_xml.assert_called_once()
 
     invoice.refresh_from_db()
     assert invoice.sap_xml == original_xml
-
-
-@pytest.mark.django_db
-@pytest.mark.parametrize(
-    "status, should_raise",
-    [
-        (
-            status,
-            status not in INVOICE_STATUSES_BEFORE_SAP_EXPORT,
-        )
-        for status, _ in InvoiceStatus.choices
-    ],
-)
-@patch("landuse.models.invoice.send_invoice_xml")
-def test_invoice_export_is_allowed_only_for_pre_export_statuses(
-    send_invoice_xml, invoice: Invoice, status, should_raise
-):
-    invoice.status = status
-    invoice.save()
-
-    if should_raise:
-        with pytest.raises(LandUseInvoiceExportError, match="already been sent to SAP"):
-            invoice.send_to_sap()
-        send_invoice_xml.assert_not_called()
-    else:
-        invoice.send_to_sap()
-        send_invoice_xml.assert_called_once_with(invoice.pk, invoice.sap_xml)
-        assert invoice.sent_at is not None
-        assert invoice.status == InvoiceStatus.OPEN
 
 
 @pytest.mark.django_db
@@ -200,3 +221,196 @@ def test_invoice_identifier_cannot_be_changed(invoice: Invoice):
 
     invoice.refresh_from_db()
     assert invoice.invoice_identifier == original_identifier
+
+
+@pytest.mark.django_db
+def test_render_multiple_invoices(invoice: Invoice):
+    root = ElementTree.fromstring(render_invoices_xml([invoice, invoice]))
+
+    assert root.tag == "SBO_SalesOrderContainer"
+    assert len(root.findall("SBO_SalesOrder")) == 2
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("has_eligible_invoice", [False, True])
+@patch("laske_export.management.commands.send_landuse_invoices.send_invoices_xml")
+def test_send_landuse_invoices_logs_progress(
+    send_invoices_xml, invoice, has_eligible_invoice, caplog
+):
+    invoice.due_date = timezone.localdate()
+    invoice.status = (
+        InvoiceStatus.WAITING_TO_BE_SENT
+        if has_eligible_invoice
+        else InvoiceStatus.DRAFT
+    )
+    invoice.save()
+
+    call_command("send_landuse_invoices")
+
+    assert "Finding unsent land-use invoices with due dates on or before" in caplog.text
+    assert f"Found {int(has_eligible_invoice)} land-use invoices to send" in caplog.text
+    if has_eligible_invoice:
+        assert "Sending 1 land-use invoices to SAP" in caplog.text
+        assert "Sent 1 land-use invoices to SAP." in caplog.text
+        send_invoices_xml.assert_called_once()
+    else:
+        assert "No land-use invoices to send." in caplog.text
+        send_invoices_xml.assert_not_called()
+
+    export_log = LanduseInvoiceExportLog.objects.get()
+    assert export_log.succeeded is True
+    assert export_log.ended_at >= export_log.started_at
+    assert export_log.error == ""
+    assert export_log.invoice_ids == ([invoice.pk] if has_eligible_invoice else [])
+    if not has_eligible_invoice:
+        assert export_log.exported_filename == ""
+        assert export_log.exported_xml == ""
+
+
+@pytest.mark.django_db
+@patch(
+    "landuse.invoice_xml._sales_order_context",
+    wraps=invoice_xml._sales_order_context,
+)
+@patch("laske_export.management.commands.send_landuse_invoices.send_invoices_xml")
+def test_send_landuse_invoices_batches_due_invoices(
+    send_invoices_xml, sales_order_context, invoice, monkeypatch
+):
+    monkeypatch.setattr(timezone, "localdate", lambda: date(2026, 1, 31))
+    today = timezone.localdate()
+    invoice.due_date = today + relativedelta(months=1)
+    invoice.status = InvoiceStatus.WAITING_TO_BE_SENT
+    invoice.save()
+    overdue_to_be_sent = Invoice.objects.create(
+        agreement=invoice.agreement,
+        recipient_party=invoice.recipient_party,
+        installment_sequence_number=2,
+        installment_count_total=2,
+        due_date=today - relativedelta(days=1),
+        status=InvoiceStatus.WAITING_TO_BE_SENT,
+    )
+
+    call_command("send_landuse_invoices")
+
+    send_invoices_xml.assert_called_once()
+    batch_id, xml = send_invoices_xml.call_args.args
+    export_log = LanduseInvoiceExportLog.objects.get()
+    assert batch_id == export_log.pk
+
+    orders = ElementTree.fromstring(xml).findall("SBO_SalesOrder")
+    assert [order.findtext("Reference") for order in orders] == [
+        str(invoice.invoice_identifier),
+        str(overdue_to_be_sent.invoice_identifier),
+    ]
+    assert export_log.invoice_ids == [invoice.pk, overdue_to_be_sent.pk]
+    assert LanduseInvoiceExportLog.objects.filter(
+        invoice_ids__contains=[overdue_to_be_sent.pk]
+    ).exists()
+    assert export_log.succeeded is True
+    assert export_log.exported_filename == (
+        f"MTIL_IN_ID990_9999_LANDUSE_{export_log.pk:08}.xml"
+    )
+    assert export_log.exported_xml == xml
+    assert export_log.ended_at >= export_log.started_at
+
+    for sent_invoice in (invoice, overdue_to_be_sent):
+        sent_invoice.refresh_from_db()
+        assert sent_invoice.sent_at is not None
+        assert sent_invoice.status == InvoiceStatus.OPEN
+        assert (
+            len(ElementTree.fromstring(sent_invoice.sap_xml).findall("SBO_SalesOrder"))
+            == 1
+        )
+
+        fragment = sent_invoice.sap_xml.split("<SBO_SalesOrderContainer>\n", 1)[
+            1
+        ].rsplit("\n</SBO_SalesOrderContainer>", 1)[0]
+        assert fragment in xml
+
+    call_command("send_landuse_invoices")
+    send_invoices_xml.assert_called_once()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "excluded", ["future", "no_due_date", "sent", "draft", "open", "paid", "credited"]
+)
+@patch("laske_export.management.commands.send_landuse_invoices.send_invoices_xml")
+def test_send_landuse_invoices_excludes_ineligible_invoices(
+    send_invoices_xml, invoice, excluded, monkeypatch
+):
+    monkeypatch.setattr(timezone, "localdate", lambda: date(2026, 1, 31))
+    invoice.due_date = timezone.localdate()
+    invoice.status = InvoiceStatus.WAITING_TO_BE_SENT
+    if excluded == "future":
+        invoice.due_date += relativedelta(months=1, days=1)
+    elif excluded == "no_due_date":
+        invoice.due_date = None
+    elif excluded == "sent":
+        invoice.sent_at = timezone.now()
+    else:
+        invoice.status = excluded
+    invoice.save()
+
+    call_command("send_landuse_invoices")
+
+    send_invoices_xml.assert_not_called()
+    invoice.refresh_from_db()
+    assert invoice.sap_xml is None
+
+
+@pytest.mark.django_db
+@patch(
+    "laske_export.management.commands.send_landuse_invoices.send_invoices_xml",
+    side_effect=OSError("Upload failed"),
+)
+def test_send_landuse_invoices_keeps_invoices_unsent_on_failure(
+    send_invoices_xml, invoice
+):
+    invoice.due_date = timezone.localdate()
+    invoice.status = InvoiceStatus.WAITING_TO_BE_SENT
+    invoice.save()
+
+    with pytest.raises(OSError, match="Upload failed"):
+        call_command("send_landuse_invoices")
+
+    invoice.refresh_from_db()
+    assert invoice.sent_at is None
+    assert invoice.sap_xml is None
+    assert invoice.status == InvoiceStatus.WAITING_TO_BE_SENT
+
+    export_log = LanduseInvoiceExportLog.objects.get()
+    assert export_log.succeeded is False
+    assert export_log.error == "Upload failed"
+    assert export_log.invoice_ids == [invoice.pk]
+    assert export_log.exported_filename.endswith(f"LANDUSE_{export_log.pk:08}.xml")
+    assert export_log.exported_xml == send_invoices_xml.call_args.args[1]
+    assert export_log.ended_at >= export_log.started_at
+
+
+@pytest.mark.django_db
+@patch(
+    "laske_export.management.commands.send_landuse_invoices.render_single_invoice_xml",
+    side_effect=ValueError("Invalid invoice XML"),
+)
+@patch("laske_export.management.commands.send_landuse_invoices.send_invoices_xml")
+def test_send_landuse_invoices_logs_rendering_failure(
+    send_invoices_xml, render_xml, invoice
+):
+    invoice.due_date = timezone.localdate()
+    invoice.status = InvoiceStatus.WAITING_TO_BE_SENT
+    invoice.save()
+
+    with pytest.raises(ValueError, match="Invalid invoice XML"):
+        call_command("send_landuse_invoices")
+
+    export_log = LanduseInvoiceExportLog.objects.get()
+    assert export_log.succeeded is False
+    assert export_log.error == "Invalid invoice XML"
+    assert export_log.exported_xml == ""
+    assert export_log.invoice_ids == [invoice.pk]
+    assert export_log.ended_at >= export_log.started_at
+    send_invoices_xml.assert_not_called()
+    invoice.refresh_from_db()
+    assert invoice.sent_at is None
+    assert invoice.status == InvoiceStatus.WAITING_TO_BE_SENT

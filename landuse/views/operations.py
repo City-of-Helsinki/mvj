@@ -3,7 +3,7 @@ from typing import Any
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
-from rest_framework import status, viewsets
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import BasePermission, IsAuthenticated
@@ -13,12 +13,9 @@ from rest_framework.response import Response
 from landuse.models.invoice import (
     INVOICE_STATUSES_BEFORE_SAP_EXPORT,
     Invoice,
-    LandUseInvoiceExportError,
 )
 from landuse.models.payment_schedule import PaymentSchedule
-from landuse.sap_export import LanduseSapExportDisabledError
 from landuse.serializers.agreement import (
-    InvoiceSerializer,
     PaymentScheduleRejectionSerializer,
     PaymentScheduleSerializer,
 )
@@ -38,18 +35,6 @@ class PaymentSchedulePermission(BasePermission):
             "return_to_draft": "landuse.change_tab_payment_schedules",
             "approve": "landuse.approve_paymentschedule",
             "reject": "landuse.approve_paymentschedule",
-        }.get(view.action)
-        return permission is not None and request.user.has_perm(permission)
-
-
-class InvoicePermission(BasePermission):
-    message = _("You do not have permission to perform this invoice operation.")
-
-    def has_permission(self, request: Request, view: Any) -> bool:
-        permission = {
-            "list": "landuse.view_tab_invoices",
-            "retrieve": "landuse.view_tab_invoices",
-            "send_to_sap": "landuse.send_invoice_to_sap",
         }.get(view.action)
         return permission is not None and request.user.has_perm(permission)
 
@@ -133,26 +118,3 @@ class PaymentScheduleViewSet(
                     ).format(operation)
                 }
             )
-
-
-class InvoiceViewSet(
-    LandUseApiEnabledFlagMixin,
-    LandUsePaginationMixin,
-    viewsets.ReadOnlyModelViewSet[Invoice],
-):
-    queryset = Invoice.objects.select_related(
-        "agreement", "recipient_party", "recipient_snapshot"
-    ).prefetch_related("items", "payments")
-    serializer_class = InvoiceSerializer
-    permission_classes = (IsAuthenticated, InvoicePermission)
-
-    @action(detail=True, methods=("post",), url_path="send-to-sap")
-    @transaction.atomic
-    def send_to_sap(self, request: Request, pk: str | None = None) -> Response:
-        invoice = self.get_object()
-        invoice = Invoice.objects.select_for_update().get(pk=invoice.pk)
-        try:
-            invoice.send_to_sap()
-        except (LandUseInvoiceExportError, LanduseSapExportDisabledError) as error:
-            raise ValidationError({"detail": str(error)})
-        return Response(InvoiceSerializer(invoice).data, status=status.HTTP_200_OK)

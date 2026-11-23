@@ -2,10 +2,56 @@ from django.contrib.gis import admin
 from django.db.models import Count
 from django.forms import BaseInlineFormSet
 from django.urls import reverse
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from laske_export.models import LaskeExportLog, LaskePaymentsLog
+from laske_export.models import (
+    LanduseInvoiceExportLog,
+    LaskeExportLog,
+    LaskePaymentsLog,
+)
+
+
+@admin.register(LanduseInvoiceExportLog)
+class LanduseExportLogAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "invoice_count",
+        "started_at",
+        "ended_at",
+        "succeeded",
+        "exported_filename",
+    )
+    list_filter = ("succeeded",)
+    search_fields = ("exported_filename", "error")
+    readonly_fields = (
+        "started_at",
+        "ended_at",
+        "succeeded",
+        "exported_filename",
+        "formatted_exported_xml",
+        "invoice_ids",
+        "error",
+    )
+    exclude = ("exported_xml",)
+
+    @admin.display(description=_("Invoice count"))
+    def invoice_count(self, export_log: LanduseInvoiceExportLog) -> int:
+        return len(export_log.invoice_ids)
+
+    @admin.display(description="Exported XML")
+    def formatted_exported_xml(self, export_log: LanduseInvoiceExportLog) -> str:
+        return format_html("<pre>{}</pre>", export_log.exported_xml)
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 class NoDeleteInlineFormSet(BaseInlineFormSet):

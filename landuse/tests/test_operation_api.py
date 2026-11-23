@@ -1,8 +1,6 @@
-from unittest.mock import patch
-
 import pytest
 from django.contrib.auth.models import Permission
-from django.urls import reverse
+from django.urls import NoReverseMatch, reverse
 from django.utils import timezone
 from rest_framework import status
 
@@ -19,7 +17,7 @@ from landuse.models.payment_schedule import (
     PaymentScheduleInstallment,
     PaymentScheduleStatus,
 )
-from landuse.views.operations import InvoicePermission, PaymentSchedulePermission
+from landuse.views.operations import PaymentSchedulePermission
 from utils.enums import AuthGroupId as AG
 
 pytestmark = pytest.mark.django_db
@@ -62,17 +60,12 @@ def clear_permission_cache(user):
         user.__dict__.pop(attribute, None)
 
 
-@pytest.mark.parametrize(
-    "permission_class", [PaymentSchedulePermission, InvoicePermission]
-)
-def test_operation_permissions_deny_unrecognized_actions(
-    permission_class, rf, user_factory
-):
+def test_operation_permissions_deny_unrecognized_actions(rf, user_factory):
     request = rf.post("/")
     request.user = user_factory(is_superuser=True)
     view = type("View", (), {"action": "unrecognized_action"})()
 
-    assert permission_class().has_permission(request, view) is False
+    assert PaymentSchedulePermission().has_permission(request, view) is False
 
 
 def test_approve_payment_schedule_requires_operation_permission(client, user_factory):
@@ -187,26 +180,12 @@ def test_schedule_transition_is_allowed_when_an_installment_has_no_invoice(
     assert invoice.status == InvoiceStatus.OPEN
 
 
-@patch("landuse.models.invoice.send_invoice_xml")
-def test_send_invoice_to_sap_requires_operation_permission(
-    send_invoice_xml, client, user_factory
-):
-    _, invoice = create_agreement_financial_data()
-    user = user_factory()
-    user.user_permissions.add(get_landuse_permission("view_invoice"))
-    client.force_login(user)
-    url = reverse("v1:landuse:invoice-send-to-sap", args=(invoice.pk,))
-
-    forbidden_response = client.post(url)
-    user.user_permissions.add(get_landuse_permission("send_invoice_to_sap"))
-    clear_permission_cache(user)
-    allowed_response = client.post(url)
-
-    assert forbidden_response.status_code == status.HTTP_403_FORBIDDEN
-    assert allowed_response.status_code == status.HTTP_200_OK
-    send_invoice_xml.assert_called_once()
-    invoice.refresh_from_db()
-    assert invoice.sent_at is not None
+@pytest.mark.parametrize(
+    "route", ["invoice-list", "invoice-detail", "invoice-send-to-sap"]
+)
+def test_standalone_invoice_routes_are_removed(route):
+    with pytest.raises(NoReverseMatch):
+        reverse(f"v1:landuse:{route}", args=() if route == "invoice-list" else (1,))
 
 
 @pytest.mark.parametrize("schedule_status", ["approved", "pending_approval"])
@@ -354,19 +333,18 @@ def test_schedule_change_permission_does_not_authorize_approval(
     ],
 )
 def test_operation_reads_use_tab_permissions(client, tab_role_user, role):
-    schedule, invoice = create_agreement_financial_data()
+    schedule, _ = create_agreement_financial_data()
     client.force_login(tab_role_user(role))
-    for resource, instance in [("payment-schedule", schedule), ("invoice", invoice)]:
-        assert (
-            client.get(reverse(f"v1:landuse:{resource}-list")).status_code
-            == status.HTTP_200_OK
-        )
-        assert (
-            client.get(
-                reverse(f"v1:landuse:{resource}-detail", args=(instance.pk,))
-            ).status_code
-            == status.HTTP_200_OK
-        )
+    assert (
+        client.get(reverse("v1:landuse:payment-schedule-list")).status_code
+        == status.HTTP_200_OK
+    )
+    assert (
+        client.get(
+            reverse("v1:landuse:payment-schedule-detail", args=(schedule.pk,))
+        ).status_code
+        == status.HTTP_200_OK
+    )
 
 
 @pytest.mark.parametrize(

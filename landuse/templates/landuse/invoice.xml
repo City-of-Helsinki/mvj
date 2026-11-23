@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<SBO_SalesOrderContainer>
   <SBO_SalesOrder>
     <SenderId>{{ order.sender_id }}</SenderId>
     <Reference>{{ order.reference }}</Reference>
@@ -61,4 +59,3 @@
       <RentalObject></RentalObject>
     </LineItem>{% endfor %}
   </SBO_SalesOrder>
-</SBO_SalesOrderContainer>

@@ -11,7 +11,7 @@ class LanduseSapExportDisabledError(Exception):
     pass
 
 
-def _get_export_filename(invoice_id: int) -> str:
+def _get_export_filename(export_id: int) -> str:
     values: SapLanduseExportValues | None = getattr(
         settings, "SAP_LANDUSE_VALUES", None
     )
@@ -21,16 +21,16 @@ def _get_export_filename(invoice_id: int) -> str:
     return "MTIL_IN_{}_{}_LANDUSE_{:08}.xml".format(
         values.get("sender_id", ""),
         values.get("sales_org", ""),
-        invoice_id,
+        export_id,
     )
 
 
-def send_invoice_xml(invoice_id: int, xml: str) -> None:
-    """Upload an in-memory land-use invoice XML document to SAP."""
+def send_invoices_xml(export_id: int, xml: str) -> None:
+    """Upload an in-memory land-use invoice batch XML document to SAP."""
     if not getattr(settings, "FLAG_LANDUSE_SAP_EXPORT_ENABLED", False):
         raise LanduseSapExportDisabledError("Land-use SAP export is disabled.")
 
-    filename = _get_export_filename(invoice_id)
+    filename = _get_export_filename(export_id)
     try:
         export_directory = getattr(settings, "LASKE_SERVERS")["landuse_export"][
             "directory"

@@ -1,5 +1,7 @@
 from auditlog.registry import auditlog
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from enumfields import EnumField
@@ -8,6 +10,19 @@ from laske_export.enums import LaskeExportLogInvoiceStatus
 from leasing.models import Invoice
 from leasing.models.invoice import InvoicePayment
 from utils.mixins import TimeStampedSafeDeleteModel
+
+
+class LanduseInvoiceExportLog(models.Model):
+    started_at = models.DateTimeField(default=timezone.now)
+    ended_at = models.DateTimeField(null=True, blank=True)
+    succeeded = models.BooleanField(default=False)
+    exported_filename = models.CharField(max_length=255, blank=True)
+    exported_xml = models.TextField(blank=True)
+    invoice_ids = ArrayField(models.IntegerField(), default=list, blank=True)
+    error = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ["-started_at"]
 
 
 class LaskeExportLog(TimeStampedSafeDeleteModel):

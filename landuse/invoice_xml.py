@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterable
 
 from django.conf import settings
 from django.template.loader import render_to_string
@@ -89,12 +89,11 @@ def _format_amount(amount: Decimal) -> str:
     return f"{amount:.2f}".replace(".", ",")
 
 
-def render_invoice_xml(invoice: "Invoice") -> str:
-    """Render the current invoice as an in-memory SAP sales-order document."""
+def _sales_order_context(invoice: "Invoice") -> SapSalesOrderContext:
     recipient = invoice.recipient_snapshot
     party = _party_context(recipient)
     due_date = invoice.due_date.strftime("%Y%m%d") if invoice.due_date else ""
-    context = SapSalesOrderContext(
+    return SapSalesOrderContext(
         sender_id=_sap_value("sender_id"),
         reference=str(invoice.invoice_identifier),
         contract_number=invoice.agreement.identifier,
@@ -119,4 +118,31 @@ def render_invoice_xml(invoice: "Invoice") -> str:
             for item in invoice.items.all()
         ),
     )
-    return render_to_string("landuse/invoice.xml", {"order": context}).strip()
+
+
+def render_invoices_xml(invoices: Iterable["Invoice"]) -> str:
+    """Render invoices in a single SAP sales-order container."""
+    return render_sales_order_container(
+        render_single_invoice_xml(invoice, include_container=False)
+        for invoice in invoices
+    )
+
+
+def render_sales_order_container(sales_orders: Iterable[str]) -> str:
+    """Wrap already-rendered sales-order XML fragments without rendering them again."""
+    return render_to_string(
+        "landuse/sales_order_container.xml",
+        {"sales_orders": sales_orders},
+    ).strip()
+
+
+def render_single_invoice_xml(
+    invoice: "Invoice", *, include_container: bool = True
+) -> str:
+    """Render the current invoice as an in-memory SAP sales-order document."""
+    sales_order = render_to_string(
+        "landuse/invoice.xml", {"order": _sales_order_context(invoice)}
+    ).strip()
+    if include_container:
+        return render_sales_order_container([sales_order])
+    return sales_order

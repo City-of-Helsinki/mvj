@@ -31,7 +31,6 @@ from landuse.views.lookups import (
     SiteIntendedUseViewSet,
     SiteTenureTypeViewSet,
 )
-from landuse.views.operations import InvoiceViewSet as LandUseInvoiceViewSet
 from landuse.views.operations import PaymentScheduleViewSet
 from landuse.views.ui_metadata import LandUseUiMetadataView
 from leasing.api_functions import CalculateIncreaseWith360DayCalendar
@@ -365,7 +364,6 @@ landuse_router.register(
 landuse_router.register(
     "payment-schedules", PaymentScheduleViewSet, basename="payment-schedule"
 )
-landuse_router.register("invoices", LandUseInvoiceViewSet, basename="invoice")
 
 landuse_router.register(
     "user_permissions",
