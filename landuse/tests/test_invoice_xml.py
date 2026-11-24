@@ -1,3 +1,4 @@
+import logging
 import xml.etree.ElementTree as ElementTree
 from datetime import date
 from decimal import Decimal
@@ -60,7 +61,7 @@ def invoice(db, settings) -> Invoice:
 
 
 @pytest.mark.django_db
-@patch("laske_export.management.commands.send_landuse_invoices.send_invoices_xml")
+@patch("laske_export.landuse_export.send_invoices_xml")
 def test_invoice_xml_is_generated_only_when_sent(send_invoices_xml, invoice: Invoice):
     assert invoice.sap_xml is None
 
@@ -153,7 +154,7 @@ def test_generate_sap_xml_requires_saved_invoice():
 
 
 @pytest.mark.django_db
-@patch("laske_export.management.commands.send_landuse_invoices.send_invoices_xml")
+@patch("laske_export.landuse_export.send_invoices_xml")
 def test_generate_sap_xml_returns_saved_xml(send_invoices_xml, invoice: Invoice):
     invoice.status = InvoiceStatus.WAITING_TO_BE_SENT
     invoice.due_date = timezone.localdate()
@@ -169,7 +170,7 @@ def test_generate_sap_xml_returns_saved_xml(send_invoices_xml, invoice: Invoice)
 
 
 @pytest.mark.django_db
-@patch("laske_export.management.commands.send_landuse_invoices.send_invoices_xml")
+@patch("laske_export.landuse_export.send_invoices_xml")
 def test_xml_is_immutable_after_invoice_is_sent(send_invoices_xml, invoice: Invoice):
     InvoiceItem.objects.create(
         invoice=invoice,
@@ -233,10 +234,11 @@ def test_render_multiple_invoices(invoice: Invoice):
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("has_eligible_invoice", [False, True])
-@patch("laske_export.management.commands.send_landuse_invoices.send_invoices_xml")
+@patch("laske_export.landuse_export.send_invoices_xml")
 def test_send_landuse_invoices_logs_progress(
     send_invoices_xml, invoice, has_eligible_invoice, caplog
 ):
+    caplog.set_level(logging.INFO, logger="laske_export.landuse_export")
     invoice.due_date = timezone.localdate()
     invoice.status = (
         InvoiceStatus.WAITING_TO_BE_SENT
@@ -272,7 +274,7 @@ def test_send_landuse_invoices_logs_progress(
     "landuse.invoice_xml._sales_order_context",
     wraps=invoice_xml._sales_order_context,
 )
-@patch("laske_export.management.commands.send_landuse_invoices.send_invoices_xml")
+@patch("laske_export.landuse_export.send_invoices_xml")
 def test_send_landuse_invoices_batches_due_invoices(
     send_invoices_xml, sales_order_context, invoice, monkeypatch
 ):
@@ -287,6 +289,7 @@ def test_send_landuse_invoices_batches_due_invoices(
         installment_sequence_number=2,
         installment_count_total=2,
         due_date=today - relativedelta(days=1),
+        invoice_type=InvoiceType.LAND_USE_COMPENSATION,
         status=InvoiceStatus.WAITING_TO_BE_SENT,
     )
 
@@ -335,7 +338,7 @@ def test_send_landuse_invoices_batches_due_invoices(
 @pytest.mark.parametrize(
     "excluded", ["future", "no_due_date", "sent", "draft", "open", "paid", "credited"]
 )
-@patch("laske_export.management.commands.send_landuse_invoices.send_invoices_xml")
+@patch("laske_export.landuse_export.send_invoices_xml")
 def test_send_landuse_invoices_excludes_ineligible_invoices(
     send_invoices_xml, invoice, excluded, monkeypatch
 ):
@@ -361,12 +364,26 @@ def test_send_landuse_invoices_excludes_ineligible_invoices(
 
 @pytest.mark.django_db
 @patch(
-    "laske_export.management.commands.send_landuse_invoices.send_invoices_xml",
+    "laske_export.landuse_export.send_invoices_xml",
     side_effect=OSError("Upload failed"),
 )
 def test_send_landuse_invoices_keeps_invoices_unsent_on_failure(
-    send_invoices_xml, invoice
+    send_invoices_xml, invoice, monkeypatch, caplog
 ):
+    import logging
+
+    from laske_export import landuse_export
+
+    caplog.set_level(logging.INFO, logger="laske_export.landuse_export")
+
+    def raise_about_missing_remote_file(export_id: int) -> None:
+        raise FileNotFoundError("missing file")
+
+    monkeypatch.setattr(
+        landuse_export,
+        "delete_invoices_xml_from_remote",
+        raise_about_missing_remote_file,
+    )
     invoice.due_date = timezone.localdate()
     invoice.status = InvoiceStatus.WAITING_TO_BE_SENT
     invoice.save()
@@ -386,14 +403,43 @@ def test_send_landuse_invoices_keeps_invoices_unsent_on_failure(
     assert export_log.exported_filename.endswith(f"LANDUSE_{export_log.pk:08}.xml")
     assert export_log.exported_xml == send_invoices_xml.call_args.args[1]
     assert export_log.ended_at >= export_log.started_at
+    assert "Likely the file was not uploaded at all" in caplog.text
+
+
+@pytest.mark.django_db
+@patch("laske_export.landuse_export.send_invoices_xml")
+@patch("laske_export.landuse_export.delete_invoices_xml_from_remote")
+def test_uploaded_batch_is_removed_when_database_update_fails(
+    delete_invoices_xml_from_remote, send_invoices_xml, invoice, monkeypatch
+):
+    invoice.due_date = timezone.localdate()
+    invoice.status = InvoiceStatus.WAITING_TO_BE_SENT
+    invoice.save()
+
+    def fail_bulk_update(*args, **kwargs):
+        raise RuntimeError("DB update failed")
+
+    monkeypatch.setattr(
+        Invoice.objects,
+        "bulk_update",
+        fail_bulk_update,
+    )
+    with pytest.raises(RuntimeError, match="DB update failed"):
+        call_command("send_landuse_invoices")
+
+    export_log = LanduseInvoiceExportLog.objects.get()
+    invoice.refresh_from_db()
+    assert invoice.sent_at is None
+    send_invoices_xml.assert_called_once()
+    delete_invoices_xml_from_remote.assert_called_once_with(export_log.pk)
 
 
 @pytest.mark.django_db
 @patch(
-    "laske_export.management.commands.send_landuse_invoices.render_single_invoice_xml",
+    "laske_export.landuse_export.render_single_invoice_xml",
     side_effect=ValueError("Invalid invoice XML"),
 )
-@patch("laske_export.management.commands.send_landuse_invoices.send_invoices_xml")
+@patch("laske_export.landuse_export.send_invoices_xml")
 def test_send_landuse_invoices_logs_rendering_failure(
     send_invoices_xml, render_xml, invoice
 ):
