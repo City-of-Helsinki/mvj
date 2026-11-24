@@ -5,6 +5,8 @@ from typing import TYPE_CHECKING, Iterable
 from django.conf import settings
 from django.template.loader import render_to_string
 
+from landuse.models.invoice import InvoiceType
+
 if TYPE_CHECKING:
     from landuse.models.invoice import Invoice, InvoiceRecipientSnapshot
 
@@ -97,7 +99,7 @@ def _sales_order_context(invoice: "Invoice") -> SapSalesOrderContext:
         sender_id=_sap_value("sender_id"),
         reference=str(invoice.invoice_identifier),
         contract_number=invoice.agreement.identifier,
-        order_type=_sap_value("order_type") or "ZTY1",
+        order_type=get_order_type(invoice.invoice_type),
         sales_org=_sap_value("sales_org"),
         distribution_channel=_sap_value("distribution_channel"),
         division=_sap_value("division"),
@@ -118,6 +120,15 @@ def _sales_order_context(invoice: "Invoice") -> SapSalesOrderContext:
             for item in invoice.items.all()
         ),
     )
+
+
+def get_order_type(invoice_type: InvoiceType) -> str:
+    if invoice_type == InvoiceType.LAND_USE_COMPENSATION:
+        # Comparable to "CHARGE" type in leasing invoices
+        return "ZTY1"
+
+    # Credit order type would be "ZHY1", but will be implemented later.
+    raise ValueError(f"Unsupported invoice type: {invoice_type}")
 
 
 def render_invoices_xml(invoices: Iterable["Invoice"]) -> str:
