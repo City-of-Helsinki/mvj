@@ -28,11 +28,13 @@ def _get_export_filename(export_id: int) -> str:
     if values is None:
         raise ValueError("SAP_LANDUSE_VALUES is not configured in settings.")
 
-    return "MTIL_IN_{}_{}_LANDUSE_{:08}.xml".format(
-        values.get("sender_id", ""),
-        values.get("sales_org", ""),
-        export_id,
-    )
+    sender_id = values.get("sender_id", "")
+    sales_org = values.get("sales_org", "")
+
+    required_prefix = f"MTIL_IN_{sender_id}_{sales_org}_"
+    file_identifier = f"LANDUSE_{export_id:08}.xml"
+
+    return required_prefix + file_identifier
 
 
 def send_invoices_xml(export_id: int, xml: str) -> None:
