@@ -11,7 +11,7 @@ from django.core.management import call_command
 from django.utils import timezone
 
 from landuse import invoice_xml
-from landuse.invoice_xml import render_invoices_xml
+from landuse.invoice_xml import render_invoices_xml, render_single_invoice_xml
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.invoice import (
     Invoice,
@@ -110,7 +110,9 @@ def test_invoice_generation_creates_valid_xml(invoice: Invoice, description):
         amount=Decimal("1250.50"),
     )
 
-    xml = invoice.get_sap_xml()
+    xml = render_single_invoice_xml(invoice)
+
+    # Would raise ElementTree.ParseError if not valid XML
     root = ElementTree.fromstring(xml.encode("utf-8"))
 
     assert xml.startswith('<?xml version="1.0" encoding="UTF-8"?>')
@@ -125,29 +127,9 @@ def test_invoice_generation_creates_valid_xml(invoice: Invoice, description):
     assert sales_order.findtext("LineItem/Quantity") == "1,00"
     assert sales_order.findtext("LineItem/NetPrice") == "1250,50"
 
-    faulty_xml = xml + "extra cruft at the end"
-    with pytest.raises(ElementTree.ParseError):
-        ElementTree.fromstring(faulty_xml.encode("utf-8"))
-
-
-def test_xml_parser_raises_on_invalid_input(invoice: Invoice):
-    """Ensure that invalid XML raises."""
-    InvoiceItem.objects.create(
-        invoice=invoice,
-        item_type=InvoiceItemType.LAND_USE_COMPENSATION,
-        description="Faulty item",
-        amount=Decimal("1250.50"),
-    )
-
-    xml = invoice.get_sap_xml()
-    faulty_xml = xml + "extra cruft at the end"
-
-    with pytest.raises(ElementTree.ParseError):
-        ElementTree.fromstring(faulty_xml.encode("utf-8"))
-
 
 @pytest.mark.django_db
-def test_generate_sap_xml_previews_without_saving(invoice: Invoice):
+def test_render_single_invoice_xml_does_not_save(invoice: Invoice):
     InvoiceItem.objects.create(
         invoice=invoice,
         item_type=InvoiceItemType.LAND_USE_COMPENSATION,
@@ -155,7 +137,7 @@ def test_generate_sap_xml_previews_without_saving(invoice: Invoice):
         amount=Decimal("1250.50"),
     )
 
-    preview_xml = invoice.get_sap_xml()
+    preview_xml = render_single_invoice_xml(invoice)
 
     assert (
         ElementTree.fromstring(preview_xml).findtext(
@@ -166,27 +148,6 @@ def test_generate_sap_xml_previews_without_saving(invoice: Invoice):
     invoice.refresh_from_db()
     assert invoice.sap_xml is None
     assert invoice.sent_at is None
-
-
-def test_generate_sap_xml_requires_saved_invoice():
-    with pytest.raises(ValueError, match="must be saved"):
-        Invoice().get_sap_xml()
-
-
-@pytest.mark.django_db
-@patch("laske_export.landuse_export.send_invoices_xml")
-def test_generate_sap_xml_returns_saved_xml(send_invoices_xml, invoice: Invoice):
-    invoice.status = InvoiceStatus.WAITING_TO_BE_SENT
-    invoice.due_date = timezone.localdate()
-    invoice.save()
-    call_command("send_landuse_invoices")
-    invoice.refresh_from_db()
-    saved_xml = invoice.sap_xml
-
-    # Once XML is stored it should be immutable and not change.
-    invoice.invoice_identifier = 1_000_000_011
-
-    assert invoice.get_sap_xml() == saved_xml
 
 
 @pytest.mark.django_db

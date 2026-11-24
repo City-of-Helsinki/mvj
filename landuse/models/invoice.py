@@ -1,13 +1,11 @@
 from decimal import Decimal
 from typing import TYPE_CHECKING, Any
-from xml.etree import ElementTree
 
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.db.models import Sum
 from sequences import get_next_value
 
-from landuse.invoice_xml import render_single_invoice_xml
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.party import (
     AgreementParty,
@@ -176,19 +174,6 @@ class Invoice(TimeStampedModel):
 
         paid_amount = self.payments.aggregate(total=Sum("paid_amount"))["total"]
         return self.billed_amount - (paid_amount or Decimal("0"))
-
-    def get_sap_xml(self) -> str:
-        if not self.pk:
-            raise ValueError("Invoice must be saved before generating SAP XML.")
-
-        if self.sap_xml:
-            try:
-                ElementTree.fromstring(self.sap_xml.encode("utf-8"))
-                return self.sap_xml
-            except ElementTree.ParseError:
-                raise ValueError("Stored SAP XML is invalid.")
-
-        return render_single_invoice_xml(self)
 
     class Meta:
         permissions = [

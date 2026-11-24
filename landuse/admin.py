@@ -3,6 +3,7 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.utils.html import format_html
 
+from landuse.invoice_xml import render_single_invoice_xml
 from landuse.models.agreement import (
     AgreementAddress,
     AgreementPreparer,
@@ -98,8 +99,17 @@ class SapXmlDisplayMixin:
 
         return format_html(
             "<p><strong>PREVIEW NOT YET GENERATED</strong></p><pre>{}</pre>",
-            invoice.get_sap_xml(),
+            self.get_sap_xml(invoice),
         )
+
+    def get_sap_xml(self, invoice: Invoice) -> str:
+        if not invoice.pk:
+            raise ValueError("Invoice must be saved before generating SAP XML.")
+
+        if invoice.sap_xml:
+            return invoice.sap_xml
+
+        return render_single_invoice_xml(invoice)
 
 
 class InvoiceInline(SapXmlDisplayMixin, admin.TabularInline[Invoice, LandUseAgreement]):
