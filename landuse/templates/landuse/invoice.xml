@@ -30,7 +30,7 @@
     <BillingDate>{{ order.billing_date }}</BillingDate>
     <PricingDate></PricingDate>
     <ValueDate>{{ order.value_date }}</ValueDate>
-    <PaymentReference></PaymentReference>
+    <PaymentReference>{{ order.payment_reference }}</PaymentReference>
     <AlreadyPrintedFlag></AlreadyPrintedFlag>
     {% include "landuse/sap_party.xml" with element_name="OrderParty" party=order.order_party %}
     {% include "landuse/sap_party.xml" with element_name="BillingParty1" party=order.billing_party1 %}

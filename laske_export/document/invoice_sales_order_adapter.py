@@ -7,7 +7,7 @@ from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.db.models import Q, QuerySet
 
-from laske_export.document.custom_validators import calculate_checksum
+from laske_export.utils import calculate_payment_reference_checksum
 from leasing.enums import (
     InvoiceType,
     RentCycle,
@@ -272,7 +272,7 @@ class InvoiceSalesOrderAdapter:
 
         payment_reference = service_unit_prefix + str(self.invoice.number)
 
-        checksum = calculate_checksum(payment_reference)
+        checksum = calculate_payment_reference_checksum(payment_reference)
 
         self.sales_order.payment_reference = payment_reference + checksum
 

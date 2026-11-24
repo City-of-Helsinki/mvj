@@ -10,6 +10,8 @@ from landuse.models.invoice import InvoiceType
 if TYPE_CHECKING:
     from landuse.models.invoice import Invoice, InvoiceRecipientSnapshot
 
+LANDUSE_PAYMENT_REFERENCE_PREFIX = "281"
+
 
 @dataclass(frozen=True)
 class SapPartyContext:
@@ -41,6 +43,8 @@ class SapLineItemContext:
 class SapSalesOrderContext:
     sender_id: str
     reference: str
+    reference_text: str
+    payment_reference: str  # The reference that customer uses when paying.
     contract_number: str
     order_type: str
     sales_org: str
@@ -48,7 +52,6 @@ class SapSalesOrderContext:
     division: str
     sales_office: str
     po_number: str
-    reference_text: str
     pmntterm: str
     billing_date: str
     value_date: str
@@ -98,6 +101,8 @@ def _sales_order_context(invoice: "Invoice") -> SapSalesOrderContext:
     return SapSalesOrderContext(
         sender_id=_sap_value("sender_id"),
         reference=str(invoice.invoice_identifier),
+        reference_text=invoice.agreement.identifier,
+        payment_reference=get_payment_reference(invoice.invoice_identifier),
         contract_number=invoice.agreement.identifier,
         order_type=get_order_type(invoice.invoice_type),
         sales_org=_sap_value("sales_org"),
@@ -105,7 +110,6 @@ def _sales_order_context(invoice: "Invoice") -> SapSalesOrderContext:
         division=_sap_value("division"),
         sales_office=_sap_value("sales_office"),
         po_number=recipient.customer_reference,
-        reference_text=invoice.agreement.identifier,
         pmntterm=_sap_value("pmntterm"),
         billing_date=due_date,
         value_date=due_date,
@@ -120,6 +124,16 @@ def _sales_order_context(invoice: "Invoice") -> SapSalesOrderContext:
             for item in invoice.items.all()
         ),
     )
+
+
+def get_payment_reference(invoice_identifier: int) -> str:
+    from laske_export.utils import calculate_payment_reference_checksum
+
+    invoice_number = str(invoice_identifier)
+    checksum = calculate_payment_reference_checksum(
+        LANDUSE_PAYMENT_REFERENCE_PREFIX + invoice_number
+    )
+    return f"{LANDUSE_PAYMENT_REFERENCE_PREFIX}{invoice_number}{checksum}"
 
 
 def get_order_type(invoice_type: InvoiceType) -> str:
