@@ -1,13 +1,14 @@
 import inspect
 from collections import OrderedDict
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable, Sequence
+from typing import TYPE_CHECKING, Any
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from lxml import etree
 
 
-def recursive_members(obj):
+def recursive_members(obj: type) -> list[str]:
     object_members = list(obj.__dict__)
     if obj.__bases__:
         for base in obj.__bases__:
@@ -23,20 +24,28 @@ class FieldError(Exception):
 class Field:
     def __init__(
         self,
-        name=None,
-        field_type="string",
-        validators=None,
-        many=False,
-        required=False,
-    ):
-        self.element_name = name
+        name: str | None = None,
+        field_type: Any = "string",
+        validators: Sequence[Callable[..., Any]] | None = None,
+        many: bool = False,
+        required: bool = False,
+    ) -> None:
+        self.element_name: Any = name
         self.field_type = field_type
         self.validators = validators
         self.many = many
         self.required = required
-        self.validation_errors = []
+        self.validation_errors: list[Any] = []
 
-    def _validate_value(self, value):
+    if TYPE_CHECKING:
+        # Typing only: lets FieldGroup subclasses assign plain values to Field attributes.
+        def __get__(self, instance: object, owner: type | None = None) -> Any:
+            return None
+
+        def __set__(self, instance: object, value: Any) -> None:
+            return None
+
+    def _validate_value(self, value: Iterable[Any]) -> None:
         for one_value in value:
             if self.field_type == "string" and not isinstance(one_value, str):
                 self.validation_errors.append(_("Value should be a string"))
@@ -56,7 +65,7 @@ class Field:
                 except ValidationError as err:
                     self.validation_errors.append(err.messages)
 
-    def is_valid(self, value):
+    def is_valid(self, value: Any) -> bool:
         self.validation_errors = []
 
         if self.required and not value:
@@ -81,13 +90,16 @@ class Field:
 
 
 class FieldGroup:
-    def __init__(self):
-        self._fields = self.get_fields()
-        self.validation_errors = []
+    # Subclasses define a nested `Meta` class with `element_name`.
+    Meta: Any
 
-    def _validate_fields(self):
+    def __init__(self) -> None:
+        self._fields = self.get_fields()
+        self.validation_errors: list[Any] = []
+
+    def _validate_fields(self) -> None:
         self.validation_errors = []
-        error_list = {}
+        error_list: dict[str, list[Any]] = {}
 
         for field_name, field in self.get_fields().items():
             field_value = getattr(self, field_name)
@@ -110,11 +122,11 @@ class FieldGroup:
         if len(error_list) > 0:
             raise ValidationError(error_list)
 
-    def get_fields(self):
+    def get_fields(self) -> dict[str, Field]:
         if hasattr(self, "_fields"):
             return self._fields
 
-        fields = OrderedDict()
+        fields: dict[str, Field] = OrderedDict()
 
         members = inspect.getmembers(self, lambda o: isinstance(o, Field))
         # inspect.getmembers returns members in alphabetical order, reorder them
@@ -129,8 +141,8 @@ class FieldGroup:
 
         return fields
 
-    def get_fields_as_elements(self):
-        elements = []
+    def get_fields_as_elements(self) -> list[etree._Element]:
+        elements: list[etree._Element] = []
 
         for field_name, field in self.get_fields().items():
             field_value = getattr(self, field_name)
@@ -163,7 +175,7 @@ class FieldGroup:
 
         return elements
 
-    def to_etree(self):
+    def to_etree(self) -> etree._Element:
         elements = self.get_fields_as_elements()
         root = etree.Element(self.Meta.element_name)
         for el in elements:
@@ -171,15 +183,15 @@ class FieldGroup:
 
         return root
 
-    def to_xml_string(self, encoding="utf-8"):
+    def to_xml_byte_string(self) -> bytes:
         root = self.to_etree()
 
         return etree.tostring(
-            root, encoding=encoding, xml_declaration=True, pretty_print=True
+            root, encoding="utf-8", xml_declaration=True, pretty_print=True
         )
 
-    def validate(self):
+    def validate(self) -> None:
         self._validate_fields()
 
-    def __str__(self):
-        return self.to_xml_string()
+    def __str__(self) -> str:
+        return self.to_xml_byte_string().decode("utf-8")

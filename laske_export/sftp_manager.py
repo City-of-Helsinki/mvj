@@ -1,4 +1,5 @@
 from base64 import decodebytes
+from typing import Any, cast
 
 import paramiko
 from django.conf import settings
@@ -8,13 +9,18 @@ class SFTPManagerError(Exception):
     pass
 
 
+def _laske_servers() -> dict[str, dict[str, Any]]:
+    # LASKE_SERVERS is a project-specific setting, not declared on django-stubs' Settings.
+    return cast(dict[str, dict[str, Any]], getattr(settings, "LASKE_SERVERS"))
+
+
 class SFTPManager:
     _payments = "payments"
     _export = "export"
     _landuse_export = "landuse_export"
     _landuse_payments = "landuse_payments"
 
-    def __init__(self, profile: str = None):
+    def __init__(self, profile: str | None = None) -> None:
         # Profile check
         if profile is None or profile not in [
             self._payments,
@@ -34,24 +40,24 @@ class SFTPManager:
 
         # Add destination server host key
         try:
-            if settings.LASKE_SERVERS[profile]["key_type"] == "ssh-ed25519":
+            servers = _laske_servers()
+            key: paramiko.PKey
+            if servers[profile]["key_type"] == "ssh-ed25519":
                 key = paramiko.ed25519key.Ed25519Key(
-                    data=decodebytes(settings.LASKE_SERVERS[profile]["key"])
+                    data=decodebytes(servers[profile]["key"])
                 )
-            elif "ecdsa" in settings.LASKE_SERVERS[profile]["key_type"]:
+            elif "ecdsa" in servers[profile]["key_type"]:
                 key = paramiko.ecdsakey.ECDSAKey(
-                    data=decodebytes(settings.LASKE_SERVERS[profile]["key"])
+                    data=decodebytes(servers[profile]["key"])
                 )
             else:
-                key = paramiko.rsakey.RSAKey(
-                    data=decodebytes(settings.LASKE_SERVERS[profile]["key"])
-                )
+                key = paramiko.rsakey.RSAKey(data=decodebytes(servers[profile]["key"]))
 
             ssh = paramiko.SSHClient()
             hostkeys = ssh.get_host_keys()
             hostkeys.add(
-                settings.LASKE_SERVERS[profile]["host"],
-                settings.LASKE_SERVERS[profile]["key_type"],
+                servers[profile]["host"],
+                servers[profile]["key_type"],
                 key,
             )
 
@@ -60,15 +66,16 @@ class SFTPManager:
 
         self._profile = profile
         self.ssh = ssh
-        self.sftp = None
+        self.sftp: paramiko.SFTPClient | None = None
 
-    def __enter__(self):
+    def __enter__(self) -> paramiko.SFTPClient:
+        servers = _laske_servers()
         try:
             self.ssh.connect(
-                hostname=settings.LASKE_SERVERS[self._profile]["host"],
-                port=settings.LASKE_SERVERS[self._profile]["port"],
-                username=settings.LASKE_SERVERS[self._profile]["username"],
-                password=settings.LASKE_SERVERS[self._profile]["password"],
+                hostname=servers[self._profile]["host"],
+                port=servers[self._profile]["port"],
+                username=servers[self._profile]["username"],
+                password=servers[self._profile]["password"],
             )
             self.sftp = self.ssh.open_sftp()
 
@@ -79,17 +86,18 @@ class SFTPManager:
 
         return self.sftp
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         if self.sftp:
             self.sftp.close()
         self.ssh.close()
 
-    def _check_settings(self, profile: str = None):
+    def _check_settings(self, profile: str | None = None) -> None:
         if profile is None:
             raise SFTPManagerError("No SFTP profile specified")
+        servers = _laske_servers() if hasattr(settings, "LASKE_SERVERS") else {}
         if (
             not hasattr(settings, "LASKE_SERVERS")
-            or profile not in settings.LASKE_SERVERS
+            or profile not in servers
             or (
                 profile == self._payments
                 and not hasattr(settings, "LASKE_PAYMENTS_IMPORT_LOCATION")
@@ -99,43 +107,38 @@ class SFTPManager:
                 profile == self._landuse_payments
                 and not hasattr(settings, "SAP_PAYMENTS_LANDUSE_ROOT")
             )
-            or not settings.LASKE_SERVERS.get(profile)
-            or not settings.LASKE_SERVERS[profile].get("host")
-            or not settings.LASKE_SERVERS[profile].get("port")
-            or not settings.LASKE_SERVERS[profile].get("username")
-            or not settings.LASKE_SERVERS[profile].get("password")
-            or not settings.LASKE_SERVERS[profile].get("key_type")
-            or not settings.LASKE_SERVERS[profile].get("key")
-            or not settings.LASKE_SERVERS[profile].get("directory")
+            or not servers.get(profile)
+            or not servers[profile].get("host")
+            or not servers[profile].get("port")
+            or not servers[profile].get("username")
+            or not servers[profile].get("password")
+            or not servers[profile].get("key_type")
+            or not servers[profile].get("key")
+            or not servers[profile].get("directory")
         ):
             raise SFTPManagerError("At least one setting is missing, please check.")
 
-    def _setup_directories(self, profile: str = None):
+    def _setup_directories(self, profile: str | None = None) -> None:
         if profile is None:
             raise SFTPManagerError("No SFTP profile specified")
+        servers = _laske_servers()
         try:
             match profile:
                 case self._payments:
                     self._localpath = getattr(
                         settings, "LASKE_PAYMENTS_IMPORT_LOCATION"
                     )
-                    self._remotepath = settings.LASKE_SERVERS[self._payments][
-                        "directory"
-                    ]
+                    self._remotepath = servers[self._payments]["directory"]
 
                 case self._export:
                     self._localpath = getattr(settings, "LASKE_EXPORT_ROOT")
-                    self._remotepath = settings.LASKE_SERVERS[self._export]["directory"]
+                    self._remotepath = servers[self._export]["directory"]
                 case self._landuse_export:
                     self._localpath = None
-                    self._remotepath = settings.LASKE_SERVERS[self._landuse_export][
-                        "directory"
-                    ]
+                    self._remotepath = servers[self._landuse_export]["directory"]
                 case self._landuse_payments:
                     self._localpath = getattr(settings, "SAP_PAYMENTS_LANDUSE_ROOT")
-                    self._remotepath = settings.LASKE_SERVERS[self._landuse_payments][
-                        "directory"
-                    ]
+                    self._remotepath = servers[self._landuse_payments]["directory"]
                 case _:
                     raise SFTPManagerError("Invalid SFTP profile specified")
         except SFTPManagerError as se:

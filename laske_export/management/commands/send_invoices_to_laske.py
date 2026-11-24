@@ -1,11 +1,12 @@
 import datetime
 import logging
 import re
+from typing import Any
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand, CommandError, CommandParser
 from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _
 
@@ -17,10 +18,10 @@ from leasing.models import Invoice, ServiceUnit
 class Command(BaseCommand):
     help = "Send invoices to Laske"
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: CommandParser) -> None:
         parser.add_argument("service_unit_id", type=int)
 
-    def handle(self, *args, **options):  # noqa
+    def handle(self, *args: Any, **options: Any) -> None:  # noqa
         translation.activate(settings.LANGUAGE_CODE)
 
         try:
@@ -97,7 +98,8 @@ class Command(BaseCommand):
             )
             logging.exception(err)
 
-        if not getattr(settings, "LASKE_EXPORT_ANNOUNCE_EMAIL", None):
+        announce_email: str = getattr(settings, "LASKE_EXPORT_ANNOUNCE_EMAIL", "")
+        if not announce_email:
             self.stderr.write(
                 "`settings.LASKE_EXPORT_ANNOUNCE_EMAIL` not set, not sending email."
             )
@@ -106,9 +108,7 @@ class Command(BaseCommand):
         email_headers = None
 
         if error_flag:
-            self.stdout.write(
-                "Sending error email to {}".format(settings.LASKE_EXPORT_ANNOUNCE_EMAIL)
-            )
+            self.stdout.write("Sending error email to {}".format(announce_email))
             email_headers = {"X-Priority": "1"}  # High
             email_subject = _("MVJ ({}) transfer failed!").format(
                 service_unit.laske_sender_id
@@ -120,11 +120,7 @@ class Command(BaseCommand):
                 "\nError message: {}"
             ).format(service_unit.name, error_message)
         else:
-            self.stdout.write(
-                "Sending announce email to {}".format(
-                    settings.LASKE_EXPORT_ANNOUNCE_EMAIL
-                )
-            )
+            self.stdout.write("Sending announce email to {}".format(announce_email))
 
             export_invoice_log_items = (
                 laske_export_log_entry.laskeexportloginvoiceitem_set
@@ -145,7 +141,7 @@ class Command(BaseCommand):
             ).format(
                 service_unit.laske_sender_id,
                 laske_export_log_entry.invoices.count(),
-                laske_export_log_entry.ended_at.astimezone(
+                laske_export_log_entry.ended_at.astimezone(  # type: ignore[union-attr]
                     timezone.get_current_timezone()
                 ).strftime("%d.%m.%Y %H.%M %Z"),
                 sent_count,
@@ -165,15 +161,15 @@ class Command(BaseCommand):
 
         from_email = settings.DEFAULT_FROM_EMAIL
         if hasattr(settings, "MVJ_EMAIL_FROM"):
-            from_email = settings.MVJ_EMAIL_FROM
+            from_email = getattr(settings, "MVJ_EMAIL_FROM")
         if hasattr(settings, "LASKE_EXPORT_FROM_EMAIL"):
-            from_email = settings.LASKE_EXPORT_FROM_EMAIL
+            from_email = getattr(settings, "LASKE_EXPORT_FROM_EMAIL")
 
         msg = EmailMultiAlternatives(
             email_subject,
             email_body,
             from_email,
-            re.split("[;,]", settings.LASKE_EXPORT_ANNOUNCE_EMAIL),
+            re.split("[;,]", announce_email),
             headers=email_headers,
         )
         msg.send()

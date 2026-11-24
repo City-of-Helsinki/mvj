@@ -8,7 +8,7 @@ import sys
 import tempfile
 from decimal import Decimal
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -33,15 +33,16 @@ def get_import_dir() -> str:
 class Command(BaseCommand):
     help = "Get payments from Laske"
 
-    def download_payments(self):
+    def download_payments(self) -> None:
         try:
             with sftp_manager.SFTPManager(profile="payments") as sftp:
                 lpath = get_import_dir()
-                rpath = settings.LASKE_SERVERS["payments"]["directory"]
+                rpath = getattr(settings, "LASKE_SERVERS")["payments"]["directory"]
 
                 for item in sftp.listdir_attr(rpath):
                     # Just in case...
-                    if stat.S_ISDIR(item.st_mode):
+                    # st_mode is Optional in paramiko's stubs
+                    if stat.S_ISDIR(item.st_mode):  # type: ignore[arg-type]
                         pass
                     else:
                         sftp.get(
@@ -56,7 +57,7 @@ class Command(BaseCommand):
             logger.error(f"Error with the Laske payments server: {str(e)}")
             capture_exception(e)
 
-    def check_import_directory(self):
+    def check_import_directory(self) -> None:
         if not os.path.isdir(get_import_dir()):
             logger.error(
                 f'Directory "{get_import_dir()}" does not exist. Please create it.'
@@ -72,10 +73,10 @@ class Command(BaseCommand):
             logger.error(f'Can not create file in directory "{get_import_dir()}".')
             sys.exit(-1)
 
-    def _get_service_unit_import_ids(self):
+    def _get_service_unit_import_ids(self) -> set[str]:
         return {su.laske_import_id for su in ServiceUnit.objects.all()}
 
-    def find_unimported_files(self):
+    def find_unimported_files(self) -> list[str]:
         all_files = []
         import_id_regexp = f"MR_OUT_({'|'.join(self._get_service_unit_import_ids())})_"
         for filename in glob.glob(f"{get_import_dir()}/MR_OUT_*"):
@@ -92,7 +93,7 @@ class Command(BaseCommand):
             if Path(filename).name not in already_imported_filenames
         ]
 
-    def get_payment_lines_from_file(self, filename):
+    def get_payment_lines_from_file(self, filename: str) -> list[str]:
         result = []
 
         with open(filename, "rt", encoding="latin-1") as fp:
@@ -146,7 +147,9 @@ class Command(BaseCommand):
             )
         return payment_date
 
-    def handle(self, *args, **options):  # NOQA C901 'Command.handle' is too complex
+    def handle(  # NOQA C901 'Command.handle' is too complex
+        self, *args: Any, **options: Any
+    ) -> None:
         self.check_import_directory()
 
         logger.info("Connecting to the Laske payments server and downloading files...")

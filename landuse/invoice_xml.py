@@ -136,7 +136,7 @@ def get_payment_reference(invoice_identifier: int) -> str:
     return f"{LANDUSE_PAYMENT_REFERENCE_PREFIX}{invoice_number}{checksum}"
 
 
-def get_order_type(invoice_type: InvoiceType) -> str:
+def get_order_type(invoice_type: InvoiceType | str) -> str:
     if invoice_type == InvoiceType.LAND_USE_COMPENSATION:
         # Comparable to "CHARGE" type in leasing invoices
         return "ZTY1"

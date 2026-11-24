@@ -86,11 +86,11 @@ class Party(FieldGroup):
     info_city = Field(name="InfoCity", validators=[MaxLengthValidator(35)])
     info_postalcode = Field(name="InfoPostalcode", validators=[MaxLengthValidator(9)])
 
-    def __init__(self, fill_priority_and_info=True):
+    def __init__(self, fill_priority_and_info: bool = True) -> None:
         super().__init__()
         self.fill_priority_and_info = fill_priority_and_info
 
-    def from_contact(self, contact: Contact | None):
+    def from_contact(self, contact: Contact | None) -> None:
         if not contact:
             raise ValidationError(_("Contact information cannot be null."))
 
@@ -101,7 +101,7 @@ class Party(FieldGroup):
             self._set_name_fields(contact)
             self._set_address_fields(contact)
 
-    def _set_customer_identifiers(self, contact: Contact):
+    def _set_customer_identifiers(self, contact: Contact) -> None:
         """Set basic customer identification fields."""
         self.customer_ovt = contact.electronic_billing_address
         self.sap_customer_id = contact.sap_customer_number
@@ -111,7 +111,7 @@ class Party(FieldGroup):
         else:
             self.customer_yid = contact.business_id
 
-    def _set_info_identifiers(self, contact: Contact):
+    def _set_info_identifiers(self, contact: Contact) -> None:
         """Set info party identification fields."""
         self.info_customer_ovt = contact.electronic_billing_address
 
@@ -120,7 +120,7 @@ class Party(FieldGroup):
         else:
             self.info_customer_yid = contact.business_id
 
-    def _set_name_fields(self, contact: Contact):
+    def _set_name_fields(self, contact: Contact) -> None:
         """Set priority and info name fields, including care_of if present."""
         name = contact.get_name()[:140]  # Max 4 * 35 chars
         line = self._write_name_lines(name)
@@ -148,7 +148,7 @@ class Party(FieldGroup):
 
         return line
 
-    def _write_care_of_lines(self, care_of: str, start_line: int):
+    def _write_care_of_lines(self, care_of: str, start_line: int) -> None:
         """
         Write care_of information to priority/info name fields.
         May overwrite last name line if at line 5.
@@ -167,7 +167,7 @@ class Party(FieldGroup):
             setattr(self, f"info_name{line}", care_of_line)
             line += 1
 
-    def _set_address_fields(self, contact: Contact):
+    def _set_address_fields(self, contact: Contact) -> None:
         """Set priority and info address fields."""
         address = contact.address[:35] if contact.address else ""
 
@@ -239,7 +239,7 @@ class LineItem(FieldGroup):
     class Meta:
         element_name = "LineItem"
 
-    def validate(self):
+    def validate(self) -> None:
         super().validate()
 
         # Only one of 'order_item_number' or 'wbs_element' can be set.
@@ -309,7 +309,7 @@ class SalesOrder(FieldGroup):
     class Meta:
         element_name = "SBO_SalesOrder"
 
-    def set_bill_texts_from_string(self, text):
+    def set_bill_texts_from_string(self, text: str) -> None:
         for num, line in enumerate(text.split("\n"), start=1):
             if num > 6:
                 break

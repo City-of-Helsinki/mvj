@@ -7,6 +7,7 @@ from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
+from paramiko import SFTPClient
 
 from landuse.invoice_xml import render_sales_order_container, render_single_invoice_xml
 from landuse.landuse_types import SapLanduseExportValues
@@ -64,7 +65,7 @@ def send_invoices_xml(export_id: int, xml: str) -> None:
         raise
 
 
-def _remove_remote_files(sftp, *remote_paths: str) -> None:
+def _remove_remote_files(sftp: SFTPClient, *remote_paths: str) -> None:
     for remote_path in remote_paths:
         try:
             sftp.remove(remote_path)
@@ -76,7 +77,7 @@ def _remove_remote_files(sftp, *remote_paths: str) -> None:
 
 def delete_invoices_xml_from_remote(export_id: int) -> None:
     filename = _get_export_filename(export_id)
-    export_directory = settings.LASKE_SERVERS["landuse_export"]["directory"]
+    export_directory = getattr(settings, "LASKE_SERVERS")["landuse_export"]["directory"]
     remote_path = str(PurePosixPath(export_directory) / filename)
     with SFTPManager(profile="landuse_export") as sftp:
         sftp.remove(remote_path)

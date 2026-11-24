@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import tempfile
+from typing import TYPE_CHECKING
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -18,13 +19,16 @@ from laske_export.models import LaskeExportLog, LaskeExportLogInvoiceItem
 from leasing.enums import InvoiceType
 from leasing.models import Invoice, ServiceUnit
 
+if TYPE_CHECKING:
+    from django.core.management.base import OutputWrapper
+
 logger = logging.getLogger(__name__)
 
 
 def create_sales_order_with_laske_values(service_unit: ServiceUnit) -> SalesOrder:
     sales_order = SalesOrder()
 
-    for key, val in settings.LASKE_VALUES.items():
+    for key, val in getattr(settings, "LASKE_VALUES").items():
         setattr(sales_order, key, val)
 
     sales_order.sender_id = service_unit.laske_sender_id
@@ -37,50 +41,52 @@ class LaskeExporterError(Exception):
 
 
 class LaskeExporter:
-    def __init__(self, service_unit: ServiceUnit):
-        self.message_output = None
+    def __init__(self, service_unit: ServiceUnit) -> None:
+        self.message_output: "OutputWrapper | None" = None
         self.service_unit = service_unit
         self.sftp_manager = sftp_manager.SFTPManager(profile="export")
         self._check_export_directory()
 
-    def _check_export_directory(self):
-        if not os.path.isdir(settings.LASKE_EXPORT_ROOT):
+    def _check_export_directory(self) -> None:
+        export_root: str = getattr(settings, "LASKE_EXPORT_ROOT")
+        if not os.path.isdir(export_root):
             raise LaskeExporterError(
                 _('Directory "{}" does not exist. Please create it.').format(
-                    settings.LASKE_EXPORT_ROOT
+                    export_root
                 )
             )
 
         try:
-            fp = tempfile.TemporaryFile(dir=settings.LASKE_EXPORT_ROOT)
+            fp = tempfile.TemporaryFile(dir=export_root)
             fp.close()
         except PermissionError:
             raise LaskeExporterError(
-                _('Can not create file in directory "{}".').format(
-                    settings.LASKE_EXPORT_ROOT
-                )
+                _('Can not create file in directory "{}".').format(export_root)
             )
 
-    def save_to_file(self, xml_string, filename):
-        full_path = os.path.join(settings.LASKE_EXPORT_ROOT, filename)
+    def save_to_file(self, xml_string: bytes, filename: str) -> None:
+        full_path = os.path.join(getattr(settings, "LASKE_EXPORT_ROOT"), filename)
 
         with open(full_path, "wb") as fp:
             fp.write(xml_string)
 
-    def send(self, filename):
+    def send(self, filename: str) -> None:
         try:
             with self.sftp_manager as sftp:
                 sftp.put(
-                    localpath=os.path.join(settings.LASKE_EXPORT_ROOT, filename),
+                    localpath=os.path.join(
+                        getattr(settings, "LASKE_EXPORT_ROOT"), filename
+                    ),
                     remotepath=os.path.join(
-                        settings.LASKE_SERVERS["export"]["directory"], filename
+                        getattr(settings, "LASKE_SERVERS")["export"]["directory"],
+                        filename,
                     ),
                 )
         except Exception as e:
             self.write_to_output("Error connecting to remote, send failed.: " + str(e))
             raise e
 
-    def write_to_output(self, message):
+    def write_to_output(self, message: str) -> None:
         if not self.message_output:
             return
 
@@ -194,7 +200,7 @@ class LaskeExporter:
 
             self.write_to_output("Export filename: {}".format(export_filename))
 
-            xml_string = sales_order_container.to_xml_string()
+            xml_string = sales_order_container.to_xml_byte_string()
 
             self.save_to_file(xml_string, export_filename)
 
@@ -212,4 +218,4 @@ class LaskeExporter:
         laske_export_log_entry.is_finished = True
         laske_export_log_entry.save()
 
-        return laske_export_log_entry
+        return laske_export_log_entry  # type: ignore[no-any-return]

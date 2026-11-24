@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from laske_export.utils import calculate_payment_reference_checksum
 
 
-def validate_payment_reference(value: str | None):
+def validate_payment_reference(value: str | None) -> None:
     if not value or value == "":
         raise ValidationError("Payment reference cannot be None or empty.")
 
