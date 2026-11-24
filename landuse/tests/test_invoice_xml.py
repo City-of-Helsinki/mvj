@@ -1,8 +1,8 @@
 import logging
-import xml.etree.ElementTree as ElementTree
 from datetime import date
 from decimal import Decimal
 from unittest.mock import patch
+from xml.etree import ElementTree
 
 import pytest
 from dateutil.relativedelta import relativedelta
@@ -124,6 +124,26 @@ def test_invoice_generation_creates_valid_xml(invoice: Invoice, description):
     assert sales_order.findtext("LineItem/LineTextL1") == description
     assert sales_order.findtext("LineItem/Quantity") == "1,00"
     assert sales_order.findtext("LineItem/NetPrice") == "1250,50"
+
+    faulty_xml = xml + "extra cruft at the end"
+    with pytest.raises(ElementTree.ParseError):
+        ElementTree.fromstring(faulty_xml.encode("utf-8"))
+
+
+def test_xml_parser_raises_on_invalid_input(invoice: Invoice):
+    """Ensure that invalid XML raises."""
+    InvoiceItem.objects.create(
+        invoice=invoice,
+        item_type=InvoiceItemType.LAND_USE_COMPENSATION,
+        description="Faulty item",
+        amount=Decimal("1250.50"),
+    )
+
+    xml = invoice.get_sap_xml()
+    faulty_xml = xml + "extra cruft at the end"
+
+    with pytest.raises(ElementTree.ParseError):
+        ElementTree.fromstring(faulty_xml.encode("utf-8"))
 
 
 @pytest.mark.django_db

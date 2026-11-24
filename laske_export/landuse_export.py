@@ -1,6 +1,7 @@
 import logging
 from io import BytesIO
 from pathlib import PurePosixPath
+from xml.etree import ElementTree
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
@@ -105,11 +106,12 @@ def export_landuse_compensation_invoices(export_log: LanduseInvoiceExportLog) ->
 
             export_log.invoice_ids = [invoice.pk for invoice in invoices]
             export_log.exported_filename = _get_export_filename(export_log.pk)
-            sales_orders = [
-                render_single_invoice_xml(invoice, include_container=False)
-                for invoice in invoices
-            ]
+            sales_orders = get_sales_order_xmls(invoices)
             xml = render_sales_order_container(sales_orders)
+
+            # Validate XML before continuing
+            ElementTree.fromstring(xml.encode("utf-8"))
+
             export_log.exported_xml = xml
             invoice_xmls = [
                 render_sales_order_container([order]) for order in sales_orders
@@ -127,6 +129,9 @@ def export_landuse_compensation_invoices(export_log: LanduseInvoiceExportLog) ->
             Invoice.objects.bulk_update(
                 invoices, ("sap_xml", "sent_at", "status", "modified_at")
             )
+    except ElementTree.ParseError:
+        logger.error("Generated SAP XML is invalid.")
+        raise
     except Exception:
         try:
             delete_invoices_xml_from_remote(export_log.pk)
@@ -143,3 +148,27 @@ def export_landuse_compensation_invoices(export_log: LanduseInvoiceExportLog) ->
             )
         raise
     logger.info(f"Sent {len(invoices)} land-use invoices to SAP.")
+
+
+def get_sales_order_xmls(invoices: list[Invoice]) -> list[str]:
+    """
+    Generate and validate sales order XMLs for a list of invoices.
+
+    Raises:
+        ElementTree.ParseError: If any generated sales order XML is invalid.
+    """
+    sales_order_xmls = []
+    for invoice in invoices:
+        sales_order_xml = render_single_invoice_xml(invoice, include_container=False)
+
+        try:
+            ElementTree.fromstring(sales_order_xml.encode("utf-8"))
+        except ElementTree.ParseError:
+            logger.error(
+                "Generated sales order XML is invalid for invoice %s.", invoice.pk
+            )
+            raise
+
+        sales_order_xmls.append(sales_order_xml)
+
+    return sales_order_xmls

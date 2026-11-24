@@ -1,5 +1,6 @@
 from decimal import Decimal
 from typing import TYPE_CHECKING, Any
+from xml.etree import ElementTree
 
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
@@ -181,7 +182,11 @@ class Invoice(TimeStampedModel):
             raise ValueError("Invoice must be saved before generating SAP XML.")
 
         if self.sap_xml:
-            return self.sap_xml
+            try:
+                ElementTree.fromstring(self.sap_xml.encode("utf-8"))
+                return self.sap_xml
+            except ElementTree.ParseError:
+                raise ValueError("Stored SAP XML is invalid.")
 
         return render_single_invoice_xml(self)
 
