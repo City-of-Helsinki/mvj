@@ -56,6 +56,27 @@ def test_payment_schedule_transition_rules():
 
 
 @pytest.mark.django_db
+def test_payment_schedule_cannot_approve_installment_without_due_date():
+    agreement = LandUseAgreement.objects.create(identifier="M-2026-1")
+    party = AgreementParty.objects.create(agreement=agreement)
+    contract = Contract.objects.create(agreement=agreement)
+    schedule = PaymentSchedule.objects.create(
+        agreement=agreement,
+        recipient_party=party,
+        contract=contract,
+        status=PaymentScheduleStatus.PENDING_APPROVAL,
+    )
+    PaymentScheduleInstallment.objects.create(
+        payment_schedule=schedule,
+        installment_sequence_number=1,
+        installment_count_total=1,
+    )
+
+    with pytest.raises(ValidationError, match="Each installment must have a due date"):
+        schedule.approve()
+
+
+@pytest.mark.django_db
 def test_schedule_serializes_invoice_snapshot_after_party_and_installment_change():
     agreement = LandUseAgreement.objects.create(identifier="M-2026-1")
     party = AgreementParty.objects.create(
