@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SBO_SalesOrderContainer>
+{% for sales_order in sales_orders %}{{ sales_order|safe }}
+{% endfor %}</SBO_SalesOrderContainer>

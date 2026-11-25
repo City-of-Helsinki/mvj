@@ -10,29 +10,29 @@
       <TemporaryPOPostalcode></TemporaryPOPostalcode>
       <TemporaryCity></TemporaryCity>
       <TemporaryPostalcode></TemporaryPostalcode>
-      <PriorityName1>{{ party.priority_name1 }}</PriorityName1>
-      <PriorityName2></PriorityName2>
-      <PriorityName3></PriorityName3>
-      <PriorityName4></PriorityName4>
-      <PriorityAddress1>{{ party.priority_address1 }}</PriorityAddress1>
-      <PriorityAddress2></PriorityAddress2>
+      <PriorityName1>{{ party.name_lines.0 }}</PriorityName1>
+      <PriorityName2>{{ party.name_lines.1 }}</PriorityName2>
+      <PriorityName3>{{ party.name_lines.2 }}</PriorityName3>
+      <PriorityName4>{{ party.name_lines.3 }}</PriorityName4>
+      <PriorityAddress1>{{ party.address_lines.0 }}</PriorityAddress1>
+      <PriorityAddress2>{{ party.address_lines.1 }}</PriorityAddress2>
       <PriorityPOCode></PriorityPOCode>
       <PriorityPOCity></PriorityPOCity>
       <PriorityPOPostalcode></PriorityPOPostalcode>
-      <PriorityCity>{{ party.priority_city }}</PriorityCity>
-      <PriorityPostalcode>{{ party.priority_postalcode }}</PriorityPostalcode>
-      <InfoCustomerID>{{ party.info_customer_id }}</InfoCustomerID>
-      <InfoCustomerYID>{{ party.info_customer_yid }}</InfoCustomerYID>
-      <InfoCustomerOVT>{{ party.info_customer_ovt }}</InfoCustomerOVT>
-      <InfoName1>{{ party.info_name1 }}</InfoName1>
-      <InfoName2></InfoName2>
-      <InfoName3></InfoName3>
-      <InfoName4></InfoName4>
-      <InfoAddress1>{{ party.info_address1 }}</InfoAddress1>
-      <InfoAddress2></InfoAddress2>
+      <PriorityCity>{{ party.city }}</PriorityCity>
+      <PriorityPostalcode>{{ party.postal_code }}</PriorityPostalcode>
+      <InfoCustomerID>{{ party.customer_id }}</InfoCustomerID>
+      <InfoCustomerYID>{{ party.customer_yid }}</InfoCustomerYID>
+      <InfoCustomerOVT>{{ party.customer_ovt }}</InfoCustomerOVT>
+      <InfoName1>{{ party.name_lines.0 }}</InfoName1>
+      <InfoName2>{{ party.name_lines.1 }}</InfoName2>
+      <InfoName3>{{ party.name_lines.2 }}</InfoName3>
+      <InfoName4>{{ party.name_lines.3 }}</InfoName4>
+      <InfoAddress1>{{ party.address_lines.0 }}</InfoAddress1>
+      <InfoAddress2>{{ party.address_lines.1 }}</InfoAddress2>
       <InfoPOCode></InfoPOCode>
       <InfoPOCity></InfoPOCity>
       <InfoPOPostalcode></InfoPOPostalcode>
-      <InfoCity>{{ party.info_city }}</InfoCity>
-      <InfoPostalcode>{{ party.info_postalcode }}</InfoPostalcode>
+      <InfoCity>{{ party.city }}</InfoCity>
+      <InfoPostalcode>{{ party.postal_code }}</InfoPostalcode>
     </{{ element_name }}>

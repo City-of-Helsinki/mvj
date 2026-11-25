@@ -44,6 +44,7 @@ from landuse.models.site import (
     SiteIntendedUse,
     SiteTenureType,
 )
+from laske_export.landuse.invoice_context import render_single_invoice_xml
 
 
 class AgreementAddressInline(admin.TabularInline[AgreementAddress, LandUseAgreement]):
@@ -98,8 +99,17 @@ class SapXmlDisplayMixin:
 
         return format_html(
             "<p><strong>PREVIEW NOT YET GENERATED</strong></p><pre>{}</pre>",
-            invoice.get_sap_xml(),
+            self.get_sap_xml(invoice),
         )
+
+    def get_sap_xml(self, invoice: Invoice) -> str:
+        if not invoice.pk:
+            raise ValueError("Invoice must be saved before generating SAP XML.")
+
+        if invoice.sap_xml:
+            return invoice.sap_xml
+
+        return render_single_invoice_xml(invoice)
 
 
 class InvoiceInline(SapXmlDisplayMixin, admin.TabularInline[Invoice, LandUseAgreement]):

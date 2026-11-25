@@ -4,10 +4,8 @@ from typing import TYPE_CHECKING, Any
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.db.models import Sum
-from django.utils import timezone
 from sequences import get_next_value
 
-from landuse.invoice_xml import render_invoice_xml
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.party import (
     AgreementParty,
@@ -15,14 +13,7 @@ from landuse.models.party import (
     BillingDetailsBase,
     PartyDetailsBase,
 )
-from landuse.sap_export import send_invoice_xml
 from utils.mixins import TimeStampedModel
-
-
-class LandUseInvoiceExportError(Exception):
-    """Errors for LandUse SAP Export logic."""
-
-    pass
 
 
 class InvoiceType(models.TextChoices):
@@ -89,7 +80,7 @@ class Invoice(TimeStampedModel):
     installment_count_total = models.PositiveSmallIntegerField()
 
     # In Finnish: Eräpäivä
-    due_date = models.DateField(null=True, blank=True)
+    due_date = models.DateField(null=False)
 
     # In Finnish: Laskun tunniste
     invoice_identifier = models.PositiveIntegerField(unique=True, editable=False)
@@ -183,37 +174,6 @@ class Invoice(TimeStampedModel):
 
         paid_amount = self.payments.aggregate(total=Sum("paid_amount"))["total"]
         return self.billed_amount - (paid_amount or Decimal("0"))
-
-    def get_sap_xml(self) -> str:
-        if not self.pk:
-            raise ValueError("Invoice must be saved before generating SAP XML.")
-
-        if self.sap_xml:
-            return self.sap_xml
-
-        return render_invoice_xml(self)
-
-    @transaction.atomic
-    def send_to_sap(self) -> None:
-        """Send the invoice XML to SAP."""
-        if self.sent_at or self.status not in INVOICE_STATUSES_BEFORE_SAP_EXPORT:
-            # Must not re-send a sent invoice.
-            raise LandUseInvoiceExportError("Invoice has already been sent to SAP.")
-
-        sap_xml = self.get_sap_xml()
-        send_invoice_xml(self.pk, sap_xml)
-
-        self.sap_xml = sap_xml
-        self.sent_at = timezone.now()
-        self.status = InvoiceStatus.OPEN
-        super().save(
-            update_fields=(
-                "sap_xml",
-                "sent_at",
-                "status",
-                "modified_at",
-            )
-        )
 
     class Meta:
         permissions = [

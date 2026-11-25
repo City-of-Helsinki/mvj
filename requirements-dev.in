@@ -16,6 +16,7 @@ isort==9.0.2
 lxml-stubs==0.5.1
 mypy==2.4.1
 paramiko-mock==2.0.1
+types-paramiko==5.1.0.20261122
 pytest==9.2.0
 pytest-cov==7.1.0
 pytest-django==4.14.0

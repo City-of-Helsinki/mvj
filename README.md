@@ -342,6 +342,10 @@ Sends unsent invoices to Laske SAP for invoicing.
 
 _In production, should be run every night_
 
+#### `send_landuse_invoices`
+
+Sends landuse invoices to SAP.
+
 #### `import_index`
 
 Imports index from stat.fi.

@@ -147,6 +147,11 @@ class PaymentSchedule(TimeStampedModel):
         for installment in self.installments.filter(
             invoice__isnull=True
         ).prefetch_related("items"):
+            if installment.due_date is None:
+                raise ValidationError(
+                    {"installments": "Each installment must have a due date."}
+                )
+
             invoice = Invoice.objects.create(
                 agreement=self.agreement,
                 recipient_party=self.recipient_party,

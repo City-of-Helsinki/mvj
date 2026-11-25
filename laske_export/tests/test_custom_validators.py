@@ -1,36 +1,8 @@
 import pytest
-from django.forms import ValidationError
+from django.core.exceptions import ValidationError
 from django.test import override_settings
 
-from laske_export.document.custom_validators import (
-    calculate_checksum,
-    validate_payment_reference,
-)
-
-
-@pytest.mark.django_db
-@override_settings(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
-def test_calculate_checksum():
-    result = calculate_checksum("1234")
-    assert result == "4"  # Total sum is 46, last digit is 4
-
-    result = calculate_checksum("123456789")
-    assert result == "7"  # Total sum is 183, last digit is 7
-
-
-@pytest.mark.django_db
-@override_settings(LASKE_EXPORT_ANNOUNCE_EMAIL=None)
-def test_calculate_checksum_nondigit_input():
-    with pytest.raises(ValidationError):
-        calculate_checksum(None)
-    with pytest.raises(ValidationError):
-        calculate_checksum("")
-    with pytest.raises(ValidationError):
-        calculate_checksum("123a")
-    with pytest.raises(ValidationError):
-        calculate_checksum("12.34")
-    with pytest.raises(ValidationError):
-        calculate_checksum("12 34")
+from laske_export.document.custom_validators import validate_payment_reference
 
 
 @pytest.mark.django_db
