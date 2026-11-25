@@ -8,7 +8,7 @@ from django.core.management.base import BaseCommand
 from leasing.management.commands.create_invoices import (
     create_invoices_for_lease,
     get_today,
-    q_lease_is_active_in_period,
+    q_lease_can_be_invoiced_for_month,
 )
 from leasing.models import Lease
 
@@ -58,7 +58,7 @@ class Command(BaseCommand):
         )
         lease = (
             Lease.objects.filter(id=lease_id, invoicing_enabled_at__isnull=False)
-            .filter(q_lease_is_active_in_period(start_date, end_date))
+            .filter(q_lease_can_be_invoiced_for_month(start_date, end_date))
             .first()
         )
         if not lease:
