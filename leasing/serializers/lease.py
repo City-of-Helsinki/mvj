@@ -309,6 +309,7 @@ class RelatedPlotApplicationSerializer(serializers.ModelSerializer):
 
 
 class LeaseSuccinctWithPlotSearchInformationSerializer(LeaseSuccinctSerializer):
+    tenants = TenantSerializer(many=True, read_only=True)
     plot_searches = serializers.SerializerMethodField(read_only=True, required=False)
     related_plot_applications = RelatedPlotApplicationSerializer(
         read_only=True, many=True
@@ -354,6 +355,7 @@ class LeaseSuccinctWithPlotSearchInformationSerializer(LeaseSuccinctSerializer):
             "is_subject_to_vat",
             "service_unit",
             "target_statuses",
+            "tenants",
             "plot_searches",
             "area_searches",
             "related_plot_applications",
@@ -478,8 +480,12 @@ def get_related_leases(obj: Lease, context: dict) -> RelatedLeases:
     """
     edges, lease_ids = get_related_lease_edges(obj.id)
 
-    leases = Lease.objects.filter(id__in=lease_ids).select_related(
-        "type", "municipality", "district", "identifier", "service_unit"
+    leases = (
+        Lease.objects.filter(id__in=lease_ids)
+        .select_related(
+            "type", "municipality", "district", "identifier", "service_unit"
+        )
+        .prefetch_related("tenants__tenantcontact_set__contact")
     )
     serialized_leases = LeaseSuccinctWithPlotSearchInformationSerializer(
         leases, many=True, context=context
