@@ -377,14 +377,6 @@ class LeaseSuccinctWithGeometrySerializer(LeaseSuccinctSerializer):
         )
 
 
-class RelatedToLeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
-    to_lease = LeaseSuccinctWithPlotSearchInformationSerializer()
-
-    class Meta:
-        model = RelatedLease
-        fields = "__all__"
-
-
 class RelatedLeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerializer):
     def validate(self, data):
         if data["from_lease"] == data["to_lease"]:
@@ -393,16 +385,6 @@ class RelatedLeaseSerializer(EnumSupportSerializerMixin, serializers.ModelSerial
             )
 
         return data
-
-    class Meta:
-        model = RelatedLease
-        fields = "__all__"
-
-
-class RelatedFromLeaseSerializer(
-    EnumSupportSerializerMixin, serializers.ModelSerializer
-):
-    from_lease = LeaseSuccinctWithPlotSearchInformationSerializer()
 
     class Meta:
         model = RelatedLease
