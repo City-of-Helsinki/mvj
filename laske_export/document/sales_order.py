@@ -200,11 +200,6 @@ class PayerParty(Party):
         element_name = "PayerParty"
 
 
-class ShipToParty(Party):
-    class Meta:
-        element_name = "ShipToParty"
-
-
 class LineItem(FieldGroup):
     grouping_factor = Field(name="GroupingFactor", validators=[MaxLengthValidator(35)])
     material = Field(name="Material", validators=[MaxLengthValidator(18)])
