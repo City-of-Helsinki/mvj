@@ -465,6 +465,7 @@ LASKE_PAYMENTS_IMPORT_LOCATION = env.str(
     "LASKE_PAYMENTS_IMPORT_LOCATION", default=project_root("sap_payment_imports")
 )
 
+# Used to derive `value date` from `due date`, probably to match what SAP does.
 LASKE_DUE_DATE_OFFSET_DAYS = 17
 
 LASKE_SERVERS = {

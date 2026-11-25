@@ -9,9 +9,12 @@ from django.db import transaction
 from django.utils import timezone
 from paramiko import SFTPClient
 
-from landuse.invoice_xml import render_sales_order_container, render_single_invoice_xml
 from landuse.landuse_types import SapLanduseExportValues
 from landuse.models.invoice import Invoice, InvoiceStatus, InvoiceType
+from laske_export.landuse.invoice_context import (
+    render_sales_order_container,
+    render_single_invoice_xml,
+)
 from laske_export.models import LanduseInvoiceExportLog
 from laske_export.sftp_manager import SFTPManager
 

@@ -10,8 +10,6 @@ from django.core.exceptions import ValidationError
 from django.core.management import call_command
 from django.utils import timezone
 
-from landuse import invoice_xml
-from landuse.invoice_xml import render_invoices_xml, render_single_invoice_xml
 from landuse.models.agreement import LandUseAgreement
 from landuse.models.invoice import (
     Invoice,
@@ -21,7 +19,41 @@ from landuse.models.invoice import (
     InvoiceType,
 )
 from landuse.models.party import AgreementParty, BillingDetails
+from laske_export.landuse import invoice_context
+from laske_export.landuse.invoice_context import (
+    render_invoices_xml,
+    render_single_invoice_xml,
+)
 from laske_export.models import LanduseInvoiceExportLog
+
+
+def test_wrap_sap_text_wraps_pads_and_warns_on_overflow(caplog):
+    caplog.set_level(logging.WARNING, logger="laske_export.landuse.invoice_context")
+    wrapped = invoice_context._wrap_sap_text(
+        "one two three", line_length=5, line_count=4
+    )
+
+    assert wrapped == ("one ", "two ", "three", "")
+    assert not caplog.text
+
+    caplog.clear()
+    wrapped = invoice_context._wrap_sap_text(
+        "one two three", line_length=5, line_count=2
+    )
+    assert wrapped == ("one ", "two ")
+    assert "SAP text exceeds the 2-line limit; omitting 1 wrapped lines." in caplog.text
+
+    caplog.clear()
+    wrapped = invoice_context._wrap_sap_text("abcdefghij", line_length=5, line_count=2)
+    assert wrapped == ("abcde", "fghij")
+    assert "abcdefghij" == "".join(wrapped)
+    assert not caplog.text
+
+    caplog.clear()
+    wrapped = invoice_context._wrap_sap_text("abcdefghijk", line_length=5, line_count=2)
+    assert wrapped == ("abcde", "fghij")
+    assert "abcdefghijk" != "".join(wrapped)
+    assert "SAP text exceeds the 2-line limit; omitting 1 wrapped lines." in caplog.text
 
 
 @pytest.fixture
@@ -129,6 +161,84 @@ def test_invoice_generation_creates_valid_xml(invoice: Invoice, description):
 
 
 @pytest.mark.django_db
+def test_party_name_is_wrapped_into_priority_and_info_name_lines(invoice: Invoice):
+    long_name = "A" * 120
+    snapshot = invoice.recipient_snapshot
+    snapshot.name = long_name
+    snapshot.save(update_fields=["name"])
+
+    xml = render_single_invoice_xml(invoice)
+    sales_order = ElementTree.fromstring(xml).find("SBO_SalesOrder")
+    expected_lines = [long_name[index : index + 35] for index in range(0, 120, 35)]
+
+    for party_name in ("OrderParty", "BillingParty1"):
+        priority_names = [
+            sales_order.findtext(f"{party_name}/PriorityName{number}")
+            for number in range(1, 5)
+        ]
+        info_names = [
+            sales_order.findtext(f"{party_name}/InfoName{number}")
+            for number in range(1, 5)
+        ]
+        assert priority_names == expected_lines
+        assert info_names == expected_lines
+
+
+@pytest.mark.django_db
+def test_party_address_is_wrapped_into_priority_and_info_address_lines(
+    invoice: Invoice,
+):
+    address = "A" * 60
+    snapshot = invoice.recipient_snapshot
+    snapshot.street_address = address
+    snapshot.save(update_fields=["street_address"])
+
+    xml = render_single_invoice_xml(invoice)
+    sales_order = ElementTree.fromstring(xml).find("SBO_SalesOrder")
+    expected_lines = [address[:35], address[35:]]
+
+    for party_name in ("OrderParty", "BillingParty1"):
+        priority_addresses = [
+            sales_order.findtext(f"{party_name}/PriorityAddress{number}")
+            for number in range(1, 3)
+        ]
+        info_addresses = [
+            sales_order.findtext(f"{party_name}/InfoAddress{number}")
+            for number in range(1, 3)
+        ]
+        assert priority_addresses == expected_lines
+        assert info_addresses == expected_lines
+
+
+@pytest.mark.django_db
+def test_invoice_linetext_is_wrapped_into_at_most_six_sap_lines(
+    invoice: Invoice, caplog
+):
+    description = "x" * 500
+    InvoiceItem.objects.create(
+        invoice=invoice,
+        item_type=InvoiceItemType.LAND_USE_COMPENSATION,
+        description=description,
+        amount=Decimal("1250.50"),
+    )
+
+    xml = render_single_invoice_xml(invoice)
+    line_item = ElementTree.fromstring(xml).find("SBO_SalesOrder/LineItem")
+    linetext_elements = [
+        element for element in line_item if element.tag.startswith("LineTextL")
+    ]
+
+    assert [element.tag for element in linetext_elements] == [
+        f"LineTextL{number}" for number in range(1, 7)
+    ]
+    assert all(len(element.text or "") <= 70 for element in linetext_elements)
+    assert (
+        "Truncated SAP field SapLineItemContext.linetext from 500 to 420 characters; "
+        "80 characters discarded."
+    ) in caplog.text
+
+
+@pytest.mark.django_db
 def test_render_single_invoice_xml_does_not_save(invoice: Invoice):
     InvoiceItem.objects.create(
         invoice=invoice,
@@ -148,6 +258,19 @@ def test_render_single_invoice_xml_does_not_save(invoice: Invoice):
     invoice.refresh_from_db()
     assert invoice.sap_xml is None
     assert invoice.sent_at is None
+
+
+@pytest.mark.django_db
+def test_render_single_invoice_xml_truncates_overlong_fields_with_warning(
+    invoice: Invoice, settings, caplog
+):
+    settings.SAP_LANDUSE_VALUES["sender_id"] = "TOO-LONG"
+
+    xml = render_single_invoice_xml(invoice)
+
+    assert ElementTree.fromstring(xml).findtext("SBO_SalesOrder/SenderId") == "TOO-L"
+    assert "Truncated SAP field SapSalesOrderContext.sender_id" in caplog.text
+    assert "3 characters discarded" in caplog.text
 
 
 @pytest.mark.django_db
@@ -252,8 +375,8 @@ def test_send_landuse_invoices_logs_progress(
 
 @pytest.mark.django_db
 @patch(
-    "landuse.invoice_xml._sales_order_context",
-    wraps=invoice_xml._sales_order_context,
+    "laske_export.landuse.invoice_context._sales_order_context",
+    wraps=invoice_context._sales_order_context,
 )
 @patch("laske_export.landuse_export.send_invoices_xml")
 def test_send_landuse_invoices_batches_due_invoices(

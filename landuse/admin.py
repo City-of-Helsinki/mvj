@@ -3,7 +3,6 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.utils.html import format_html
 
-from landuse.invoice_xml import render_single_invoice_xml
 from landuse.models.agreement import (
     AgreementAddress,
     AgreementPreparer,
@@ -45,6 +44,7 @@ from landuse.models.site import (
     SiteIntendedUse,
     SiteTenureType,
 )
+from laske_export.landuse.invoice_context import render_single_invoice_xml
 
 
 class AgreementAddressInline(admin.TabularInline[AgreementAddress, LandUseAgreement]):

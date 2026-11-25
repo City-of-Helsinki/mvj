@@ -80,7 +80,7 @@ class Invoice(TimeStampedModel):
     installment_count_total = models.PositiveSmallIntegerField()
 
     # In Finnish: Eräpäivä
-    due_date = models.DateField(null=True, blank=True)
+    due_date = models.DateField(null=False)
 
     # In Finnish: Laskun tunniste
     invoice_identifier = models.PositiveIntegerField(unique=True, editable=False)

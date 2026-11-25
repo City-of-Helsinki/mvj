@@ -2,7 +2,7 @@
     <SenderId>{{ order.sender_id }}</SenderId>
     <Reference>{{ order.reference }}</Reference>
     <OriginalOrder></OriginalOrder>
-    <ContractNumber>{{ order.contract_number }}</ContractNumber>
+    <ContractNumber></ContractNumber>
     <OrderType>{{ order.order_type }}</OrderType>
     <SalesOrg>{{ order.sales_org }}</SalesOrg>
     <DistributionChannel>{{ order.distribution_channel }}</DistributionChannel>
@@ -39,17 +39,17 @@
     <LineItem>
       <GroupingFactor></GroupingFactor>
       <Material></Material>
-      <MaterialDescription>{{ item.material_description }}</MaterialDescription>
+      <MaterialDescription></MaterialDescription>
       <Quantity>{{ item.quantity }}</Quantity>
       <Unit></Unit>
       <NetPrice>{{ item.net_price }}</NetPrice>
       <TaxCode></TaxCode>
-      <LineTextL1>{{ item.line_text_l1 }}</LineTextL1>
-      <LineTextL2></LineTextL2>
-      <LineTextL3></LineTextL3>
-      <LineTextL4></LineTextL4>
-      <LineTextL5></LineTextL5>
-      <LineTextL6></LineTextL6>
+      <LineTextL1>{{ item.linetext_lines.0 }}</LineTextL1>
+      <LineTextL2>{{ item.linetext_lines.1 }}</LineTextL2>
+      <LineTextL3>{{ item.linetext_lines.2 }}</LineTextL3>
+      <LineTextL4>{{ item.linetext_lines.3 }}</LineTextL4>
+      <LineTextL5>{{ item.linetext_lines.4 }}</LineTextL5>
+      <LineTextL6>{{ item.linetext_lines.5 }}</LineTextL6>
       <ProfitCenter></ProfitCenter>
       <OrderItemNumber></OrderItemNumber>
       <WBS_Element></WBS_Element>
