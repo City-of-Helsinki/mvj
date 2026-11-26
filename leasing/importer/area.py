@@ -197,8 +197,8 @@ AREA_IMPORT_TYPES: Dict[str, AreaImport] = {
         AND yksikko IS NOT NULL
         """,
     },
-    # Vuokra-alueet: KAMA & KUVA / vuokrausalue_lyhyt_paa
-    "lease_area_kama_kuva": {
+    # Vuokra-alueet: KAMA / vuokrausalue_lyhyt_paa
+    "lease_area_kama": {
         "source_dsn_setting_name": "KAMA_KUVA_LEASE_AREA_DATABASE_DSN",
         "source_name": "Tonttiosasto: vuokrausalue_lyhyt_paa",
         "source_identifier": "tonttiosasto.vuokrausalue_lyhyt_paa",
@@ -226,6 +226,36 @@ AREA_IMPORT_TYPES: Dict[str, AreaImport] = {
         AND ryhma IS NOT NULL
         AND yksikko IS NOT NULL
         """,
+    },
+    # Vuokra-alueet: KUVA / vuokrausalue_kuva_paa
+    "lease_area_kuva": {
+        "source_dsn_setting_name": "KAMA_KUVA_LEASE_AREA_DATABASE_DSN",
+        "source_name": "Tonttiosasto: vuokrausalue_kuva_paa",
+        "source_identifier": "tonttiosasto.vuokrausalue_kuva_paa",
+        "area_type": AreaType.LEASE_AREA,
+        "identifier_field_name": "vuokratunnus",
+        "metadata_columns": [
+            "vuokratunnus",
+            "sopimusnumero",
+            "olotila",
+            "kunta",
+            "sijaintialue",
+            "ryhma",
+            "yksikko",
+            "mvj_yks",
+        ],
+        "query": """
+            SELECT *, ST_AsText(ST_CollectionExtract(ST_MakeValid(ST_Transform(ST_CurveToLine(a.geom), 4326)), 3))
+                AS geom_text
+            FROM tonttiosasto.vuokrausalue_kuva_paa AS a
+            WHERE vuokratunnus IS NOT NULL
+            AND geom IS NOT NULL
+            AND NOT UPPER(olotila) LIKE 'PÄÄTTYNYT'
+            AND kunta IS NOT NULL
+            AND sijaintialue IS NOT NULL
+            AND ryhma IS NOT NULL
+            AND yksikko IS NOT NULL
+            """,
     },
     # Kiinteistöt
     "real_property": {
