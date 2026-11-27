@@ -1,13 +1,14 @@
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db.models import Union
-from django.db.models import DurationField, Q
+from django.db.models import DurationField, Q, QuerySet
 from django.db.models.functions import Cast
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from enumfields.drf import EnumField, EnumSupportSerializerMixin
 from rest_framework import serializers
 
 from field_permissions.serializers import FieldPermissionsSerializerMixin
-from leasing.enums import LeaseRelationType
+from leasing.enums import LeaseRelationType, TenantContactType
 from leasing.models import (
     AreaNote,
     BasisOfRent,
@@ -16,8 +17,10 @@ from leasing.models import (
     RelatedLease,
     ReservationProcedure,
     ServiceUnit,
+    TenantContact,
 )
 from leasing.models.lease import ApplicationMetadata
+from leasing.models.tenant import Tenant
 from leasing.models.types import LeaseWithTenants
 from leasing.serializers.debt_collection import (
     CollectionCourtDecisionSerializer,
@@ -309,7 +312,7 @@ class RelatedPlotApplicationSerializer(serializers.ModelSerializer):
 
 
 class LeaseSuccinctWithPlotSearchInformationSerializer(LeaseSuccinctSerializer):
-    tenants = TenantSerializer(many=True, read_only=True)
+    tenant_names = serializers.SerializerMethodField(read_only=True)
     plot_searches = serializers.SerializerMethodField(read_only=True, required=False)
     related_plot_applications = RelatedPlotApplicationSerializer(
         read_only=True, many=True
@@ -320,6 +323,23 @@ class LeaseSuccinctWithPlotSearchInformationSerializer(LeaseSuccinctSerializer):
     area_searches = AreaSearchSuccinctSerializer(
         read_only=True, many=True, required=False
     )
+
+    def get_tenant_names(self, obj: Lease) -> list[str]:
+        today = timezone.now().date()
+        tenant_names: list[str] = []
+        tenants: QuerySet[Tenant] = obj.tenants.all()
+
+        for tenant in tenants:
+            tenant_contacts: QuerySet[TenantContact] = tenant.tenantcontact_set.all()
+
+            for tenant_contact in tenant_contacts:
+                is_active_tenant = tenant_contact.type == TenantContactType.TENANT and (
+                    tenant_contact.end_date is None or tenant_contact.end_date >= today
+                )
+                if is_active_tenant:
+                    tenant_names.append(tenant_contact.contact.get_name())
+
+        return tenant_names
 
     def get_plot_searches(self, obj: Lease):
         """Return the PlotSearches associated with the Lease via
@@ -355,7 +375,7 @@ class LeaseSuccinctWithPlotSearchInformationSerializer(LeaseSuccinctSerializer):
             "is_subject_to_vat",
             "service_unit",
             "target_statuses",
-            "tenants",
+            "tenant_names",
             "plot_searches",
             "area_searches",
             "related_plot_applications",

@@ -322,7 +322,7 @@ def test_get_related_leases_returns_full_tree(lease_factory, related_lease_facto
     assert {int(lease_id) for lease_id in result_from_root["leases"]} == {
         lease.id for lease in leases.values()
     }
-    assert all("tenants" in lease for lease in result_from_root["leases"].values())
+    assert all("tenant_names" in lease for lease in result_from_root["leases"].values())
 
     # Ensure that starting from a leaf node still collects the entire tree.
     result_from_leaf = get_related_leases(leases["A"], context={})
