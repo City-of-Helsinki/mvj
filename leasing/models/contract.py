@@ -392,6 +392,7 @@ class ContractChange(models.Model):
         on_delete=models.PROTECT,
     )
 
+    # In Finnish: Toimeenpanija
     executor = models.ForeignKey(
         "users.User",
         verbose_name=_("Executor"),
@@ -399,6 +400,11 @@ class ContractChange(models.Model):
         null=True,
         blank=True,
         on_delete=models.PROTECT,
+    )
+
+    # In Finnish: Sopimusnumero
+    contract_number = models.CharField(
+        verbose_name=_("Contract number"), null=True, blank=True, max_length=255
     )
 
     recursive_get_related_skip_relations = ["contract", "decision"]
