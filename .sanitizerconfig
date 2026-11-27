@@ -875,6 +875,7 @@ strategy:
     signing_date: null
     third_call_sent: null
     executor_id: null
+    contract_number: null
   leasing_contractrent:
     amount: null
     base_amount: null

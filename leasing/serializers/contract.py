@@ -35,6 +35,7 @@ class ContractChangeSerializer(
             "description",
             "decision",
             "executor",
+            "contract_number",
         )
 
 
@@ -69,6 +70,7 @@ class ContractChangeCreateUpdateSerializer(
             "description",
             "decision",
             "executor",
+            "contract_number",
         )
 
 
